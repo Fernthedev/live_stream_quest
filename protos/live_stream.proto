@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+// optional = nullable
+// may change in future!
+
+message Vector3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message Quaternion {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+
+message Transform {
+  Vector3 position = 1;
+  Quaternion rotation = 2;
+}
+
+message UpdatePosition {
+//  nullable
+  optional Transform headTransform = 1;
+  optional Transform leftTransform = 2;
+  optional Transform rightTransform = 3;
+}
+
+message StartBeatmap {
+  string hash = 1;
+}
+
+message StartBeatmapFailure {
+  string error = 1;
+}
+
+// To synchronize quest and PC game
+// PC/Quest will wait until both are ready and loaded
+// Quest will then send the Start packet and the level starts
+message ReadyUp {}
+message StartMap {}
+
+message PacketWrapper {
+  uint64 queryResultId = 1;
+  oneof Packet {
+      UpdatePosition updatePosition = 2;
+      StartBeatmap startBeatmap = 3;
+      StartBeatmapFailure startBeatmapFailure = 4;
+      ReadyUp readyUp = 5;
+      StartMap startMap = 6;
+  }
+}

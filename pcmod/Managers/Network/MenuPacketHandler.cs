@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
 using BeatSaverSharp.Models;
+using LiveStreamQuest.Network;
 using LiveStreamQuest.Protos;
 using Polyglot;
+using SiraUtil.Logging;
 using Zenject;
 
 namespace LiveStreamQuest.Managers;
@@ -26,6 +28,10 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
     [Inject] private readonly PlayerDataModel _playerDataModel;
 
     [Inject] private readonly PlayerSettingsPanelController _playerSettingsPanelController;
+
+    [Inject] private readonly NetworkManager _networkManager;
+
+    [Inject] private readonly SiraLog _siraLog;
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
 
     public async void HandlePacket(PacketWrapper packetWrapper)
@@ -33,7 +39,15 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
         switch (packetWrapper.PacketCase)
         {
             case PacketWrapper.PacketOneofCase.StartBeatmap:
-                await StartLevel(packetWrapper);
+                try
+                {
+                    await StartLevel(packetWrapper);
+                }
+                catch (Exception e)
+                {
+                    _siraLog.Error(e);
+                    SendBeatmapStartError(e.Message);
+                }
 
                 break;
         }
@@ -60,6 +74,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
 
         if (levelPreview == null)
         {
+            SendBeatmapStartError("levelPreview is null");
             // TODO: User error dialog
             return;
         }
@@ -68,6 +83,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
 
         if (levelPack == null)
         {
+            SendBeatmapStartError("levelPack is null");
             // TODO: User error dialog
             return;
         }
@@ -76,6 +92,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
 
         if (beatmapResult.beatmapLevel == null || beatmapResult.isError)
         {
+            SendBeatmapStartError("beatmap level is null");
             // TODO: User error dialog
             return;
         }
@@ -93,11 +110,19 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
             _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null, new GameplayModifiers(),
             _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false, false,
             null, null, null);
+    }
 
-        // _levelSelectionFlow.Setup(
-        //     new LevelSelectionFlowCoordinator.State(SelectLevelCategoryViewController.LevelCategory.All, levelPack,
-        //         level, null));
-        // _levelSelectionFlow.
+    private void SendBeatmapStartError(string message)
+    {
+        var packetWrapper = new PacketWrapper
+        {
+            StartBeatmapFailure =
+            {
+                Error = message
+            }
+        };
+
+        _networkManager.SendPacket(packetWrapper);
     }
 
     public void Dispose()

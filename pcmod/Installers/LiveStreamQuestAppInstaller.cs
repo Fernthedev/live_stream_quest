@@ -1,6 +1,7 @@
 ﻿using System;
 using BeatSaverSharp;
 using LiveStreamQuest.Configuration;
+using LiveStreamQuest.Managers;
 using LiveStreamQuest.Network;
 using Zenject;
 
@@ -22,5 +23,6 @@ internal class AppInstaller : Installer
         Container.BindInstance(_config);
         Container.BindInstance(_beatSaver);
         Container.BindInterfacesAndSelfTo<NetworkManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<StateManager>().AsSingle();
     }
 }

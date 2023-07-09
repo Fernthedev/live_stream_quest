@@ -3,8 +3,11 @@ using Zenject;
 
 namespace LiveStreamQuest.Installers;
 
-internal class MenuInstaller : Installer
+internal class MenuInstaller : Installer, IInitializable
 {
+    [Inject] private readonly StateManager _stateManager;
+
+    
     public MenuInstaller()
     {
 
@@ -13,5 +16,10 @@ internal class MenuInstaller : Installer
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<MenuPacketHandler>().AsSingle();
+    }
+
+    public void Initialize()
+    {
+        _stateManager.StartingGameFromQuest = false;
     }
 }

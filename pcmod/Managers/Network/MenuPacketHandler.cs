@@ -32,6 +32,8 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
     [Inject] private readonly NetworkManager _networkManager;
 
     [Inject] private readonly SiraLog _siraLog;
+
+    [Inject] private readonly StateManager _stateManager;
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
 
     public async void HandlePacket(PacketWrapper packetWrapper)
@@ -41,6 +43,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
             case PacketWrapper.PacketOneofCase.StartBeatmap:
                 try
                 {
+                    _stateManager.StartingGameFromQuest = true;
                     await StartLevel(packetWrapper);
                 }
                 catch (Exception e)
@@ -114,6 +117,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
 
     private void SendBeatmapStartError(string message)
     {
+        _stateManager.StartingGameFromQuest = false;
         var packetWrapper = new PacketWrapper
         {
             StartBeatmapFailure =

@@ -940,6 +940,8 @@ class StartBeatmap final :
 
   enum : int {
     kLevelIdFieldNumber = 1,
+    kCharacteristicFieldNumber = 2,
+    kDifficultyFieldNumber = 3,
   };
   // string levelId = 1;
   void clear_levelid();
@@ -955,6 +957,29 @@ class StartBeatmap final :
   std::string* _internal_mutable_levelid();
   public:
 
+  // string characteristic = 2;
+  void clear_characteristic();
+  const std::string& characteristic() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_characteristic(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_characteristic();
+  PROTOBUF_NODISCARD std::string* release_characteristic();
+  void set_allocated_characteristic(std::string* characteristic);
+  private:
+  const std::string& _internal_characteristic() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_characteristic(const std::string& value);
+  std::string* _internal_mutable_characteristic();
+  public:
+
+  // int32 difficulty = 3;
+  void clear_difficulty();
+  int32_t difficulty() const;
+  void set_difficulty(int32_t value);
+  private:
+  int32_t _internal_difficulty() const;
+  void _internal_set_difficulty(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:StartBeatmap)
  private:
   class _Internal;
@@ -963,6 +988,8 @@ class StartBeatmap final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr levelid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr characteristic_;
+  int32_t difficulty_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_live_5fstream_2eproto;
 };
@@ -2430,6 +2457,77 @@ inline void StartBeatmap::set_allocated_levelid(std::string* levelid) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:StartBeatmap.levelId)
+}
+
+// string characteristic = 2;
+inline void StartBeatmap::clear_characteristic() {
+  characteristic_.ClearToEmpty();
+}
+inline const std::string& StartBeatmap::characteristic() const {
+  // @@protoc_insertion_point(field_get:StartBeatmap.characteristic)
+  return _internal_characteristic();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void StartBeatmap::set_characteristic(ArgT0&& arg0, ArgT... args) {
+ 
+ characteristic_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:StartBeatmap.characteristic)
+}
+inline std::string* StartBeatmap::mutable_characteristic() {
+  std::string* _s = _internal_mutable_characteristic();
+  // @@protoc_insertion_point(field_mutable:StartBeatmap.characteristic)
+  return _s;
+}
+inline const std::string& StartBeatmap::_internal_characteristic() const {
+  return characteristic_.Get();
+}
+inline void StartBeatmap::_internal_set_characteristic(const std::string& value) {
+  
+  characteristic_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* StartBeatmap::_internal_mutable_characteristic() {
+  
+  return characteristic_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* StartBeatmap::release_characteristic() {
+  // @@protoc_insertion_point(field_release:StartBeatmap.characteristic)
+  return characteristic_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void StartBeatmap::set_allocated_characteristic(std::string* characteristic) {
+  if (characteristic != nullptr) {
+    
+  } else {
+    
+  }
+  characteristic_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), characteristic,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (characteristic_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    characteristic_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:StartBeatmap.characteristic)
+}
+
+// int32 difficulty = 3;
+inline void StartBeatmap::clear_difficulty() {
+  difficulty_ = 0;
+}
+inline int32_t StartBeatmap::_internal_difficulty() const {
+  return difficulty_;
+}
+inline int32_t StartBeatmap::difficulty() const {
+  // @@protoc_insertion_point(field_get:StartBeatmap.difficulty)
+  return _internal_difficulty();
+}
+inline void StartBeatmap::_internal_set_difficulty(int32_t value) {
+  
+  difficulty_ = value;
+}
+inline void StartBeatmap::set_difficulty(int32_t value) {
+  _internal_set_difficulty(value);
+  // @@protoc_insertion_point(field_set:StartBeatmap.difficulty)
 }
 
 // -------------------------------------------------------------------

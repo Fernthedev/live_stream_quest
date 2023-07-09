@@ -32,6 +32,9 @@ message UpdatePosition {
 
 message StartBeatmap {
   string levelId = 1;
+  string characteristic = 2;
+  int32 difficulty = 3;
+  // TODO: Gameplay Modifiers
 }
 
 message StartBeatmapFailure {

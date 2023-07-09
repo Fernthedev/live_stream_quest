@@ -17,6 +17,7 @@ namespace LiveStreamQuest.Network
         private readonly IPEndPoint _endPoint;
 
         [Inject] private readonly IPacketHandler _packetHandler;
+        [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
 
         [Inject]
         public NetworkManager(PluginConfig config)
@@ -80,7 +81,9 @@ namespace LiveStreamQuest.Network
 
         private void HandlePacket(PacketWrapper packetWrapper)
         {
-            _packetHandler.HandlePacket(packetWrapper);
+            _mainThreadDispatcher.DispatchOnMainThread(
+                (handler, wrapper) => { handler.HandlePacket(wrapper); },
+                _packetHandler, packetWrapper);
         }
 
         public void SendPacket(PacketWrapper packetWrapper)

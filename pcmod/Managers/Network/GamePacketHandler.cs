@@ -13,13 +13,16 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
     [Inject] private readonly NetworkManager _networkManager;
     [Inject] private readonly Submission _submission;
 
+    [Inject] private readonly VRControllerManager _vrControllerManager;
+
 
     public void HandlePacket(PacketWrapper packetWrapper)
     {
         switch (packetWrapper.PacketCase)
         {
             case PacketWrapper.PacketOneofCase.UpdatePosition:
-                // TODO:
+                var updatePositionData = packetWrapper.UpdatePosition;
+                _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform, updatePositionData.RightTransform, updatePositionData.RightTransform);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:
                 _pauseController.HandlePauseMenuManagerDidPressContinueButton();

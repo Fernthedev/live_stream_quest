@@ -13,7 +13,7 @@ namespace LiveStreamQuest.Configuration
         /// to detect a value change and save the config automatically
         // public virtual int MeaningofLife = 42 { get; set; } 
         public virtual string Address { get; set; } = "192.168.0.24";
-        public virtual int Port { get; set; } = 3306;
+        public virtual int Port { get; set; } = 9542;
         public virtual bool ConnectOnStartup { get; set; } = false;
     }
 }

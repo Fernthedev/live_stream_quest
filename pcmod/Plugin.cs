@@ -4,6 +4,8 @@ using BeatSaverSharp;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
+using IPA.Loader;
+using JetBrains.Annotations;
 using SiraUtil.Zenject;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Installers;
@@ -21,13 +23,21 @@ namespace LiveStreamQuest
         internal static IPALogger Log { get; private set; }
         internal PluginConfig _config;
 
-        private readonly BeatSaver _beatSaver = new(new BeatSaverOptions("LiveStreamQuest", new Version(0, 1, 0)));
+        public static Hive.Versioning.Version Version;
+
+        private BeatSaver _beatSaver;
 
         [Init]
-        public void Init(Zenjector zenjector, IPALogger logger, Config config)
+        [UsedImplicitly]
+        public void Init(Zenjector zenjector, IPALogger logger, Config config, PluginMetadata metadata)
         {
             Instance = this;
             Log = logger;
+
+            Version = metadata.HVersion;
+
+            _beatSaver = new(new BeatSaverOptions("LiveStreamQuest",
+                new Version((int)Version.Major, (int)Version.Minor, (int)Version.Patch)));
 
             zenjector.UseLogger(logger);
             zenjector.UseMetadataBinder<Plugin>();

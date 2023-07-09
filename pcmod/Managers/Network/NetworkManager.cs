@@ -76,22 +76,6 @@ namespace LiveStreamQuest.Network
             var packetWrapper = PacketWrapper.Parser.ParseFrom(bytes);
 
             HandlePacket(packetWrapper);
-            // var lenBuffer = new byte[8];
-            //
-            // var readCount = 0;
-            //
-            // while (readCount < lenBuffer.Length)
-            // {
-            //     var segment = new ArraySegment<byte>(lenBuffer, readCount, lenBuffer.Length);
-            //     readCount = await _socket.ReceiveAsync(segment,
-            //         SocketFlags.None);
-            // }
-            //
-            // var len = 
-            //
-            // readCount = 0;
-            // var dataBuffer = new byte[readCount];
-            // while ()
         }
 
         private void HandlePacket(PacketWrapper packetWrapper)
@@ -99,9 +83,9 @@ namespace LiveStreamQuest.Network
             _packetHandler.HandlePacket(packetWrapper);
         }
 
-        public Task SendPacket(PacketWrapper packetWrapper)
+        public void SendPacket(PacketWrapper packetWrapper)
         {
-            return Task.Run(async () =>
+            Task.Run(async () =>
             {
                 var byteArray = packetWrapper.ToByteArray();
                 await _socket.SendAsync(new ArraySegment<byte>(byteArray), SocketFlags.None);

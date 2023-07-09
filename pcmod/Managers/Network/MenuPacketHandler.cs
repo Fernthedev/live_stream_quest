@@ -12,8 +12,6 @@ public class MenuPacketHandler : IPacketHandler
         {
             case PacketWrapper.PacketOneofCase.StartBeatmap:
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     }
 }

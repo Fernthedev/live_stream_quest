@@ -2,12 +2,14 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using JetBrains.Annotations;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Managers;
 using LiveStreamQuest.Protos;
+using SiraUtil.Logging;
 using Zenject;
 
 namespace LiveStreamQuest.Network
@@ -21,6 +23,7 @@ namespace LiveStreamQuest.Network
 
         [Inject(Optional = true)] [CanBeNull] private readonly IPacketHandler _packetHandler;
         [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
+        [Inject] private readonly SiraLog _siraLog;
 
         [Inject]
         public NetworkManager(PluginConfig config)
@@ -33,32 +36,57 @@ namespace LiveStreamQuest.Network
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
+            _socket.ReceiveTimeout = 30 * 1000;
+            _socket.SendTimeout = 30 * 1000;
         }
-
-        public void Dispose()
-        {
-            _socket?.Dispose();
-        }
-
+        
         public void Initialize()
         {
+            _siraLog.Info("Initializing network manager");
             if (!_pluginConfig.ConnectOnStartup) return;
             
             _ = Connect().ConfigureAwait(false);
         }
+
+        public void Dispose()
+        {
+            _siraLog.Info("Closing network stream");
+            Disconnect();
+            _socket?.Dispose();
+        }
+
+
+        public void Disconnect()
+        {
+            if (!_socket.Connected) return;
+         
+            _siraLog.Info("Disconnecting");
+            _socket.Disconnect(false);
+        }
         
         public async Task Connect()
         {
+            _siraLog.Info($"Connecting to {_endPoint}");
+
             await _socket.ConnectAsync(_endPoint).ConfigureAwait(false);
 
+            if (!_socket.Connected)
+            {
+                _siraLog.Info($"Failed to connect to {_endPoint}");
+                return;
+            }
+            
             _ = Task.Run(async () =>
             {
                 using var networkStream = new NetworkStream(_socket, false);
 
+                _siraLog.Info($"Receiving");
                 while (_socket.Connected)
                 {
                     await OnReceive(networkStream).ConfigureAwait(false);
                 }
+                _siraLog.Info($"Stopped Receiving");
+
             }).ConfigureAwait(false);
         }
 
@@ -69,8 +97,9 @@ namespace LiveStreamQuest.Network
                 await Task.Yield();
                 return;
             }
+            _siraLog.Info("Received data");
 
-            using var binaryReader = new BinaryReader(stream);
+            using var binaryReader = new BinaryReader(stream, new UTF8Encoding(), true);
 
             // bad but oh well, C# uses ints
             var len = (int)binaryReader.ReadUInt64();

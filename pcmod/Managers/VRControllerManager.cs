@@ -32,6 +32,7 @@ public class VRControllerManager : IInitializable
         var transformedLeftRotation =
             _playerTransforms._originParentTransform.TransformRotation(leftTransform.Rotation.ToQuaternion());
 
+        // TODO: Lerp
         _playerTransforms._headTransform.position = transformedHeadPosition;
         _playerTransforms._headTransform.rotation = transformedHeadRotation;
 

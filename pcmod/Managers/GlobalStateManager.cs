@@ -1,6 +1,6 @@
 ﻿namespace LiveStreamQuest.Managers;
 
-public class StateManager
+public class GlobalStateManager
 {
     public bool StartingGameFromQuest;
 }

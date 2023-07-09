@@ -14,6 +14,8 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
     [Inject] private readonly Submission _submission;
 
     [Inject] private readonly VRControllerManager _vrControllerManager;
+    
+    private ulong _packetId;
 
 
     public void HandlePacket(PacketWrapper packetWrapper)
@@ -22,6 +24,10 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
         {
             case PacketWrapper.PacketOneofCase.UpdatePosition:
                 var updatePositionData = packetWrapper.UpdatePosition;
+                // ignore old packet
+                if (_packetId > packetWrapper.QueryResultId) return;
+                _packetId = packetWrapper.QueryResultId;
+                
                 _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform, updatePositionData.RightTransform, updatePositionData.RightTransform);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:

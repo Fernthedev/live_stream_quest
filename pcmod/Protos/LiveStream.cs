@@ -1235,6 +1235,9 @@ namespace LiveStreamQuest.Protos {
     /// <summary>Field number for the "difficulty" field.</summary>
     public const int DifficultyFieldNumber = 3;
     private int difficulty_;
+    /// <summary>
+    /// TODO: Gameplay Modifiers
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int Difficulty {

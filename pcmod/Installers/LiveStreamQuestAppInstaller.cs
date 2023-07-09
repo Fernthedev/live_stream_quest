@@ -28,6 +28,6 @@ internal class AppInstaller : Installer
             networkManagerBind.NonLazy();
         }
 
-        Container.BindInterfacesAndSelfTo<StateManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GlobalStateManager>().AsSingle();
     }
 }

@@ -7,7 +7,8 @@ namespace LiveStreamQuest.Installers;
 
 internal class GameInstaller : Installer, IDisposable
 {
-    [Inject] private readonly StateManager _stateManager;
+    [Inject] 
+    private readonly GlobalStateManager _globalStateManager;
 
     public GameInstaller()
     {
@@ -16,13 +17,13 @@ internal class GameInstaller : Installer, IDisposable
 
     public override void InstallBindings()
     {
-        if (!_stateManager.StartingGameFromQuest) return;
+        if (!_globalStateManager.StartingGameFromQuest) return;
         // TODO: Conditionally
         Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle();
     }
 
     public void Dispose()
     {
-        _stateManager.StartingGameFromQuest = false;
+        _globalStateManager.StartingGameFromQuest = false;
     }
 }

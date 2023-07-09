@@ -34,7 +34,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
 
     [Inject] private readonly SiraLog _siraLog;
 
-    [Inject] private readonly StateManager _stateManager;
+    [Inject] private readonly GlobalStateManager _globalStateManager;
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
     private PlayerSettingsPanelController _playerSettingsPanelController;
@@ -58,7 +58,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
             case PacketWrapper.PacketOneofCase.StartBeatmap:
                 try
                 {
-                    _stateManager.StartingGameFromQuest = true;
+                    _globalStateManager.StartingGameFromQuest = true;
                     await StartLevel(packetWrapper).ConfigureAwait(true);
                 }
                 catch (Exception e)
@@ -133,7 +133,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
 
     private void SendBeatmapStartError(string message)
     {
-        _stateManager.StartingGameFromQuest = false;
+        _globalStateManager.StartingGameFromQuest = false;
         var packetWrapper = new PacketWrapper
         {
             StartBeatmapFailure =

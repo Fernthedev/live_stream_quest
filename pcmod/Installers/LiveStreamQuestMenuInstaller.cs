@@ -5,7 +5,7 @@ namespace LiveStreamQuest.Installers;
 
 internal class MenuInstaller : Installer, IInitializable
 {
-    [Inject] private readonly StateManager _stateManager;
+    [Inject] private readonly GlobalStateManager _globalStateManager;
 
     
     public MenuInstaller()
@@ -20,6 +20,6 @@ internal class MenuInstaller : Installer, IInitializable
 
     public void Initialize()
     {
-        _stateManager.StartingGameFromQuest = false;
+        _globalStateManager.StartingGameFromQuest = false;
     }
 }

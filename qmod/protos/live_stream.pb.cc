@@ -74,7 +74,7 @@ struct UpdatePositionDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UpdatePositionDefaultTypeInternal _UpdatePosition_default_instance_;
 constexpr StartBeatmap::StartBeatmap(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+  : levelid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct StartBeatmapDefaultTypeInternal {
   constexpr StartBeatmapDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -118,6 +118,17 @@ struct StartMapDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT StartMapDefaultTypeInternal _StartMap_default_instance_;
+constexpr ExitMap::ExitMap(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct ExitMapDefaultTypeInternal {
+  constexpr ExitMapDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~ExitMapDefaultTypeInternal() {}
+  union {
+    ExitMap _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ExitMapDefaultTypeInternal _ExitMap_default_instance_;
 constexpr PacketWrapper::PacketWrapper(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : queryresultid_(uint64_t{0u})
@@ -131,7 +142,7 @@ struct PacketWrapperDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PacketWrapperDefaultTypeInternal _PacketWrapper_default_instance_;
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_live_5fstream_2eproto[9];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_live_5fstream_2eproto[10];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_live_5fstream_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_live_5fstream_2eproto = nullptr;
 
@@ -181,7 +192,7 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::StartBeatmap, hash_),
+  PROTOBUF_FIELD_OFFSET(::StartBeatmap, levelid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::StartBeatmapFailure, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -202,12 +213,19 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::ExitMap, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::PacketWrapper, _internal_metadata_),
   ~0u,  // no _extensions_
   PROTOBUF_FIELD_OFFSET(::PacketWrapper, _oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::PacketWrapper, queryresultid_),
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
@@ -224,7 +242,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 46, -1, -1, sizeof(::StartBeatmapFailure)},
   { 53, -1, -1, sizeof(::ReadyUp)},
   { 59, -1, -1, sizeof(::StartMap)},
-  { 65, -1, -1, sizeof(::PacketWrapper)},
+  { 65, -1, -1, sizeof(::ExitMap)},
+  { 71, -1, -1, sizeof(::PacketWrapper)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -236,6 +255,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_StartBeatmapFailure_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_ReadyUp_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_StartMap_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_ExitMap_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_PacketWrapper_default_instance_),
 };
 
@@ -249,21 +269,22 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VA
   "ansformH\000\210\001\001\022&\n\rleftTransform\030\002 \001(\0132\n.Tr"
   "ansformH\001\210\001\001\022\'\n\016rightTransform\030\003 \001(\0132\n.T"
   "ransformH\002\210\001\001B\020\n\016_headTransformB\020\n\016_left"
-  "TransformB\021\n\017_rightTransform\"\034\n\014StartBea"
-  "tmap\022\014\n\004hash\030\001 \001(\t\"$\n\023StartBeatmapFailur"
-  "e\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\n\n\010StartMap\""
-  "\363\001\n\rPacketWrapper\022\025\n\rqueryResultId\030\001 \001(\004"
-  "\022)\n\016updatePosition\030\002 \001(\0132\017.UpdatePositio"
-  "nH\000\022%\n\014startBeatmap\030\003 \001(\0132\r.StartBeatmap"
-  "H\000\0223\n\023startBeatmapFailure\030\004 \001(\0132\024.StartB"
-  "eatmapFailureH\000\022\033\n\007readyUp\030\005 \001(\0132\010.Ready"
-  "UpH\000\022\035\n\010startMap\030\006 \001(\0132\t.StartMapH\000B\010\n\006P"
-  "acketb\006proto3"
+  "TransformB\021\n\017_rightTransform\"\037\n\014StartBea"
+  "tmap\022\017\n\007levelId\030\001 \001(\t\"$\n\023StartBeatmapFai"
+  "lure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\n\n\010StartM"
+  "ap\"\t\n\007ExitMap\"\220\002\n\rPacketWrapper\022\025\n\rquery"
+  "ResultId\030\001 \001(\004\022)\n\016updatePosition\030\002 \001(\0132\017"
+  ".UpdatePositionH\000\022%\n\014startBeatmap\030\003 \001(\0132"
+  "\r.StartBeatmapH\000\0223\n\023startBeatmapFailure\030"
+  "\004 \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007readyUp"
+  "\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.S"
+  "tartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000B\010"
+  "\n\006Packetb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-  false, false, 733, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
-  &descriptor_table_live_5fstream_2eproto_once, nullptr, 0, 9,
+  false, false, 776, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
+  &descriptor_table_live_5fstream_2eproto_once, nullptr, 0, 10,
   schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
   file_level_metadata_live_5fstream_2eproto, file_level_enum_descriptors_live_5fstream_2eproto, file_level_service_descriptors_live_5fstream_2eproto,
 };
@@ -1419,21 +1440,21 @@ StartBeatmap::StartBeatmap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 StartBeatmap::StartBeatmap(const StartBeatmap& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  levelid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+    levelid_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_hash().empty()) {
-    hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_hash(), 
+  if (!from._internal_levelid().empty()) {
+    levelid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_levelid(), 
       GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:StartBeatmap)
 }
 
 inline void StartBeatmap::SharedCtor() {
-hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+levelid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  levelid_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -1446,7 +1467,7 @@ StartBeatmap::~StartBeatmap() {
 
 inline void StartBeatmap::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  levelid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void StartBeatmap::ArenaDtor(void* object) {
@@ -1465,7 +1486,7 @@ void StartBeatmap::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  hash_.ClearToEmpty();
+  levelid_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1475,12 +1496,12 @@ const char* StartBeatmap::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string hash = 1;
+      // string levelId = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_hash();
+          auto str = _internal_mutable_levelid();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "StartBeatmap.hash"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "StartBeatmap.levelId"));
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1514,14 +1535,14 @@ uint8_t* StartBeatmap::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string hash = 1;
-  if (!this->_internal_hash().empty()) {
+  // string levelId = 1;
+  if (!this->_internal_levelid().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_hash().data(), static_cast<int>(this->_internal_hash().length()),
+      this->_internal_levelid().data(), static_cast<int>(this->_internal_levelid().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "StartBeatmap.hash");
+      "StartBeatmap.levelId");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_hash(), target);
+        1, this->_internal_levelid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1540,11 +1561,11 @@ size_t StartBeatmap::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string hash = 1;
-  if (!this->_internal_hash().empty()) {
+  // string levelId = 1;
+  if (!this->_internal_levelid().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_hash());
+        this->_internal_levelid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -1569,8 +1590,8 @@ void StartBeatmap::MergeFrom(const StartBeatmap& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_hash().empty()) {
-    _internal_set_hash(from._internal_hash());
+  if (!from._internal_levelid().empty()) {
+    _internal_set_levelid(from._internal_levelid());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1593,8 +1614,8 @@ void StartBeatmap::InternalSwap(StartBeatmap* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      &hash_, lhs_arena,
-      &other->hash_, rhs_arena
+      &levelid_, lhs_arena,
+      &other->levelid_, rhs_arena
   );
 }
 
@@ -1887,6 +1908,45 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*StartMap::GetClassData() const
 
 // ===================================================================
 
+class ExitMap::_Internal {
+ public:
+};
+
+ExitMap::ExitMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:ExitMap)
+}
+ExitMap::ExitMap(const ExitMap& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:ExitMap)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ExitMap::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ExitMap::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ExitMap::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_live_5fstream_2eproto_getter, &descriptor_table_live_5fstream_2eproto_once,
+      file_level_metadata_live_5fstream_2eproto[8]);
+}
+
+// ===================================================================
+
 class PacketWrapper::_Internal {
  public:
   static const ::UpdatePosition& updateposition(const PacketWrapper* msg);
@@ -1894,6 +1954,7 @@ class PacketWrapper::_Internal {
   static const ::StartBeatmapFailure& startbeatmapfailure(const PacketWrapper* msg);
   static const ::ReadyUp& readyup(const PacketWrapper* msg);
   static const ::StartMap& startmap(const PacketWrapper* msg);
+  static const ::ExitMap& exitmap(const PacketWrapper* msg);
 };
 
 const ::UpdatePosition&
@@ -1915,6 +1976,10 @@ PacketWrapper::_Internal::readyup(const PacketWrapper* msg) {
 const ::StartMap&
 PacketWrapper::_Internal::startmap(const PacketWrapper* msg) {
   return *msg->Packet_.startmap_;
+}
+const ::ExitMap&
+PacketWrapper::_Internal::exitmap(const PacketWrapper* msg) {
+  return *msg->Packet_.exitmap_;
 }
 void PacketWrapper::set_allocated_updateposition(::UpdatePosition* updateposition) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -1991,6 +2056,21 @@ void PacketWrapper::set_allocated_startmap(::StartMap* startmap) {
   }
   // @@protoc_insertion_point(field_set_allocated:PacketWrapper.startMap)
 }
+void PacketWrapper::set_allocated_exitmap(::ExitMap* exitmap) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_Packet();
+  if (exitmap) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::ExitMap>::GetOwningArena(exitmap);
+    if (message_arena != submessage_arena) {
+      exitmap = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, exitmap, submessage_arena);
+    }
+    set_has_exitmap();
+    Packet_.exitmap_ = exitmap;
+  }
+  // @@protoc_insertion_point(field_set_allocated:PacketWrapper.exitMap)
+}
 PacketWrapper::PacketWrapper(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -2024,6 +2104,10 @@ PacketWrapper::PacketWrapper(const PacketWrapper& from)
     }
     case kStartMap: {
       _internal_mutable_startmap()->::StartMap::MergeFrom(from._internal_startmap());
+      break;
+    }
+    case kExitMap: {
+      _internal_mutable_exitmap()->::ExitMap::MergeFrom(from._internal_exitmap());
       break;
     }
     case PACKET_NOT_SET: {
@@ -2092,6 +2176,12 @@ void PacketWrapper::clear_Packet() {
     case kStartMap: {
       if (GetArenaForAllocation() == nullptr) {
         delete Packet_.startmap_;
+      }
+      break;
+    }
+    case kExitMap: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete Packet_.exitmap_;
       }
       break;
     }
@@ -2164,6 +2254,14 @@ const char* PacketWrapper::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           ptr = ctx->ParseMessage(_internal_mutable_startmap(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .ExitMap exitMap = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          ptr = ctx->ParseMessage(_internal_mutable_exitmap(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -2243,6 +2341,14 @@ uint8_t* PacketWrapper::_InternalSerialize(
         6, _Internal::startmap(this), target, stream);
   }
 
+  // .ExitMap exitMap = 7;
+  if (_internal_has_exitmap()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        7, _Internal::exitmap(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2300,6 +2406,13 @@ size_t PacketWrapper::ByteSizeLong() const {
           *Packet_.startmap_);
       break;
     }
+    // .ExitMap exitMap = 7;
+    case kExitMap: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *Packet_.exitmap_);
+      break;
+    }
     case PACKET_NOT_SET: {
       break;
     }
@@ -2350,6 +2463,10 @@ void PacketWrapper::MergeFrom(const PacketWrapper& from) {
       _internal_mutable_startmap()->::StartMap::MergeFrom(from._internal_startmap());
       break;
     }
+    case kExitMap: {
+      _internal_mutable_exitmap()->::ExitMap::MergeFrom(from._internal_exitmap());
+      break;
+    }
     case PACKET_NOT_SET: {
       break;
     }
@@ -2379,7 +2496,7 @@ void PacketWrapper::InternalSwap(PacketWrapper* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PacketWrapper::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_live_5fstream_2eproto_getter, &descriptor_table_live_5fstream_2eproto_once,
-      file_level_metadata_live_5fstream_2eproto[8]);
+      file_level_metadata_live_5fstream_2eproto[9]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2407,6 +2524,9 @@ template<> PROTOBUF_NOINLINE ::ReadyUp* Arena::CreateMaybeMessage< ::ReadyUp >(A
 }
 template<> PROTOBUF_NOINLINE ::StartMap* Arena::CreateMaybeMessage< ::StartMap >(Arena* arena) {
   return Arena::CreateMessageInternal< ::StartMap >(arena);
+}
+template<> PROTOBUF_NOINLINE ::ExitMap* Arena::CreateMaybeMessage< ::ExitMap >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::ExitMap >(arena);
 }
 template<> PROTOBUF_NOINLINE ::PacketWrapper* Arena::CreateMaybeMessage< ::PacketWrapper >(Arena* arena) {
   return Arena::CreateMessageInternal< ::PacketWrapper >(arena);

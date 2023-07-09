@@ -29,7 +29,7 @@ message UpdatePosition {
 }
 
 message StartBeatmap {
-  string hash = 1;
+  string levelId = 1;
 }
 
 message StartBeatmapFailure {
@@ -41,6 +41,7 @@ message StartBeatmapFailure {
 // Quest will then send the Start packet and the level starts
 message ReadyUp {}
 message StartMap {}
+message ExitMap {}
 
 message PacketWrapper {
   uint64 queryResultId = 1;
@@ -50,5 +51,6 @@ message PacketWrapper {
       StartBeatmapFailure startBeatmapFailure = 4;
       ReadyUp readyUp = 5;
       StartMap startMap = 6;
+      ExitMap exitMap = 7;
   }
 }

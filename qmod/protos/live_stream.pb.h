@@ -47,13 +47,16 @@ struct TableStruct_live_5fstream_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto;
+class ExitMap;
+struct ExitMapDefaultTypeInternal;
+extern ExitMapDefaultTypeInternal _ExitMap_default_instance_;
 class PacketWrapper;
 struct PacketWrapperDefaultTypeInternal;
 extern PacketWrapperDefaultTypeInternal _PacketWrapper_default_instance_;
@@ -82,6 +85,7 @@ class Vector3;
 struct Vector3DefaultTypeInternal;
 extern Vector3DefaultTypeInternal _Vector3_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
+template<> ::ExitMap* Arena::CreateMaybeMessage<::ExitMap>(Arena*);
 template<> ::PacketWrapper* Arena::CreateMaybeMessage<::PacketWrapper>(Arena*);
 template<> ::Quaternion* Arena::CreateMaybeMessage<::Quaternion>(Arena*);
 template<> ::ReadyUp* Arena::CreateMaybeMessage<::ReadyUp>(Arena*);
@@ -935,20 +939,20 @@ class StartBeatmap final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kHashFieldNumber = 1,
+    kLevelIdFieldNumber = 1,
   };
-  // string hash = 1;
-  void clear_hash();
-  const std::string& hash() const;
+  // string levelId = 1;
+  void clear_levelid();
+  const std::string& levelid() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_hash(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_hash();
-  PROTOBUF_NODISCARD std::string* release_hash();
-  void set_allocated_hash(std::string* hash);
+  void set_levelid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_levelid();
+  PROTOBUF_NODISCARD std::string* release_levelid();
+  void set_allocated_levelid(std::string* levelid);
   private:
-  const std::string& _internal_hash() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_hash(const std::string& value);
-  std::string* _internal_mutable_hash();
+  const std::string& _internal_levelid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_levelid(const std::string& value);
+  std::string* _internal_mutable_levelid();
   public:
 
   // @@protoc_insertion_point(class_scope:StartBeatmap)
@@ -958,7 +962,7 @@ class StartBeatmap final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr levelid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_live_5fstream_2eproto;
 };
@@ -1351,6 +1355,124 @@ class StartMap final :
 };
 // -------------------------------------------------------------------
 
+class ExitMap final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:ExitMap) */ {
+ public:
+  inline ExitMap() : ExitMap(nullptr) {}
+  explicit constexpr ExitMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ExitMap(const ExitMap& from);
+  ExitMap(ExitMap&& from) noexcept
+    : ExitMap() {
+    *this = ::std::move(from);
+  }
+
+  inline ExitMap& operator=(const ExitMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ExitMap& operator=(ExitMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ExitMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ExitMap* internal_default_instance() {
+    return reinterpret_cast<const ExitMap*>(
+               &_ExitMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(ExitMap& a, ExitMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ExitMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ExitMap* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ExitMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ExitMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ExitMap& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ExitMap& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "ExitMap";
+  }
+  protected:
+  explicit ExitMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:ExitMap)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_live_5fstream_2eproto;
+};
+// -------------------------------------------------------------------
+
 class PacketWrapper final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:PacketWrapper) */ {
  public:
@@ -1400,6 +1522,7 @@ class PacketWrapper final :
     kStartBeatmapFailure = 4,
     kReadyUp = 5,
     kStartMap = 6,
+    kExitMap = 7,
     PACKET_NOT_SET = 0,
   };
 
@@ -1408,7 +1531,7 @@ class PacketWrapper final :
                &_PacketWrapper_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(PacketWrapper& a, PacketWrapper& b) {
     a.Swap(&b);
@@ -1488,6 +1611,7 @@ class PacketWrapper final :
     kStartBeatmapFailureFieldNumber = 4,
     kReadyUpFieldNumber = 5,
     kStartMapFieldNumber = 6,
+    kExitMapFieldNumber = 7,
   };
   // uint64 queryResultId = 1;
   void clear_queryresultid();
@@ -1588,6 +1712,24 @@ class PacketWrapper final :
       ::StartMap* startmap);
   ::StartMap* unsafe_arena_release_startmap();
 
+  // .ExitMap exitMap = 7;
+  bool has_exitmap() const;
+  private:
+  bool _internal_has_exitmap() const;
+  public:
+  void clear_exitmap();
+  const ::ExitMap& exitmap() const;
+  PROTOBUF_NODISCARD ::ExitMap* release_exitmap();
+  ::ExitMap* mutable_exitmap();
+  void set_allocated_exitmap(::ExitMap* exitmap);
+  private:
+  const ::ExitMap& _internal_exitmap() const;
+  ::ExitMap* _internal_mutable_exitmap();
+  public:
+  void unsafe_arena_set_allocated_exitmap(
+      ::ExitMap* exitmap);
+  ::ExitMap* unsafe_arena_release_exitmap();
+
   void clear_Packet();
   PacketCase Packet_case() const;
   // @@protoc_insertion_point(class_scope:PacketWrapper)
@@ -1598,6 +1740,7 @@ class PacketWrapper final :
   void set_has_startbeatmapfailure();
   void set_has_readyup();
   void set_has_startmap();
+  void set_has_exitmap();
 
   inline bool has_Packet() const;
   inline void clear_has_Packet();
@@ -1614,6 +1757,7 @@ class PacketWrapper final :
     ::StartBeatmapFailure* startbeatmapfailure_;
     ::ReadyUp* readyup_;
     ::StartMap* startmap_;
+    ::ExitMap* exitmap_;
   } Packet_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -2237,55 +2381,55 @@ inline void UpdatePosition::set_allocated_righttransform(::Transform* righttrans
 
 // StartBeatmap
 
-// string hash = 1;
-inline void StartBeatmap::clear_hash() {
-  hash_.ClearToEmpty();
+// string levelId = 1;
+inline void StartBeatmap::clear_levelid() {
+  levelid_.ClearToEmpty();
 }
-inline const std::string& StartBeatmap::hash() const {
-  // @@protoc_insertion_point(field_get:StartBeatmap.hash)
-  return _internal_hash();
+inline const std::string& StartBeatmap::levelid() const {
+  // @@protoc_insertion_point(field_get:StartBeatmap.levelId)
+  return _internal_levelid();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void StartBeatmap::set_hash(ArgT0&& arg0, ArgT... args) {
+void StartBeatmap::set_levelid(ArgT0&& arg0, ArgT... args) {
  
- hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:StartBeatmap.hash)
+ levelid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:StartBeatmap.levelId)
 }
-inline std::string* StartBeatmap::mutable_hash() {
-  std::string* _s = _internal_mutable_hash();
-  // @@protoc_insertion_point(field_mutable:StartBeatmap.hash)
+inline std::string* StartBeatmap::mutable_levelid() {
+  std::string* _s = _internal_mutable_levelid();
+  // @@protoc_insertion_point(field_mutable:StartBeatmap.levelId)
   return _s;
 }
-inline const std::string& StartBeatmap::_internal_hash() const {
-  return hash_.Get();
+inline const std::string& StartBeatmap::_internal_levelid() const {
+  return levelid_.Get();
 }
-inline void StartBeatmap::_internal_set_hash(const std::string& value) {
+inline void StartBeatmap::_internal_set_levelid(const std::string& value) {
   
-  hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  levelid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* StartBeatmap::_internal_mutable_hash() {
+inline std::string* StartBeatmap::_internal_mutable_levelid() {
   
-  return hash_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return levelid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* StartBeatmap::release_hash() {
-  // @@protoc_insertion_point(field_release:StartBeatmap.hash)
-  return hash_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* StartBeatmap::release_levelid() {
+  // @@protoc_insertion_point(field_release:StartBeatmap.levelId)
+  return levelid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void StartBeatmap::set_allocated_hash(std::string* hash) {
-  if (hash != nullptr) {
+inline void StartBeatmap::set_allocated_levelid(std::string* levelid) {
+  if (levelid != nullptr) {
     
   } else {
     
   }
-  hash_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hash,
+  levelid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), levelid,
       GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (hash_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
-    hash_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  if (levelid_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    levelid_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:StartBeatmap.hash)
+  // @@protoc_insertion_point(field_set_allocated:StartBeatmap.levelId)
 }
 
 // -------------------------------------------------------------------
@@ -2350,6 +2494,10 @@ inline void StartBeatmapFailure::set_allocated_error(std::string* error) {
 // -------------------------------------------------------------------
 
 // StartMap
+
+// -------------------------------------------------------------------
+
+// ExitMap
 
 // -------------------------------------------------------------------
 
@@ -2745,6 +2893,80 @@ inline ::StartMap* PacketWrapper::mutable_startmap() {
   return _msg;
 }
 
+// .ExitMap exitMap = 7;
+inline bool PacketWrapper::_internal_has_exitmap() const {
+  return Packet_case() == kExitMap;
+}
+inline bool PacketWrapper::has_exitmap() const {
+  return _internal_has_exitmap();
+}
+inline void PacketWrapper::set_has_exitmap() {
+  _oneof_case_[0] = kExitMap;
+}
+inline void PacketWrapper::clear_exitmap() {
+  if (_internal_has_exitmap()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete Packet_.exitmap_;
+    }
+    clear_has_Packet();
+  }
+}
+inline ::ExitMap* PacketWrapper::release_exitmap() {
+  // @@protoc_insertion_point(field_release:PacketWrapper.exitMap)
+  if (_internal_has_exitmap()) {
+    clear_has_Packet();
+      ::ExitMap* temp = Packet_.exitmap_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    Packet_.exitmap_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::ExitMap& PacketWrapper::_internal_exitmap() const {
+  return _internal_has_exitmap()
+      ? *Packet_.exitmap_
+      : reinterpret_cast< ::ExitMap&>(::_ExitMap_default_instance_);
+}
+inline const ::ExitMap& PacketWrapper::exitmap() const {
+  // @@protoc_insertion_point(field_get:PacketWrapper.exitMap)
+  return _internal_exitmap();
+}
+inline ::ExitMap* PacketWrapper::unsafe_arena_release_exitmap() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:PacketWrapper.exitMap)
+  if (_internal_has_exitmap()) {
+    clear_has_Packet();
+    ::ExitMap* temp = Packet_.exitmap_;
+    Packet_.exitmap_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void PacketWrapper::unsafe_arena_set_allocated_exitmap(::ExitMap* exitmap) {
+  clear_Packet();
+  if (exitmap) {
+    set_has_exitmap();
+    Packet_.exitmap_ = exitmap;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:PacketWrapper.exitMap)
+}
+inline ::ExitMap* PacketWrapper::_internal_mutable_exitmap() {
+  if (!_internal_has_exitmap()) {
+    clear_Packet();
+    set_has_exitmap();
+    Packet_.exitmap_ = CreateMaybeMessage< ::ExitMap >(GetArenaForAllocation());
+  }
+  return Packet_.exitmap_;
+}
+inline ::ExitMap* PacketWrapper::mutable_exitmap() {
+  ::ExitMap* _msg = _internal_mutable_exitmap();
+  // @@protoc_insertion_point(field_mutable:PacketWrapper.exitMap)
+  return _msg;
+}
+
 inline bool PacketWrapper::has_Packet() const {
   return Packet_case() != PACKET_NOT_SET;
 }
@@ -2757,6 +2979,8 @@ inline PacketWrapper::PacketCase PacketWrapper::Packet_case() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -18,6 +18,10 @@
 #include "GlobalNamespace/PlayerTransforms.hpp"
 #include "GlobalNamespace/PauseController.hpp"
 #include "GlobalNamespace/PauseController_InitData.hpp"
+#include "GlobalNamespace/GameSongController.hpp"
+#include "GlobalNamespace/IDifficultyBeatmap.hpp"
+#include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
+#include "GlobalNamespace/IBeatmapLevel.hpp"
 
 #include "MainThreadRunner.hpp"
 #include "PlayerPositionUpdater.hpp"
@@ -51,11 +55,27 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_StartStandardLevel,
                 System::Action_2<LevelScenesTransitionSetupDataSO *, LevelCompletionResults *> *f15) {
     Manager::GetInstance()->StartWait();
     MenuTransitionsHelper_StartStandardLevel(self, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15);
+
+    // Start level on PC
+    auto levelId = std::string(f2->get_level()->i_IPreviewBeatmapLevel()->get_levelID());
+
+    PacketWrapper packetWrapper;
+    packetWrapper.mutable_startbeatmap()->set_levelid(std::move(levelId));
+    Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
 MAKE_HOOK_MATCH(GameSongController_StartSong, &GameSongController::StartSong, void, GameSongController *self, float songTimeOffset) {
     GameSongController_StartSong(self, songTimeOffset);
-    Manager::ReadyQuestUp();
+    Manager::GetInstance()->ReadyQuestUp();
+}
+
+MAKE_HOOK_MATCH(GameSongController_StopSong, &GameSongController::StopSong, void, GameSongController *self) {
+    GameSongController_StopSong(self);
+
+    // Exit map
+    PacketWrapper packetWrapper;
+    packetWrapper.mutable_exitmap();
+    Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
 MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void, PlayerTransforms *self) {
@@ -137,6 +157,9 @@ extern "C" void load() {
     INSTALL_HOOK(getLoggerOld(), PlayerTransforms_Awake)
     INSTALL_HOOK(getLoggerOld(), PauseController_Start)
     INSTALL_HOOK(getLoggerOld(), PauseController_HandlePauseMenuManagerDidPressContinueButton)
+    INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
+    INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
+    INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
     getLoggerOld().info("Installed all hooks!");
 
     std::function<void(SceneManagement::Scene scene, SceneManagement::LoadSceneMode)> onSceneChanged = onSceneLoad;

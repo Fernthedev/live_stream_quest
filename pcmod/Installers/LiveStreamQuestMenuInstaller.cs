@@ -12,6 +12,6 @@ internal class MenuInstaller : Installer
 
     public override void InstallBindings()
     {
-        Container.BindInterfacesAndSelfTo<MenuPacketHandler>();
+        Container.BindInterfacesAndSelfTo<MenuPacketHandler>().AsSingle();
     }
 }

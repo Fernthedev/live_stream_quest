@@ -36,6 +36,18 @@
         <Reference Include="HMLib">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
             <Private>False</Private>
+        </Reference>        
+        <Reference Include="BeatmapCore">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>           
+        <Reference Include="GameplayCore">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>   
+        <Reference Include="Colors">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll</HintPath>
+            <Private>False</Private>
         </Reference>
         <Reference Include="HMUI">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
@@ -72,6 +84,10 @@
         <Reference Include="UnityEngine.VRModule">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
             <Private>False</Private>
+        </Reference>    
+        <Reference Include="Polyglot">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Polyglot.dll</HintPath>
+            <Private>False</Private>
         </Reference>
         <Reference Include="Zenject">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
@@ -88,7 +104,19 @@
         <Reference Include="BSML">
             <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
             <Private>False</Private>
-        </Reference> 
+        </Reference>
+        <Reference Include="SongCore">
+            <HintPath>$(BeatSaberDir)\Plugins\SongCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatSaverDownloader">
+            <HintPath>$(BeatSaberDir)\Plugins\BeatSaverDownloader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatSaverSharp, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(BeatSaberDir)\Libs\BeatSaverSharp.dll</HintPath>
+        </Reference>
         <Reference Include="protobuf-net">
             <HintPath>$(BeatSaberDir)\Libs\protobuf-net.dll</HintPath>
             <Private>False</Private>

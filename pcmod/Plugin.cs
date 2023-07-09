@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using BeatSaverSharp;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
@@ -18,6 +20,8 @@ namespace LiveStreamQuest
         internal static IPALogger Log { get; private set; }
         internal PluginConfig _config;
 
+        private readonly BeatSaver _beatSaver = new(new BeatSaverOptions("BeatSaverDownloader", new Version(0, 1, 0)));
+
         [Init]
         public void Init(Zenjector zenjector, IPALogger logger, Config config)
         {
@@ -28,7 +32,7 @@ namespace LiveStreamQuest
             zenjector.UseMetadataBinder<Plugin>();
 
             // This logic also goes for installing to Menu and Game. "Location." will give you a list of places to install to.
-            zenjector.Install<AppInstaller>(Location.App, config.Generated<PluginConfig>());
+            zenjector.Install<AppInstaller>(Location.App, config.Generated<PluginConfig>(), _beatSaver);
             zenjector.Install<MenuInstaller>(Location.Menu);
             zenjector.Install<GameInstaller>(Location.GameCore);
             // zenjector.Install<{Menu|Game}Installer>(Location.{Menu|Game}>()); Remove the one you don't need and the { }.

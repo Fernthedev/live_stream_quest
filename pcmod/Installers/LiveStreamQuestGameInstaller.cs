@@ -15,6 +15,6 @@ internal class GameInstaller : Installer
 
     public override void InstallBindings()
     {
-        Container.BindInterfacesAndSelfTo<GamePacketHandler>();
+        Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle();
     }
 }

@@ -21,12 +21,11 @@ namespace LiveStreamQuest.FlowCoordinators
         {
             try
             {
-                if (firstActivation)
-                {
-                    SetTitle("Name of the Menu Button :)");
-                    showBackButton = true;
-                    ProvideInitialViewControllers( /* Put your ViewControllers here! */);
-                }
+                if (!firstActivation) return;
+                
+                SetTitle("Name of the Menu Button :)");
+                showBackButton = true;
+                ProvideInitialViewControllers(gameObject.AddComponent<LiveStreamQuestConfigViewController>());
             }
             catch (Exception ex)
             {

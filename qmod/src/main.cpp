@@ -4,6 +4,7 @@
 
 #include "beatsaber-hook/shared/utils/hooking.hpp"
 
+#include "custom-types/shared/coroutine.hpp"
 #include "custom-types/shared/delegate.hpp"
 #include "custom-types/shared/register.hpp"
 
@@ -27,7 +28,6 @@
 
 #include "MainThreadRunner.hpp"
 #include "PlayerPositionUpdater.hpp"
-#include "custom-types/shared/coroutine.hpp"
 
 using namespace GlobalNamespace;
 using namespace UnityEngine;
@@ -66,6 +66,7 @@ MAKE_HOOK_MATCH(
   MenuTransitionsHelper_StartStandardLevel(self, f1, f2, f3, f4, f5, f6, f7, f8,
                                            f9, f10, f11, f12, f13, f14, f15);
 
+
   // Start level on PC
   auto levelId =
       std::string(f2->get_level()->i_IPreviewBeatmapLevel()->get_levelID());
@@ -74,6 +75,7 @@ MAKE_HOOK_MATCH(
                                       ->get_beatmapCharacteristic()
                                       ->get_serializedName());
 
+  LOG_INFO("Sending level start {}", levelId);
   PacketWrapper packetWrapper;
   packetWrapper.mutable_startbeatmap()->set_levelid(std::move(levelId));
   packetWrapper.mutable_startbeatmap()->set_characteristic(characteristicsName);
@@ -151,7 +153,7 @@ MAKE_HOOK_MATCH(PauseController_HandlePauseMenuManagerDidPressContinueButton,
 
 void onSceneLoad(SceneManagement::Scene scene, SceneManagement::LoadSceneMode) {
   static bool loaded;
-  if (!scene.IsValid() || loaded)
+  if (loaded || !scene.IsValid())
     return;
   loaded = true;
 
@@ -159,6 +161,15 @@ void onSceneLoad(SceneManagement::Scene scene, SceneManagement::LoadSceneMode) {
                            UnityEngine::GameObject::New_ctor("LiveStreamQuest");
                        UnityEngine::Object::DontDestroyOnLoad(go);
                        go->AddComponent<LiveStreamQuest::MainThreadRunner *>();)
+}
+
+MAKE_HOOK_MATCH(
+    Scene_Internal_SceneLoaded,
+    &UnityEngine::SceneManagement::SceneManager::Internal_SceneLoaded, void,
+    ::UnityEngine::SceneManagement::Scene scene,
+    ::UnityEngine::SceneManagement::LoadSceneMode mode) {
+  Scene_Internal_SceneLoaded(scene, mode);
+  onSceneLoad(scene, mode);
 }
 
 // Called at the early stages of game loading
@@ -170,16 +181,18 @@ extern "C" void setup(ModInfo &info) {
   info.version = VERSION;
   modInfo = info;
 
-  getLoggerOld().info("Completed setup!");
+  LOG_INFO("Completed setup!");
 }
 
 // Called later on in the game loading - a good time to install function hooks
 extern "C" void load() {
   il2cpp_functions::Init();
 
+  custom_types::Register::AutoRegister();
+
   Manager::GetInstance()->Init();
 
-  getLoggerOld().info("Installing hooks...");
+  LOG_INFO("Installing hooks...");
   INSTALL_HOOK(getLoggerOld(), PlayerTransforms_Awake)
   INSTALL_HOOK(getLoggerOld(), PauseController_Start)
   INSTALL_HOOK(getLoggerOld(),
@@ -187,7 +200,8 @@ extern "C" void load() {
   INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
-  getLoggerOld().info("Installed all hooks!");
+  //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)
+  LOG_INFO("Installed all hooks!");
 
   std::function<void(SceneManagement::Scene scene,
                      SceneManagement::LoadSceneMode)>

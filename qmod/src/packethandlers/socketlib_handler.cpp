@@ -1,8 +1,14 @@
 #include "packethandlers/socketlib_handler.hpp"
 
 #include "MainThreadRunner.hpp"
+#include "main.hpp"
 
 using namespace SocketLib;
+
+void handleLog(LoggerLevel level, std::string_view const tag,
+               std::string_view const log) {
+  LOG_INFO("[{}] ({}): {}", SocketLib::Logger::loggerLevelToStr(level), tag, log);
+}
 
 void SocketLibHandler::listen(const int port) {
     SocketHandler& socketHandler = SocketHandler::getCommonSocketHandler();
@@ -12,7 +18,10 @@ void SocketLibHandler::listen(const int port) {
     LOG_INFO("Started server");
 
     ServerSocket& serverSocket = *this->serverSocket;
-    
+
+    // Subscribe to logger
+    SocketHandler::getCommonSocketHandler().getLogger().loggerCallback +=
+        handleLog;
     serverSocket.connectCallback += {&SocketLibHandler::connectEvent, this};
     serverSocket.listenCallback += {&SocketLibHandler::listenOnEvents, this};
 }

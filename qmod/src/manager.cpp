@@ -26,7 +26,7 @@ void Manager::Init() {
     LOG_INFO("Starting server at port 3306");
     handler = std::make_unique<SocketLibHandler>((ReceivePacketFunc)[this](
         auto &&PH1) { processMessage(std::forward<decltype(PH1)>(PH1)); });
-    handler->listen(3306);
+    handler->listen(9542);
     LOG_INFO("Server fully initialized");
 }
 
@@ -134,6 +134,9 @@ void Manager::ReadyQuestUp() {
 
 
 bool Manager::isPcReady() const {
+    // No PCs mean ready
+    if (!handler->hasConnection()) return true;
+
     return pcReady;
 }
 

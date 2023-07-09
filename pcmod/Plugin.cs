@@ -16,11 +16,12 @@ namespace LiveStreamQuest
     // and OnDisable/OnExit methods
     public class Plugin
     {
+        public const string ID = "LiveStreamQuest";
         internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
         internal PluginConfig _config;
 
-        private readonly BeatSaver _beatSaver = new(new BeatSaverOptions("BeatSaverDownloader", new Version(0, 1, 0)));
+        private readonly BeatSaver _beatSaver = new(new BeatSaverOptions("LiveStreamQuest", new Version(0, 1, 0)));
 
         [Init]
         public void Init(Zenjector zenjector, IPALogger logger, Config config)

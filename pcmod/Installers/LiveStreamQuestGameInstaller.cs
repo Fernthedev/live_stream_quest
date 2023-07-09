@@ -15,6 +15,7 @@ internal class GameInstaller : Installer
 
     public override void InstallBindings()
     {
+        // TODO: Conditionally
         Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle();
     }
 }

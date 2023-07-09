@@ -1,16 +1,17 @@
 ﻿using System;
 using LiveStreamQuest.Network;
 using LiveStreamQuest.Protos;
+using SiraUtil.Submissions;
 using Zenject;
 
 namespace LiveStreamQuest.Managers;
 
-public class GamePacketHandler : IPacketHandler, IInitializable
+public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
 {
     [Inject] private readonly SongController _songController;
-
     [Inject] private readonly PauseController _pauseController;
     [Inject] private readonly NetworkManager _networkManager;
+    [Inject] private readonly Submission _submission;
 
 
     public void HandlePacket(PacketWrapper packetWrapper)
@@ -31,6 +32,7 @@ public class GamePacketHandler : IPacketHandler, IInitializable
 
     public void Initialize()
     {
+        _submission.DisableScoreSubmission(Plugin.ID);
         _pauseController.Pause();
 
         var packetWrapper = new PacketWrapper
@@ -39,5 +41,10 @@ public class GamePacketHandler : IPacketHandler, IInitializable
         };
 
         _networkManager.SendPacket(packetWrapper);
+    }
+
+    public void Dispose()
+    {
+        _submission?.Dispose();
     }
 }

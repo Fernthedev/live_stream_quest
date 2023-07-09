@@ -279,11 +279,12 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VA
   "\004 \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007readyUp"
   "\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.S"
   "tartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000B\010"
-  "\n\006Packetb\006proto3"
+  "\n\006PacketB\031\252\002\026LiveStreamQuest.Protosb\006pro"
+  "to3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-  false, false, 776, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
+  false, false, 803, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
   &descriptor_table_live_5fstream_2eproto_once, nullptr, 0, 10,
   schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
   file_level_metadata_live_5fstream_2eproto, file_level_enum_descriptors_live_5fstream_2eproto, file_level_service_descriptors_live_5fstream_2eproto,

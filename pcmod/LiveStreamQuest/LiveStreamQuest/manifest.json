@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "LiveStreamQuest",
+  "name": "Live Stream Quest",
+  "author": "Fernthedev",
+  "version": "0.1.0",
+  "description": "Stream your quest movements to PC",
+  "gameVersion": "1.31.0",
+  "dependsOn": {
+    "BSIPA": "^4.3.0",
+    "BeatSaberMarkupLanguage": "^1.5.12",
+    "SiraUtil": "^3.0.0"
+  }
+}

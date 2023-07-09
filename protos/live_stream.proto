@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option csharp_namespace = "LiveStreamQuest.Protos";
+
 // optional = nullable
 // may change in future!
 

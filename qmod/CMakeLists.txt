@@ -47,7 +47,7 @@ RECURSE_FILES(cpp_file_list ${SOURCE_DIR}/*.cpp)
 RECURSE_FILES(c_file_list ${SOURCE_DIR}/*.c)
 
 # get protobuf source files
-RECURSE_FILES(proto_file_list ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/*.cc)
+RECURSE_FILES(proto_file_list ${CMAKE_CURRENT_SOURCE_DIR}/protos/*.cc)
 
 # add all src files to compile
 add_library(

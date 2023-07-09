@@ -20,12 +20,12 @@ namespace LiveStreamQuest.UI
 
         public void Initialize()
         {
-            BSMLSettings.instance.AddSettingsMenu("Name of your Mod", "Path.To.BSML.File.bsml", this);
+            BSMLSettings.instance.AddSettingsMenu("LiveStreamQuest", "LiveStreamQuestView.bsml", this);
         }
 
         public void Dispose()
         {
-            if (BSMLSettings.instance != null) BSMLSettings.instance.RemoveSettingsMenu("Name of your Mod");
+            if (BSMLSettings.instance != null) BSMLSettings.instance.RemoveSettingsMenu("LiveStreamQuest");
         }
     }
 }

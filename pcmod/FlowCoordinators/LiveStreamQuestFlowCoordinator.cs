@@ -2,6 +2,7 @@
 using SiraUtil.Logging;
 using HMUI;
 using System;
+using LiveStreamQuest.UI;
 
 namespace LiveStreamQuest.FlowCoordinators
 {
@@ -25,7 +26,7 @@ namespace LiveStreamQuest.FlowCoordinators
                 
                 SetTitle("Name of the Menu Button :)");
                 showBackButton = true;
-                ProvideInitialViewControllers(gameObject.AddComponent<LiveStreamQuestConfigViewController>());
+                ProvideInitialViewControllers(null!);
             }
             catch (Exception ex)
             {

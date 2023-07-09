@@ -12,4 +12,4 @@ DECLARE_CLASS_CODEGEN(LiveStreamQuest, MainThreadRunner, UnityEngine::MonoBehavi
 
 
 )
-void scheduleFunction(std::function<void()> const& func);
+void scheduleFunction(std::function<void()>&& func);

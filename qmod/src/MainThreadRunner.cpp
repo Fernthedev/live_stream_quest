@@ -15,7 +15,7 @@ std::thread::id mainThreadId;
 static moodycamel::ConcurrentQueue<std::function<void()>> scheduledFunctions;
 
 
-void scheduleFunction(std::function<void()> const &func) {
+void scheduleFunction(std::function<void()>&& func) {
     if (mainThreadId == std::this_thread::get_id()) {
         func();
         return;
@@ -27,7 +27,6 @@ void scheduleFunction(std::function<void()> const &func) {
 void MainThreadRunner::Update() {
     static moodycamel::ConsumerToken token(scheduledFunctions);
 
-    LOG_INFO("Running scheduled functions on main thread");
     std::function<void()> func;
     while (scheduledFunctions.try_dequeue(token, func)) {
         if (!func) continue;

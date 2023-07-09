@@ -1,7 +1,9 @@
 #pragma once
 
 #include "packethandler.hpp"
-#include "socket_lib/shared/SocketHandler.hpp"
+
+#include "packethandlers/socketlib_handler.hpp"
+#include "packethandlers/websocket_handler.hpp"
 
 #include <sstream>
 
@@ -15,8 +17,7 @@ private:
     bool questReady;
     bool waiting;
 
-    std::unique_ptr<PacketHandler> handler;
-
+    std::unique_ptr<SocketLibHandler> handler;
 
     // Called internally
     void readyPCUp();

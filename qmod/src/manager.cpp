@@ -24,8 +24,8 @@ Manager *Manager::GetInstance() {
 void Manager::Init() {
     initialized = true;
     LOG_INFO("Starting server at port 3306");
-    handler = std::make_unique<WebSocketHandler>(
-            (ReceivePacketFunc) [this](auto &&PH1) { processMessage(std::forward<decltype(PH1)>(PH1)); });
+    handler = std::make_unique<SocketLibHandler>((ReceivePacketFunc)[this](
+        auto &&PH1) { processMessage(std::forward<decltype(PH1)>(PH1)); });
     handler->listen(3306);
     LOG_INFO("Server fully initialized");
 }

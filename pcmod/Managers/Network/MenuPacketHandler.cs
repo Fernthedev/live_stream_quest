@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
@@ -8,11 +9,12 @@ using LiveStreamQuest.Network;
 using LiveStreamQuest.Protos;
 using Polyglot;
 using SiraUtil.Logging;
+using UnityEngine;
 using Zenject;
 
 namespace LiveStreamQuest.Managers;
 
-public class MenuPacketHandler : IPacketHandler, IDisposable
+public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
 {
     private const string CustomLevelPrefix = "custom_level_";
     private readonly CancellationTokenSource _cancellationTokenSource = new();
@@ -27,14 +29,27 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
 
     [Inject] private readonly PlayerDataModel _playerDataModel;
 
-    [Inject] private readonly PlayerSettingsPanelController _playerSettingsPanelController;
 
     [Inject] private readonly NetworkManager _networkManager;
 
     [Inject] private readonly SiraLog _siraLog;
 
     [Inject] private readonly StateManager _stateManager;
+
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
+    private PlayerSettingsPanelController _playerSettingsPanelController;
+
+
+    public void Initialize()
+    {
+        _playerSettingsPanelController = Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Dispose();
+    }
+
 
     public async void HandlePacket(PacketWrapper packetWrapper)
     {
@@ -44,7 +59,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
                 try
                 {
                     _stateManager.StartingGameFromQuest = true;
-                    await StartLevel(packetWrapper);
+                    await StartLevel(packetWrapper).ConfigureAwait(true);
                 }
                 catch (Exception e)
                 {
@@ -67,7 +82,7 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
             var hash = id.Substring(CustomLevelPrefix.Length);
             if (!SongDownloader.IsSongDownloaded(hash))
             {
-                var beatmap = await _beatSaver.BeatmapByHash(hash);
+                var beatmap = await _beatSaver.BeatmapByHash(hash).ConfigureAwait(true);
 
                 await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token);
             }
@@ -91,7 +106,8 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
             return;
         }
 
-        var beatmapResult = await _beatmapLevelsModel.GetBeatmapLevelAsync(id, _cancellationTokenSource.Token);
+        var beatmapResult = await _beatmapLevelsModel.GetBeatmapLevelAsync(id, _cancellationTokenSource.Token)
+            .ConfigureAwait(true);
 
         if (beatmapResult.beatmapLevel == null || beatmapResult.isError)
         {
@@ -127,10 +143,5 @@ public class MenuPacketHandler : IPacketHandler, IDisposable
         };
 
         _networkManager.SendPacket(packetWrapper);
-    }
-
-    public void Dispose()
-    {
-        _cancellationTokenSource.Dispose();
     }
 }

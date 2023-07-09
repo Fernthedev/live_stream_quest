@@ -22,7 +22,12 @@ internal class AppInstaller : Installer
     {
         Container.BindInstance(_config);
         Container.BindInstance(_beatSaver);
-        Container.BindInterfacesAndSelfTo<NetworkManager>().AsSingle();
+        var networkManagerBind = Container.BindInterfacesAndSelfTo<NetworkManager>().AsSingle();
+        if (_config.ConnectOnStartup)
+        {
+            networkManagerBind.NonLazy();
+        }
+
         Container.BindInterfacesAndSelfTo<StateManager>().AsSingle();
     }
 }

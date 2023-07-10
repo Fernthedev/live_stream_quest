@@ -1,12 +1,12 @@
 ﻿using System;
-using LiveStreamQuest.Network;
 using LiveStreamQuest.Protos;
+using SiraUtil.Logging;
 using SiraUtil.Submissions;
 using Zenject;
 
-namespace LiveStreamQuest.Managers;
+namespace LiveStreamQuest.Managers.Network;
 
-public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
+public class GamePacketHandler : IInitializable, IDisposable
 {
     [Inject] private readonly SongController _songController;
     [Inject] private readonly PauseController _pauseController;
@@ -14,7 +14,8 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
     [Inject] private readonly Submission _submission;
 
     [Inject] private readonly VRControllerManager _vrControllerManager;
-    
+    [Inject] private readonly SiraLog _siraLog;
+
     private ulong _packetId;
 
 
@@ -27,11 +28,14 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
                 // ignore old packet
                 if (_packetId > packetWrapper.QueryResultId) return;
                 _packetId = packetWrapper.QueryResultId;
-                
-                _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform, updatePositionData.RightTransform, updatePositionData.RightTransform);
+
+                _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform,
+                    updatePositionData.RightTransform, updatePositionData.RightTransform);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:
+                _siraLog.Info("Resuming the map");
                 _pauseController.HandlePauseMenuManagerDidPressContinueButton();
+                
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
                 _songController.StopSong();
@@ -41,6 +45,7 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
 
     public void Initialize()
     {
+        _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
         _submission.DisableScoreSubmission(Plugin.ID);
         _pauseController.Pause();
 
@@ -54,6 +59,7 @@ public class GamePacketHandler : IPacketHandler, IInitializable,IDisposable
 
     public void Dispose()
     {
-        _submission?.Dispose();
+        _submission.Dispose();
+        _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
     }
 }

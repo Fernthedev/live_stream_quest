@@ -1,4 +1,5 @@
 ﻿using LiveStreamQuest.Managers;
+using LiveStreamQuest.Managers.Network;
 using Zenject;
 
 namespace LiveStreamQuest.Installers;
@@ -7,7 +8,7 @@ internal class MenuInstaller : Installer, IInitializable
 {
     [Inject] private readonly GlobalStateManager _globalStateManager;
 
-    
+
     public MenuInstaller()
     {
 

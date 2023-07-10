@@ -4,7 +4,7 @@
         <ProjectGuid>{FAC1A6B9-1F06-461A-86A6-430EADFA3C1B}</ProjectGuid>
         <RootNamespace>LiveStreamQuest</RootNamespace>
         <AssemblyName>LiveStreamQuest</AssemblyName>
-        <TargetFramework>net48</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <DebugSymbols>true</DebugSymbols>
         <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
         <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
@@ -12,7 +12,8 @@
         <AssemblyTitle>LiveStreamQuest</AssemblyTitle>
         <Product>LiveStreamQuest</Product>
         <Copyright>Copyright © Fernthedev</Copyright>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>default</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
         <DisableCopyToPlugins>True</DisableCopyToPlugins>
@@ -36,15 +37,15 @@
         <Reference Include="HMLib">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
             <Private>False</Private>
-        </Reference>        
+        </Reference>
         <Reference Include="BeatmapCore">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
             <Private>False</Private>
-        </Reference>           
+        </Reference>
         <Reference Include="GameplayCore">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
             <Private>False</Private>
-        </Reference>   
+        </Reference>
         <Reference Include="Colors">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll</HintPath>
             <Private>False</Private>
@@ -84,7 +85,7 @@
         <Reference Include="UnityEngine.VRModule">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
             <Private>False</Private>
-        </Reference>    
+        </Reference>
         <Reference Include="Polyglot">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Polyglot.dll</HintPath>
             <Private>False</Private>
@@ -96,7 +97,7 @@
         <Reference Include="Zenject-usage">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
             <Private>False</Private>
-        </Reference>        
+        </Reference>
         <Reference Include="SemVer">
             <HintPath>$(BeatSaberDir)\Libs\SemVer.dll</HintPath>
             <Private>False</Private>
@@ -117,12 +118,9 @@
             <HintPath>$(BeatSaberDir)\Plugins\BeatSaverDownloader.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="BeatSaverSharp, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+        <Reference Include="BeatSaverSharp">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(BeatSaberDir)\Libs\BeatSaverSharp.dll</HintPath>
-        </Reference>
-        <Reference Include="protobuf-net">
-            <HintPath>$(BeatSaberDir)\Libs\protobuf-net.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Hive.Versioning">
@@ -137,8 +135,13 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
-        <PackageReference Include="Google.Protobuf" Version="3.23.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+        
+<!--        TODO: Bundle this with the publish zip -->
+        <PackageReference Include="Google.Protobuf" Version="3.23.4" />
+        <PackageReference Include="System.Memory" Version="4.5.5" />
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     </ItemGroup>
     <ItemGroup>
         <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
@@ -146,6 +149,6 @@
         <None Include="LiveStreamQuest.csproj.user" Condition="Exists('LiveStreamQuest.csproj.user')" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="LiveStreamQuest.csproj.user" />
+        <Content Include="LiveStreamQuest.csproj.user" />
     </ItemGroup>
 </Project>

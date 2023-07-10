@@ -4,17 +4,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
-using BeatSaverSharp.Models;
-using LiveStreamQuest.Network;
 using LiveStreamQuest.Protos;
 using Polyglot;
 using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
 
-namespace LiveStreamQuest.Managers;
+namespace LiveStreamQuest.Managers.Network;
 
-public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
+public class MenuPacketHandler : IDisposable, IInitializable
 {
     private const string CustomLevelPrefix = "custom_level_";
     private readonly CancellationTokenSource _cancellationTokenSource = new();
@@ -28,6 +26,8 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
     [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
 
     [Inject] private readonly PlayerDataModel _playerDataModel;
+
+    [Inject] private readonly GameplaySetupViewController _gameplaySetupViewController;
 
 
     [Inject] private readonly NetworkManager _networkManager;
@@ -43,10 +43,13 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
     public void Initialize()
     {
         _playerSettingsPanelController = Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
+        _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
     }
 
     public void Dispose()
     {
+        _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
+        _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
     }
 
@@ -116,18 +119,36 @@ public class MenuPacketHandler : IPacketHandler, IDisposable, IInitializable
             return;
         }
 
-        BeatmapCharacteristicSO beatmapCharacteristicSo =
+        var beatmapCharacteristicSo =
             _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(packetWrapper.StartBeatmap
                 .Characteristic);
-        BeatmapDifficulty beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
+
+        var beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
         var diffBeatmap =
             beatmapResult.beatmapLevel.beatmapLevelData.GetDifficultyBeatmap(beatmapCharacteristicSo,
                 beatmapDifficulty);
 
+        if (beatmapCharacteristicSo == null)
+        {
+            SendBeatmapStartError("beatmapCharacteristicSo is null");
+            // TODO: User error dialog
+            return;
+        }
+
+        if (diffBeatmap == null)
+        {
+            SendBeatmapStartError("diffBeatmap is null");
+            // TODO: User error dialog
+            return;
+        }
+        
+        // TODO: Figure out why this null refs if single player hasn't been opened
         _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
             _playerDataModel.playerData.overrideEnvironmentSettings,
-            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null, new GameplayModifiers(),
-            _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false, false,
+            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null,
+            _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
+            _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false,
+            true,
             null, null, null);
     }
 

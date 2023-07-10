@@ -1,14 +1,14 @@
 ﻿using System;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Managers;
+using LiveStreamQuest.Managers.Network;
 using Zenject;
 
 namespace LiveStreamQuest.Installers;
 
 internal class GameInstaller : Installer, IDisposable
 {
-    [Inject] 
-    private readonly GlobalStateManager _globalStateManager;
+    [Inject] private readonly GlobalStateManager _globalStateManager;
 
     public GameInstaller()
     {
@@ -19,6 +19,7 @@ internal class GameInstaller : Installer, IDisposable
     {
         if (!_globalStateManager.StartingGameFromQuest) return;
         // TODO: Conditionally
+        Container.BindInterfacesAndSelfTo<VRControllerManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle();
     }
 

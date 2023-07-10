@@ -110,7 +110,7 @@ void Manager::tryStartGame() {
     waiting = false;
 
     PacketWrapper packetWrapper;
-    packetWrapper.startmap();
+    packetWrapper.mutable_startmap();
     handler->sendPacket(packetWrapper);
 }
 

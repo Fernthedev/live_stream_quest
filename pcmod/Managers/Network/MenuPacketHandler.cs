@@ -59,25 +59,27 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     public void HandlePacket(PacketWrapper packetWrapper)
     {
-        _mainThreadDispatcher.DispatchOnMainThread(async () =>
-        {
-            switch (packetWrapper.PacketCase)
-            {
-                case PacketWrapper.PacketOneofCase.StartBeatmap:
-                    try
-                    {
-                        _globalStateManager.StartingGameFromQuest = true;
-                        await StartLevel(packetWrapper).ConfigureAwait(true);
-                    }
-                    catch (Exception e)
-                    {
-                        _siraLog.Error(e);
-                        SendBeatmapStartError(e.Message);
-                    }
+        _mainThreadDispatcher.DispatchOnMainThread(HandlePacketMainThread, packetWrapper);
+    }
 
-                    break;
-            }
-        });
+    private async void HandlePacketMainThread(PacketWrapper packetWrapper)
+    {
+        switch (packetWrapper.PacketCase)
+        {
+            case PacketWrapper.PacketOneofCase.StartBeatmap:
+                try
+                {
+                    _globalStateManager.StartingGameFromQuest = true;
+                    await StartLevel(packetWrapper).ConfigureAwait(true);
+                }
+                catch (Exception e)
+                {
+                    _siraLog.Error(e);
+                    SendBeatmapStartError(e.Message);
+                }
+
+                break;
+        }
     }
 
     private async Task StartLevel(PacketWrapper packetWrapper)

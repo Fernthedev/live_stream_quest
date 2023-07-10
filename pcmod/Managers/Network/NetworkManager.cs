@@ -15,31 +15,16 @@ namespace LiveStreamQuest.Managers.Network;
 
 public class NetworkManager : IDisposable, IInitializable
 {
-    private readonly Socket _socket;
-    private readonly IPEndPoint _endPoint;
+    private Socket? _socket;
+
+    [Inject]
     private readonly PluginConfig _pluginConfig;
 
 
     [Inject]
     public readonly SignalBus PacketReceivedEvent;
 
-    [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
     [Inject] private readonly SiraLog _siraLog;
-
-    [Inject]
-    public NetworkManager(PluginConfig config)
-    {
-        _pluginConfig = config;
-        _endPoint = new IPEndPoint(IPAddress.Parse(config.Address), config.Port);
-
-        _socket = new Socket(
-            _endPoint.AddressFamily,
-            SocketType.Stream,
-            ProtocolType.Tcp
-        );
-        _socket.ReceiveTimeout = 30 * 1000;
-        _socket.SendTimeout = 30 * 1000;
-    }
 
     public void Initialize()
     {
@@ -60,23 +45,43 @@ public class NetworkManager : IDisposable, IInitializable
 
     public void Disconnect()
     {
-        if (!_socket.Connected) return;
+        if (_socket != null)
+        {
+            if (!_socket.Connected) return;
 
-        _siraLog.Info("Disconnecting");
-        _socket.Disconnect(false);
+            _siraLog.Info("Disconnecting");
+            _socket.Disconnect(false);
+        }
     }
 
     public async Task Connect()
     {
         try
         {
-            _siraLog.Info($"Connecting to {_endPoint}");
+            var endPoint = new IPEndPoint(IPAddress.Parse(_pluginConfig.Address), _pluginConfig.Port);
 
-            await _socket.ConnectAsync(_endPoint).ConfigureAwait(false);
+            if (_socket != null)
+            {
+                Disconnect();
+            }
+
+            _socket = new Socket(
+                endPoint.AddressFamily,
+                SocketType.Stream,
+                ProtocolType.Tcp
+            )
+            {
+                ReceiveTimeout = 30 * 1000,
+                SendTimeout = 30 * 1000
+            };
+
+            _siraLog.Info($"Connecting to {endPoint}");
+
+            await _socket.ConnectAsync(endPoint).ConfigureAwait(false);
 
             if (!_socket.Connected)
             {
-                _siraLog.Info($"Failed to connect to {_endPoint}");
+                _siraLog.Info($"Failed to connect to {endPoint}");
                 return;
             }
 
@@ -92,12 +97,15 @@ public class NetworkManager : IDisposable, IInitializable
 
     private async Task OnReceiveLoop()
     {
+        if (_socket == null) throw new InvalidOperationException("Socket is null");
+
         _siraLog.Info("Receiving");
         try
         {
             using var networkStream = new NetworkStream(_socket, false);
+            var socket = _socket;
 
-            while (_socket.Connected)
+            while (socket.Connected)
             {
                 await OnReceive(networkStream).ConfigureAwait(false);
             }

@@ -66,7 +66,6 @@ MAKE_HOOK_MATCH(
   MenuTransitionsHelper_StartStandardLevel(self, f1, f2, f3, f4, f5, f6, f7, f8,
                                            f9, f10, f11, f12, f13, f14, f15);
 
-
   // Start level on PC
   auto levelId =
       std::string(f2->get_level()->i_IPreviewBeatmapLevel()->get_levelID());
@@ -80,6 +79,21 @@ MAKE_HOOK_MATCH(
   packetWrapper.mutable_startbeatmap()->set_levelid(std::move(levelId));
   packetWrapper.mutable_startbeatmap()->set_characteristic(characteristicsName);
   packetWrapper.mutable_startbeatmap()->set_difficulty(f2->get_difficulty());
+  Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
+}
+
+MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
+                &MenuTransitionsHelper::HandleMainGameSceneDidFinish, void,
+                MenuTransitionsHelper *self,
+                StandardLevelScenesTransitionSetupDataSO
+                    *standardLevelScenesTransitionSetupData,
+                LevelCompletionResults *levelCompletionResults) {
+  MenuTransitionsHelper_HandleMainGameSceneDidFinish(
+      self, standardLevelScenesTransitionSetupData, levelCompletionResults);
+
+  // Exit map
+  PacketWrapper packetWrapper;
+  packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
@@ -98,8 +112,9 @@ MAKE_HOOK_MATCH(GameSongController_StopSong, &GameSongController::StopSong,
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
-MAKE_HOOK_MATCH(GameSongController_FailStopSong, &GameSongController::FailStopSong,
-                void, GameSongController *self) {
+MAKE_HOOK_MATCH(GameSongController_FailStopSong,
+                &GameSongController::FailStopSong, void,
+                GameSongController *self) {
   GameSongController_FailStopSong(self);
 
   // Exit map
@@ -207,9 +222,11 @@ extern "C" void load() {
   INSTALL_HOOK(getLoggerOld(),
                PauseController_HandlePauseMenuManagerDidPressContinueButton)
   INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
+  INSTALL_HOOK(getLoggerOld(),
+               MenuTransitionsHelper_HandleMainGameSceneDidFinish)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
-  INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
-  INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
+  // INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
+  // INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
   //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)
   LOG_INFO("Installed all hooks!");
 

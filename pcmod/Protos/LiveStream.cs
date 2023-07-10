@@ -24,32 +24,34 @@ namespace LiveStreamQuest.Protos {
     static LiveStreamReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChFsaXZlX3N0cmVhbS5wcm90byIqCgdWZWN0b3IzEgkKAXgYASABKAISCQoB",
-            "eRgCIAEoAhIJCgF6GAMgASgCIjgKClF1YXRlcm5pb24SCQoBeBgBIAEoAhIJ",
-            "CgF5GAIgASgCEgkKAXoYAyABKAISCQoBdxgEIAEoAiJGCglUcmFuc2Zvcm0S",
-            "GgoIcG9zaXRpb24YASABKAsyCC5WZWN0b3IzEh0KCHJvdGF0aW9uGAIgASgL",
-            "MgsuUXVhdGVybmlvbiLAAQoOVXBkYXRlUG9zaXRpb24SJgoNaGVhZFRyYW5z",
-            "Zm9ybRgBIAEoCzIKLlRyYW5zZm9ybUgAiAEBEiYKDWxlZnRUcmFuc2Zvcm0Y",
-            "AiABKAsyCi5UcmFuc2Zvcm1IAYgBARInCg5yaWdodFRyYW5zZm9ybRgDIAEo",
-            "CzIKLlRyYW5zZm9ybUgCiAEBQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9sZWZ0",
-            "VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJLCgxTdGFydEJlYXRtYXAS",
-            "DwoHbGV2ZWxJZBgBIAEoCRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRISCgpk",
-            "aWZmaWN1bHR5GAMgASgFIiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoFZXJy",
-            "b3IYASABKAkiCQoHUmVhZHlVcCIKCghTdGFydE1hcCIJCgdFeGl0TWFwIpAC",
-            "Cg1QYWNrZXRXcmFwcGVyEhUKDXF1ZXJ5UmVzdWx0SWQYASABKAQSKQoOdXBk",
-            "YXRlUG9zaXRpb24YAiABKAsyDy5VcGRhdGVQb3NpdGlvbkgAEiUKDHN0YXJ0",
-            "QmVhdG1hcBgDIAEoCzINLlN0YXJ0QmVhdG1hcEgAEjMKE3N0YXJ0QmVhdG1h",
-            "cEZhaWx1cmUYBCABKAsyFC5TdGFydEJlYXRtYXBGYWlsdXJlSAASGwoHcmVh",
-            "ZHlVcBgFIAEoCzIILlJlYWR5VXBIABIdCghzdGFydE1hcBgGIAEoCzIJLlN0",
-            "YXJ0TWFwSAASGwoHZXhpdE1hcBgHIAEoCzIILkV4aXRNYXBIAEIICgZQYWNr",
-            "ZXRCGaoCFkxpdmVTdHJlYW1RdWVzdC5Qcm90b3NiBnByb3RvMw=="));
+            "ChFsaXZlX3N0cmVhbS5wcm90bxofZ29vZ2xlL3Byb3RvYnVmL3RpbWVzdGFt",
+            "cC5wcm90byIqCgdWZWN0b3IzEgkKAXgYASABKAISCQoBeRgCIAEoAhIJCgF6",
+            "GAMgASgCIjgKClF1YXRlcm5pb24SCQoBeBgBIAEoAhIJCgF5GAIgASgCEgkK",
+            "AXoYAyABKAISCQoBdxgEIAEoAiJGCglUcmFuc2Zvcm0SGgoIcG9zaXRpb24Y",
+            "ASABKAsyCC5WZWN0b3IzEh0KCHJvdGF0aW9uGAIgASgLMgsuUXVhdGVybmlv",
+            "biLqAQoOVXBkYXRlUG9zaXRpb24SJgoNaGVhZFRyYW5zZm9ybRgBIAEoCzIK",
+            "LlRyYW5zZm9ybUgAiAEBEiYKDWxlZnRUcmFuc2Zvcm0YAiABKAsyCi5UcmFu",
+            "c2Zvcm1IAYgBARInCg5yaWdodFRyYW5zZm9ybRgDIAEoCzIKLlRyYW5zZm9y",
+            "bUgCiAEBEigKBHRpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
+            "YW1wQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9sZWZ0VHJhbnNmb3JtQhEKD19y",
+            "aWdodFRyYW5zZm9ybSJLCgxTdGFydEJlYXRtYXASDwoHbGV2ZWxJZBgBIAEo",
+            "CRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRISCgpkaWZmaWN1bHR5GAMgASgF",
+            "IiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoFZXJyb3IYASABKAkiCQoHUmVh",
+            "ZHlVcCIKCghTdGFydE1hcCIJCgdFeGl0TWFwIpACCg1QYWNrZXRXcmFwcGVy",
+            "EhUKDXF1ZXJ5UmVzdWx0SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24YAiAB",
+            "KAsyDy5VcGRhdGVQb3NpdGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEoCzIN",
+            "LlN0YXJ0QmVhdG1hcEgAEjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCABKAsy",
+            "FC5TdGFydEJlYXRtYXBGYWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzIILlJl",
+            "YWR5VXBIABIdCghzdGFydE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoHZXhp",
+            "dE1hcBgHIAEoCzIILkV4aXRNYXBIAEIICgZQYWNrZXRCGaoCFkxpdmVTdHJl",
+            "YW1RdWVzdC5Qcm90b3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Vector3), global::LiveStreamQuest.Protos.Vector3.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Quaternion), global::LiveStreamQuest.Protos.Quaternion.Parser, new[]{ "X", "Y", "Z", "W" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Transform), global::LiveStreamQuest.Protos.Transform.Parser, new[]{ "Position", "Rotation" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform", "Time" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmap), global::LiveStreamQuest.Protos.StartBeatmap.Parser, new[]{ "LevelId", "Characteristic", "Difficulty" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmapFailure), global::LiveStreamQuest.Protos.StartBeatmapFailure.Parser, new[]{ "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ReadyUp), global::LiveStreamQuest.Protos.ReadyUp.Parser, null, null, null, null, null),
@@ -906,6 +908,7 @@ namespace LiveStreamQuest.Protos {
       headTransform_ = other.headTransform_ != null ? other.headTransform_.Clone() : null;
       leftTransform_ = other.leftTransform_ != null ? other.leftTransform_.Clone() : null;
       rightTransform_ = other.rightTransform_ != null ? other.rightTransform_.Clone() : null;
+      time_ = other.time_ != null ? other.time_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -954,6 +957,18 @@ namespace LiveStreamQuest.Protos {
       }
     }
 
+    /// <summary>Field number for the "time" field.</summary>
+    public const int TimeFieldNumber = 4;
+    private global::Google.Protobuf.WellKnownTypes.Timestamp time_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Google.Protobuf.WellKnownTypes.Timestamp Time {
+      get { return time_; }
+      set {
+        time_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -972,6 +987,7 @@ namespace LiveStreamQuest.Protos {
       if (!object.Equals(HeadTransform, other.HeadTransform)) return false;
       if (!object.Equals(LeftTransform, other.LeftTransform)) return false;
       if (!object.Equals(RightTransform, other.RightTransform)) return false;
+      if (!object.Equals(Time, other.Time)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -982,6 +998,7 @@ namespace LiveStreamQuest.Protos {
       if (headTransform_ != null) hash ^= HeadTransform.GetHashCode();
       if (leftTransform_ != null) hash ^= LeftTransform.GetHashCode();
       if (rightTransform_ != null) hash ^= RightTransform.GetHashCode();
+      if (time_ != null) hash ^= Time.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1012,6 +1029,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(26);
         output.WriteMessage(RightTransform);
       }
+      if (time_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Time);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1034,6 +1055,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(26);
         output.WriteMessage(RightTransform);
       }
+      if (time_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Time);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1052,6 +1077,9 @@ namespace LiveStreamQuest.Protos {
       }
       if (rightTransform_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RightTransform);
+      }
+      if (time_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Time);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1082,6 +1110,12 @@ namespace LiveStreamQuest.Protos {
           RightTransform = new global::LiveStreamQuest.Protos.Transform();
         }
         RightTransform.MergeFrom(other.RightTransform);
+      }
+      if (other.time_ != null) {
+        if (time_ == null) {
+          Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+        }
+        Time.MergeFrom(other.Time);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1119,6 +1153,13 @@ namespace LiveStreamQuest.Protos {
             input.ReadMessage(RightTransform);
             break;
           }
+          case 34: {
+            if (time_ == null) {
+              Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+            }
+            input.ReadMessage(Time);
+            break;
+          }
         }
       }
     #endif
@@ -1153,6 +1194,13 @@ namespace LiveStreamQuest.Protos {
               RightTransform = new global::LiveStreamQuest.Protos.Transform();
             }
             input.ReadMessage(RightTransform);
+            break;
+          }
+          case 34: {
+            if (time_ == null) {
+              Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+            }
+            input.ReadMessage(Time);
             break;
           }
         }

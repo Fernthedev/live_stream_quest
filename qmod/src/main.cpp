@@ -98,6 +98,15 @@ MAKE_HOOK_MATCH(GameSongController_StopSong, &GameSongController::StopSong,
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
+MAKE_HOOK_MATCH(GameSongController_FailStopSong, &GameSongController::FailStopSong,
+                void, GameSongController *self) {
+  GameSongController_FailStopSong(self);
+
+  // Exit map
+  PacketWrapper packetWrapper;
+  packetWrapper.mutable_exitmap();
+  Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
+}
 
 MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void,
                 PlayerTransforms *self) {
@@ -200,6 +209,7 @@ extern "C" void load() {
   INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
+  INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
   //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)
   LOG_INFO("Installed all hooks!");
 

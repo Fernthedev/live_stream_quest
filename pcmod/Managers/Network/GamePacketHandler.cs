@@ -30,7 +30,7 @@ public class GamePacketHandler : IInitializable, IDisposable
                 _packetId = packetWrapper.QueryResultId;
 
                 _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform,
-                    updatePositionData.RightTransform, updatePositionData.RightTransform);
+                    updatePositionData.RightTransform, updatePositionData.RightTransform, updatePositionData.Time);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");
@@ -38,6 +38,8 @@ public class GamePacketHandler : IInitializable, IDisposable
                 
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
+                _siraLog.Info("Exit the map");
+
                 _songController.StopSong();
                 break;
         }

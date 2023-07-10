@@ -1,45 +1,127 @@
-﻿using LiveStreamQuest.Extensions;
+﻿using System;
+using LiveStreamQuest.Extensions;
 using LiveStreamQuest.Protos;
+using SiraUtil.Logging;
+using UnityEngine;
 using Zenject;
 
 namespace LiveStreamQuest.Managers;
 
-public class VRControllerManager : IInitializable
+public class VRControllerManager : IInitializable, ITickable
 {
     [Inject] private readonly PlayerVRControllersManager _playerVRControllersManager;
 
     [Inject] private readonly PlayerTransforms _playerTransforms;
+    [Inject] private readonly SiraLog _siraLog;
+
+    // Set late
+    private Protos.Transform? _headTransform, _rightHand, _leftHand;
+    private bool updated = false;
+
+    private UnityEngine.Vector3 _transformedHeadPosition;
+    private UnityEngine.Quaternion _transformedHeadRotation;
+
+    private UnityEngine.Vector3 _transformedLeftPosition;
+    private UnityEngine.Quaternion _transformedLeftRotation;
+
+    private UnityEngine.Vector3 _transformedRightPosition;
+    private UnityEngine.Quaternion _transformedRightRotation;
+
+    private DateTime _lastPacketTime;
+    private TimeSpan _deltaPacketTime;
 
     public void Initialize()
     {
         _playerVRControllersManager.DisableAllVRControllers();
     }
 
-    public void UpdateTransforms(Protos.Transform headTransform, Transform rightTransform, Transform leftTransform)
+    public void Tick()
     {
-        var transformedHeadPosition =
-            _playerTransforms._originParentTransform.TransformPoint(headTransform.Position.ToVector3());
-        var transformedHeadRotation =
-            _playerTransforms._originParentTransform.TransformRotation(headTransform.Rotation.ToQuaternion());
+        var unityDeltaTime = Time.deltaTime;
+        var deltaPacketTime = (float)_deltaPacketTime.TotalSeconds;
 
-        var transformedRightPosition =
-            _playerTransforms._originParentTransform.TransformPoint(rightTransform.Position.ToVector3());
-        var transformedRightRotation =
-            _playerTransforms._originParentTransform.TransformRotation(rightTransform.Rotation.ToQuaternion());
 
-        var transformedLeftPosition =
-            _playerTransforms._originParentTransform.TransformPoint(leftTransform.Position.ToVector3());
-        var transformedLeftRotation =
-            _playerTransforms._originParentTransform.TransformRotation(leftTransform.Rotation.ToQuaternion());
+        // var deltaTime = (float)(unityDeltaTime * unityDeltaTime / deltaPacketTime);
+        float deltaTime;
 
-        // TODO: Lerp
-        _playerTransforms._headTransform.position = transformedHeadPosition;
-        _playerTransforms._headTransform.rotation = transformedHeadRotation;
+        if (deltaPacketTime <= 0)
+        {
+            deltaTime = 0;
+        }
+        else
+        {
+            deltaTime = (float)(unityDeltaTime / deltaPacketTime);
+        }
 
-        _playerTransforms._rightHandTransform.position = transformedRightPosition;
-        _playerTransforms._rightHandTransform.rotation = transformedRightRotation;
-
-        _playerTransforms._leftHandTransform.position = transformedLeftPosition;
-        _playerTransforms._leftHandTransform.rotation = transformedLeftRotation;
+        if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
+        {
+            PseudoLocalTransform(deltaTime);
+        }
+        else
+        {
+            LocalTransformsUpdate(deltaTime);
+        }
     }
+
+    private void PseudoLocalTransform(float deltaTime)
+    {
+        if (updated)
+        {
+            _transformedHeadPosition =
+                _playerTransforms._originParentTransform.TransformPoint(_headTransform?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
+            _transformedHeadRotation =
+                _playerTransforms._originParentTransform.TransformRotation(_headTransform?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
+
+            _transformedRightPosition =
+                _playerTransforms._originParentTransform.TransformPoint(_rightHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
+            _transformedRightRotation =
+                _playerTransforms._originParentTransform.TransformRotation(_rightHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
+
+            _transformedLeftPosition =
+                _playerTransforms._originParentTransform.TransformPoint(_leftHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
+            _transformedLeftRotation =
+                _playerTransforms._originParentTransform.TransformRotation(_leftHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
+            updated = false;
+        }
+
+
+        _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+        _playerTransforms._rightHandTransform.LerpToWorldSpace(_transformedRightPosition, _transformedRightRotation, deltaTime);
+        _playerTransforms._leftHandTransform.LerpToWorldSpace(_transformedLeftPosition, _transformedLeftRotation, deltaTime);
+    }
+
+    private void LocalTransformsUpdate(float deltaTime)
+    {
+        if (updated)
+        {
+            _transformedHeadPosition = _headTransform?.Position.ToVector3() ?? UnityEngine.Vector3.zero;
+            _transformedHeadRotation = _headTransform?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity;
+
+            _transformedLeftPosition = _leftHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero;
+            _transformedLeftRotation = _leftHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity;
+
+            _transformedRightPosition = _rightHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero;
+            _transformedRightRotation = _rightHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity;
+            updated = false;
+        }
+
+        _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+        _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation, deltaTime);
+        _playerTransforms._leftHandTransform.LerpToRelativeSpace(_transformedLeftPosition, _transformedLeftRotation, deltaTime);
+    }
+
+    public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform, Protos.Transform leftTransform, Google.Protobuf.WellKnownTypes.Timestamp time)
+    {
+        updated = true;
+        _headTransform = headTransform;
+        _rightHand = rightTransform;
+        _leftHand = leftTransform;
+
+        var dateTime = time.ToDateTime();
+
+        _deltaPacketTime = dateTime.Subtract(_lastPacketTime);
+
+        _lastPacketTime = dateTime;
+    }
+
 }

@@ -6,7 +6,22 @@
 
 #include "UnityEngine/WaitForSecondsRealtime.hpp"
 
-DEFINE_TYPE(LiveStreamQuest, PlayerPositionUpdater)
+#include <chrono>
+
+DEFINE_TYPE(LiveStreamQuest, PlayerPositionUpdater);
+
+google::protobuf::Timestamp ConvertToProtobufTimestamp(const std::chrono::time_point<std::chrono::system_clock> &timePoint) {
+  std::chrono::nanoseconds duration = timePoint.time_since_epoch();
+  std::chrono::seconds seconds =
+      std::chrono::duration_cast<std::chrono::seconds>(duration);
+  std::chrono::nanoseconds fractionalNanos = duration - seconds;
+
+  google::protobuf::Timestamp timestamp;
+  timestamp.set_seconds(seconds.count());
+  timestamp.set_nanos(static_cast<int32_t>(fractionalNanos.count()));
+
+  return timestamp;
+}
 
 inline ::Vector3 toProtoVec3(UnityEngine::Vector3 const &vec) {
   auto protoVec = ::Vector3();
@@ -56,6 +71,10 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
         toProtoVec3(playerTransform->rightHandPseudoLocalPos);
     *updatePosition->mutable_righttransform()->mutable_rotation() =
         toProtoQuaternion(playerTransform->rightHandPseudoLocalRot);
+
+    auto current_time = std::chrono::system_clock::now(); //.time_since_epoch();
+
+    *updatePosition->mutable_time() = ConvertToProtobufTimestamp(current_time);
 
     Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 

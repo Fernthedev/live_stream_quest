@@ -46,21 +46,22 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-& $PSScriptRoot/validate-modjson.ps1
+# & $PSScriptRoot/validate-modjson.ps1
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
-$modJson = Get-Content "./mod.json" -Raw | ConvertFrom-Json
+# $modJson = Get-Content "./mod.json" -Raw | ConvertFrom-Json
 
-$modFiles = $modJson.modFiles
+# $modFiles = $modJson.modFiles
 
-foreach ($fileName in $modFiles) {
-    if ($useDebug -eq $true) {
-        & adb push build/debug/$fileName /sdcard/Android/data/com.beatgames.beatsaber/files/mods/$fileName
-    } else {
-        & adb push build/$fileName /sdcard/Android/data/com.beatgames.beatsaber/files/mods/$fileName
-    }
-}
+# foreach ($fileName in $modFiles) {
+#     if ($useDebug -eq $true) {
+#         & adb push build/debug/$fileName /sdcard/Android/data/com.beatgames.beatsaber/files/mods/$fileName
+#     } else {
+#         & adb push build/$fileName /sdcard/Android/data/com.beatgames.beatsaber/files/mods/$fileName
+#     }
+# }
+adb push build/liblive_stream_quest.so /sdcard/Android/data/com.beatgames.beatsaber/files/mods/liblive_stream_quest.so
 
 & $PSScriptRoot/restart-game.ps1
 

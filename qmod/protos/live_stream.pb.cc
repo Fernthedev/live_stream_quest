@@ -62,7 +62,8 @@ constexpr UpdatePosition::UpdatePosition(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : headtransform_(nullptr)
   , lefttransform_(nullptr)
-  , righttransform_(nullptr){}
+  , righttransform_(nullptr)
+  , time_(nullptr){}
 struct UpdatePositionDefaultTypeInternal {
   constexpr UpdatePositionDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -185,9 +186,11 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, headtransform_),
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, lefttransform_),
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, righttransform_),
+  PROTOBUF_FIELD_OFFSET(::UpdatePosition, time_),
   0,
   1,
   2,
+  ~0u,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::StartBeatmap, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -241,13 +244,13 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, -1, sizeof(::Vector3)},
   { 9, -1, -1, sizeof(::Quaternion)},
   { 19, -1, -1, sizeof(::Transform)},
-  { 27, 36, -1, sizeof(::UpdatePosition)},
-  { 39, -1, -1, sizeof(::StartBeatmap)},
-  { 48, -1, -1, sizeof(::StartBeatmapFailure)},
-  { 55, -1, -1, sizeof(::ReadyUp)},
-  { 61, -1, -1, sizeof(::StartMap)},
-  { 67, -1, -1, sizeof(::ExitMap)},
-  { 73, -1, -1, sizeof(::PacketWrapper)},
+  { 27, 37, -1, sizeof(::UpdatePosition)},
+  { 41, -1, -1, sizeof(::StartBeatmap)},
+  { 50, -1, -1, sizeof(::StartBeatmapFailure)},
+  { 57, -1, -1, sizeof(::ReadyUp)},
+  { 63, -1, -1, sizeof(::StartMap)},
+  { 69, -1, -1, sizeof(::ExitMap)},
+  { 75, -1, -1, sizeof(::PacketWrapper)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -264,33 +267,38 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\021live_stream.proto\"*\n\007Vector3\022\t\n\001x\030\001 \001("
-  "\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\"8\n\nQuaternion\022\t\n"
-  "\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\022\t\n\001w\030\004 \001("
-  "\002\"F\n\tTransform\022\032\n\010position\030\001 \001(\0132\010.Vecto"
-  "r3\022\035\n\010rotation\030\002 \001(\0132\013.Quaternion\"\300\001\n\016Up"
-  "datePosition\022&\n\rheadTransform\030\001 \001(\0132\n.Tr"
-  "ansformH\000\210\001\001\022&\n\rleftTransform\030\002 \001(\0132\n.Tr"
-  "ansformH\001\210\001\001\022\'\n\016rightTransform\030\003 \001(\0132\n.T"
-  "ransformH\002\210\001\001B\020\n\016_headTransformB\020\n\016_left"
-  "TransformB\021\n\017_rightTransform\"K\n\014StartBea"
-  "tmap\022\017\n\007levelId\030\001 \001(\t\022\026\n\016characteristic\030"
-  "\002 \001(\t\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatma"
-  "pFailure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\n\n\010St"
-  "artMap\"\t\n\007ExitMap\"\220\002\n\rPacketWrapper\022\025\n\rq"
-  "ueryResultId\030\001 \001(\004\022)\n\016updatePosition\030\002 \001"
-  "(\0132\017.UpdatePositionH\000\022%\n\014startBeatmap\030\003 "
-  "\001(\0132\r.StartBeatmapH\000\0223\n\023startBeatmapFail"
-  "ure\030\004 \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007rea"
-  "dyUp\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\013"
-  "2\t.StartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMap"
-  "H\000B\010\n\006PacketB\031\252\002\026LiveStreamQuest.Protosb"
-  "\006proto3"
+  "\n\021live_stream.proto\032\037google/protobuf/tim"
+  "estamp.proto\"*\n\007Vector3\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030"
+  "\002 \001(\002\022\t\n\001z\030\003 \001(\002\"8\n\nQuaternion\022\t\n\001x\030\001 \001("
+  "\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\022\t\n\001w\030\004 \001(\002\"F\n\tTr"
+  "ansform\022\032\n\010position\030\001 \001(\0132\010.Vector3\022\035\n\010r"
+  "otation\030\002 \001(\0132\013.Quaternion\"\352\001\n\016UpdatePos"
+  "ition\022&\n\rheadTransform\030\001 \001(\0132\n.Transform"
+  "H\000\210\001\001\022&\n\rleftTransform\030\002 \001(\0132\n.Transform"
+  "H\001\210\001\001\022\'\n\016rightTransform\030\003 \001(\0132\n.Transfor"
+  "mH\002\210\001\001\022(\n\004time\030\004 \001(\0132\032.google.protobuf.T"
+  "imestampB\020\n\016_headTransformB\020\n\016_leftTrans"
+  "formB\021\n\017_rightTransform\"K\n\014StartBeatmap\022"
+  "\017\n\007levelId\030\001 \001(\t\022\026\n\016characteristic\030\002 \001(\t"
+  "\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatmapFail"
+  "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\n\n\010StartMa"
+  "p\"\t\n\007ExitMap\"\220\002\n\rPacketWrapper\022\025\n\rqueryR"
+  "esultId\030\001 \001(\004\022)\n\016updatePosition\030\002 \001(\0132\017."
+  "UpdatePositionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r"
+  ".StartBeatmapH\000\0223\n\023startBeatmapFailure\030\004"
+  " \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007readyUp\030"
+  "\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.St"
+  "artMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000B\010\n"
+  "\006PacketB\031\252\002\026LiveStreamQuest.Protosb\006prot"
+  "o3"
   ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_live_5fstream_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
+};
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-  false, false, 847, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
-  &descriptor_table_live_5fstream_2eproto_once, nullptr, 0, 10,
+  false, false, 922, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
+  &descriptor_table_live_5fstream_2eproto_once, descriptor_table_live_5fstream_2eproto_deps, 1, 10,
   schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
   file_level_metadata_live_5fstream_2eproto, file_level_enum_descriptors_live_5fstream_2eproto, file_level_service_descriptors_live_5fstream_2eproto,
 };
@@ -1136,6 +1144,7 @@ class UpdatePosition::_Internal {
   static void set_has_righttransform(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
+  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& time(const UpdatePosition* msg);
 };
 
 const ::Transform&
@@ -1149,6 +1158,16 @@ UpdatePosition::_Internal::lefttransform(const UpdatePosition* msg) {
 const ::Transform&
 UpdatePosition::_Internal::righttransform(const UpdatePosition* msg) {
   return *msg->righttransform_;
+}
+const ::PROTOBUF_NAMESPACE_ID::Timestamp&
+UpdatePosition::_Internal::time(const UpdatePosition* msg) {
+  return *msg->time_;
+}
+void UpdatePosition::clear_time() {
+  if (GetArenaForAllocation() == nullptr && time_ != nullptr) {
+    delete time_;
+  }
+  time_ = nullptr;
 }
 UpdatePosition::UpdatePosition(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -1178,14 +1197,19 @@ UpdatePosition::UpdatePosition(const UpdatePosition& from)
   } else {
     righttransform_ = nullptr;
   }
+  if (from._internal_has_time()) {
+    time_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.time_);
+  } else {
+    time_ = nullptr;
+  }
   // @@protoc_insertion_point(copy_constructor:UpdatePosition)
 }
 
 inline void UpdatePosition::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&headtransform_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&righttransform_) -
-    reinterpret_cast<char*>(&headtransform_)) + sizeof(righttransform_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&time_) -
+    reinterpret_cast<char*>(&headtransform_)) + sizeof(time_));
 }
 
 UpdatePosition::~UpdatePosition() {
@@ -1200,6 +1224,7 @@ inline void UpdatePosition::SharedDtor() {
   if (this != internal_default_instance()) delete headtransform_;
   if (this != internal_default_instance()) delete lefttransform_;
   if (this != internal_default_instance()) delete righttransform_;
+  if (this != internal_default_instance()) delete time_;
 }
 
 void UpdatePosition::ArenaDtor(void* object) {
@@ -1233,6 +1258,10 @@ void UpdatePosition::Clear() {
       righttransform_->Clear();
     }
   }
+  if (GetArenaForAllocation() == nullptr && time_ != nullptr) {
+    delete time_;
+  }
+  time_ = nullptr;
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1264,6 +1293,14 @@ const char* UpdatePosition::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_righttransform(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .google.protobuf.Timestamp time = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_time(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1322,6 +1359,14 @@ uint8_t* UpdatePosition::_InternalSerialize(
         3, _Internal::righttransform(this), target, stream);
   }
 
+  // .google.protobuf.Timestamp time = 4;
+  if (this->_internal_has_time()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        4, _Internal::time(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1362,6 +1407,13 @@ size_t UpdatePosition::ByteSizeLong() const {
     }
 
   }
+  // .google.protobuf.Timestamp time = 4;
+  if (this->_internal_has_time()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *time_);
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -1396,6 +1448,9 @@ void UpdatePosition::MergeFrom(const UpdatePosition& from) {
       _internal_mutable_righttransform()->::Transform::MergeFrom(from._internal_righttransform());
     }
   }
+  if (from._internal_has_time()) {
+    _internal_mutable_time()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_time());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1415,8 +1470,8 @@ void UpdatePosition::InternalSwap(UpdatePosition* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UpdatePosition, righttransform_)
-      + sizeof(UpdatePosition::righttransform_)
+      PROTOBUF_FIELD_OFFSET(UpdatePosition, time_)
+      + sizeof(UpdatePosition::time_)
       - PROTOBUF_FIELD_OFFSET(UpdatePosition, headtransform_)>(
           reinterpret_cast<char*>(&headtransform_),
           reinterpret_cast<char*>(&other->headtransform_));

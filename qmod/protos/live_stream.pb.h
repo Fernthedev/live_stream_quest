@@ -32,6 +32,7 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
+#include <google/protobuf/timestamp.pb.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_live_5fstream_2eproto
@@ -746,6 +747,7 @@ class UpdatePosition final :
     kHeadTransformFieldNumber = 1,
     kLeftTransformFieldNumber = 2,
     kRightTransformFieldNumber = 3,
+    kTimeFieldNumber = 4,
   };
   // optional .Transform headTransform = 1;
   bool has_headtransform() const;
@@ -801,6 +803,24 @@ class UpdatePosition final :
       ::Transform* righttransform);
   ::Transform* unsafe_arena_release_righttransform();
 
+  // .google.protobuf.Timestamp time = 4;
+  bool has_time() const;
+  private:
+  bool _internal_has_time() const;
+  public:
+  void clear_time();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& time() const;
+  PROTOBUF_NODISCARD ::PROTOBUF_NAMESPACE_ID::Timestamp* release_time();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_time();
+  void set_allocated_time(::PROTOBUF_NAMESPACE_ID::Timestamp* time);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_time() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_time();
+  public:
+  void unsafe_arena_set_allocated_time(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* time);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_time();
+
   // @@protoc_insertion_point(class_scope:UpdatePosition)
  private:
   class _Internal;
@@ -813,6 +833,7 @@ class UpdatePosition final :
   ::Transform* headtransform_;
   ::Transform* lefttransform_;
   ::Transform* righttransform_;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* time_;
   friend struct ::TableStruct_live_5fstream_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2402,6 +2423,92 @@ inline void UpdatePosition::set_allocated_righttransform(::Transform* righttrans
   }
   righttransform_ = righttransform;
   // @@protoc_insertion_point(field_set_allocated:UpdatePosition.rightTransform)
+}
+
+// .google.protobuf.Timestamp time = 4;
+inline bool UpdatePosition::_internal_has_time() const {
+  return this != internal_default_instance() && time_ != nullptr;
+}
+inline bool UpdatePosition::has_time() const {
+  return _internal_has_time();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& UpdatePosition::_internal_time() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = time_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& UpdatePosition::time() const {
+  // @@protoc_insertion_point(field_get:UpdatePosition.time)
+  return _internal_time();
+}
+inline void UpdatePosition::unsafe_arena_set_allocated_time(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* time) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(time_);
+  }
+  time_ = time;
+  if (time) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:UpdatePosition.time)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* UpdatePosition::release_time() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = time_;
+  time_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* UpdatePosition::unsafe_arena_release_time() {
+  // @@protoc_insertion_point(field_release:UpdatePosition.time)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = time_;
+  time_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* UpdatePosition::_internal_mutable_time() {
+  
+  if (time_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    time_ = p;
+  }
+  return time_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* UpdatePosition::mutable_time() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:UpdatePosition.time)
+  return _msg;
+}
+inline void UpdatePosition::set_allocated_time(::PROTOBUF_NAMESPACE_ID::Timestamp* time) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(time_);
+  }
+  if (time) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(time));
+    if (message_arena != submessage_arena) {
+      time = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, time, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  time_ = time;
+  // @@protoc_insertion_point(field_set_allocated:UpdatePosition.time)
 }
 
 // -------------------------------------------------------------------

@@ -35,6 +35,9 @@ public class MenuPacketHandler : IDisposable, IInitializable
     [Inject] private readonly SiraLog _siraLog;
 
     [Inject] private readonly GlobalStateManager _globalStateManager;
+    [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
+
+
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
     private PlayerSettingsPanelController _playerSettingsPanelController;
@@ -54,24 +57,27 @@ public class MenuPacketHandler : IDisposable, IInitializable
     }
 
 
-    public async void HandlePacket(PacketWrapper packetWrapper)
+    public void HandlePacket(PacketWrapper packetWrapper)
     {
-        switch (packetWrapper.PacketCase)
+        _mainThreadDispatcher.DispatchOnMainThread(async () =>
         {
-            case PacketWrapper.PacketOneofCase.StartBeatmap:
-                try
-                {
-                    _globalStateManager.StartingGameFromQuest = true;
-                    await StartLevel(packetWrapper).ConfigureAwait(true);
-                }
-                catch (Exception e)
-                {
-                    _siraLog.Error(e);
-                    SendBeatmapStartError(e.Message);
-                }
+            switch (packetWrapper.PacketCase)
+            {
+                case PacketWrapper.PacketOneofCase.StartBeatmap:
+                    try
+                    {
+                        _globalStateManager.StartingGameFromQuest = true;
+                        await StartLevel(packetWrapper).ConfigureAwait(true);
+                    }
+                    catch (Exception e)
+                    {
+                        _siraLog.Error(e);
+                        SendBeatmapStartError(e.Message);
+                    }
 
-                break;
-        }
+                    break;
+            }
+        });
     }
 
     private async Task StartLevel(PacketWrapper packetWrapper)
@@ -141,7 +147,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             // TODO: User error dialog
             return;
         }
-        
+
         // TODO: Figure out why this null refs if single player hasn't been opened
         _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
             _playerDataModel.playerData.overrideEnvironmentSettings,

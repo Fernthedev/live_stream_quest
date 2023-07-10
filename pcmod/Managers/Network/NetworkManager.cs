@@ -19,10 +19,10 @@ public class NetworkManager : IDisposable, IInitializable
     private readonly IPEndPoint _endPoint;
     private readonly PluginConfig _pluginConfig;
 
-    
+
     [Inject]
     public readonly SignalBus PacketReceivedEvent;
-    
+
     [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
     [Inject] private readonly SiraLog _siraLog;
 
@@ -140,20 +140,29 @@ public class NetworkManager : IDisposable, IInitializable
     {
         // Don't bother fire
         if (PacketReceivedEvent.NumSubscribers == 0) return;
-        
-        _mainThreadDispatcher.DispatchOnMainThread(
-            (siraLog, handler, wrapper) =>
-            {
-                try
-                {
-                    handler.TryFire(wrapper);
-                }
-                catch (Exception e)
-                {
-                    siraLog.Error(e);
-                }
-            },
-            _siraLog, PacketReceivedEvent, packetWrapper);
+
+        try
+        {
+            PacketReceivedEvent.TryFire(packetWrapper);
+        }
+        catch (Exception e)
+        {
+            _siraLog.Error(e);
+        }
+
+        // _mainThreadDispatcher.DispatchOnMainThread(
+        //     (siraLog, handler, wrapper) =>
+        //     {
+        //         try
+        //         {
+        //             handler.TryFire(wrapper);
+        //         }
+        //         catch (Exception e)
+        //         {
+        //             siraLog.Error(e);
+        //         }
+        //     },
+        //     _siraLog, PacketReceivedEvent, packetWrapper);
     }
 
     public void SendPacket(PacketWrapper packetWrapper)

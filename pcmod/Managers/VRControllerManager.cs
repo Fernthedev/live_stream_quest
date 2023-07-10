@@ -37,21 +37,14 @@ public class VRControllerManager : IInitializable, ITickable
 
     public void Tick()
     {
-        var unityDeltaTime = Time.deltaTime;
         var deltaPacketTime = (float)_deltaPacketTime.TotalSeconds;
-
-
-        // var deltaTime = (float)(unityDeltaTime * unityDeltaTime / deltaPacketTime);
-        float deltaTime;
-
         if (deltaPacketTime <= 0)
         {
-            deltaTime = 0;
+            return;
         }
-        else
-        {
-            deltaTime = (float)(unityDeltaTime / deltaPacketTime);
-        }
+        var unityDeltaTime = Time.deltaTime;
+        float deltaTime = (float)(unityDeltaTime / deltaPacketTime);
+
 
         if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
         {

@@ -153,18 +153,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         // multiplayerLevelSelectionFlowCoordinator.Setup(x);
         // _soloFreePlayFlowCoordinator.Setup(state);
 
-        {
-            var environmentSceneSetupData = new EnvironmentSceneSetupData(diffBeatmap.GetEnvironmentInfo(), levelPreview, false);
-            var standardGameplaySceneSetupData = new StandardGameplaySceneSetupData(_playerDataModel.playerData.playerSpecificSettings.autoRestart,
-                diffBeatmap.level, diffBeatmap.difficulty, diffBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic,
-                "", _gameplaySetupViewController.gameplayModifiers, true);
-            if (_menuTransitionsHelper._standardLevelScenesTransitionSetupData == null)
-                throw new InvalidOperationException();
-            var gameCoreSceneSetupData = new GameCoreSceneSetupData();
-        }
-
         _playerDataModel.Load();
-        
         _gameplaySetupViewController.Init();
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();

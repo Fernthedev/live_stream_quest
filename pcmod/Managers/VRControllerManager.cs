@@ -43,8 +43,9 @@ public class VRControllerManager : IInitializable, ITickable
             return;
         }
         var unityDeltaTime = Time.deltaTime;
-        float deltaTime = (float)(unityDeltaTime / deltaPacketTime);
-
+        var deltaTime = unityDeltaTime / deltaPacketTime;
+        // TODO: Needed? Add or Sub?
+        // _deltaPacketTime = _deltaPacketTime.Add(TimeSpan.FromSeconds(unityDeltaTime));
 
         if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
         {

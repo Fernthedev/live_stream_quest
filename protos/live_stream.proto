@@ -49,8 +49,11 @@ message StartBeatmapFailure {
 // PC/Quest will wait until both are ready and loaded
 // Quest will then send the Start packet and the level starts
 message ReadyUp {}
-message StartMap {}
+message StartMap {
+  float songTime = 1;
+}
 message ExitMap {}
+message PauseMap {}
 
 message PacketWrapper {
   uint64 queryResultId = 1;
@@ -61,5 +64,6 @@ message PacketWrapper {
       ReadyUp readyUp = 5;
       StartMap startMap = 6;
       ExitMap exitMap = 7;
+      PauseMap pauseMap = 8;
   }
 }

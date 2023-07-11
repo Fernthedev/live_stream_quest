@@ -1,15 +1,10 @@
 #include "manager.hpp"
-#include "MainThreadRunner.hpp"
 
 #include <fmt/ranges.h>
 
 #include "packethandlers/socketlib_handler.hpp"
 #include "packethandlers/websocket_handler.hpp"
 
-#include "sombrero/shared/linq.hpp"
-#include "sombrero/shared/linq_functional.hpp"
-
-#include "UnityEngine/Transform.hpp"
 
 #define MESSAGE_LOGGING
 
@@ -110,16 +105,16 @@ void Manager::tryStartGame() {
     waiting = false;
 
     PacketWrapper packetWrapper;
-    packetWrapper.mutable_startmap();
+    packetWrapper.mutable_startmap()->set_songtime(songTime);
     handler->sendPacket(packetWrapper);
 }
 
-void Manager::StartWait() {
+void Manager::StartWait(float songTime) {
     waiting = true;
     pcReady = false;
     questReady = false;
+    this->songTime = songTime;
 }
-
 
 void Manager::readyPCUp() {
     pcReady = true;

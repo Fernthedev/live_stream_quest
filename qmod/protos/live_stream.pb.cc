@@ -111,7 +111,8 @@ struct ReadyUpDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ReadyUpDefaultTypeInternal _ReadyUp_default_instance_;
 constexpr StartMap::StartMap(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : songtime_(0){}
 struct StartMapDefaultTypeInternal {
   constexpr StartMapDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -132,6 +133,17 @@ struct ExitMapDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ExitMapDefaultTypeInternal _ExitMap_default_instance_;
+constexpr PauseMap::PauseMap(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct PauseMapDefaultTypeInternal {
+  constexpr PauseMapDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~PauseMapDefaultTypeInternal() {}
+  union {
+    PauseMap _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PauseMapDefaultTypeInternal _PauseMap_default_instance_;
 constexpr PacketWrapper::PacketWrapper(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : queryresultid_(uint64_t{0u})
@@ -145,7 +157,7 @@ struct PacketWrapperDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PacketWrapperDefaultTypeInternal _PacketWrapper_default_instance_;
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_live_5fstream_2eproto[10];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_live_5fstream_2eproto[11];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_live_5fstream_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_live_5fstream_2eproto = nullptr;
 
@@ -219,8 +231,15 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::StartMap, songtime_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ExitMap, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::PauseMap, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
@@ -238,6 +257,7 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::PacketWrapper, Packet_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -249,8 +269,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 50, -1, -1, sizeof(::StartBeatmapFailure)},
   { 57, -1, -1, sizeof(::ReadyUp)},
   { 63, -1, -1, sizeof(::StartMap)},
-  { 69, -1, -1, sizeof(::ExitMap)},
-  { 75, -1, -1, sizeof(::PacketWrapper)},
+  { 70, -1, -1, sizeof(::ExitMap)},
+  { 76, -1, -1, sizeof(::PauseMap)},
+  { 82, -1, -1, sizeof(::PacketWrapper)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -263,6 +284,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_ReadyUp_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_StartMap_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_ExitMap_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_PauseMap_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_PacketWrapper_default_instance_),
 };
 
@@ -281,24 +303,25 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VA
   "formB\021\n\017_rightTransform\"K\n\014StartBeatmap\022"
   "\017\n\007levelId\030\001 \001(\t\022\026\n\016characteristic\030\002 \001(\t"
   "\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatmapFail"
-  "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\n\n\010StartMa"
-  "p\"\t\n\007ExitMap\"\220\002\n\rPacketWrapper\022\025\n\rqueryR"
-  "esultId\030\001 \001(\004\022)\n\016updatePosition\030\002 \001(\0132\017."
-  "UpdatePositionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r"
-  ".StartBeatmapH\000\0223\n\023startBeatmapFailure\030\004"
-  " \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007readyUp\030"
-  "\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.St"
-  "artMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000B\010\n"
-  "\006PacketB\031\252\002\026LiveStreamQuest.Protosb\006prot"
-  "o3"
+  "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\034\n\010StartMa"
+  "p\022\020\n\010songTime\030\001 \001(\002\"\t\n\007ExitMap\"\n\n\010PauseM"
+  "ap\"\257\002\n\rPacketWrapper\022\025\n\rqueryResultId\030\001 "
+  "\001(\004\022)\n\016updatePosition\030\002 \001(\0132\017.UpdatePosi"
+  "tionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r.StartBeat"
+  "mapH\000\0223\n\023startBeatmapFailure\030\004 \001(\0132\024.Sta"
+  "rtBeatmapFailureH\000\022\033\n\007readyUp\030\005 \001(\0132\010.Re"
+  "adyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.StartMapH\000\022\033"
+  "\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000\022\035\n\010pauseMap\030"
+  "\010 \001(\0132\t.PauseMapH\000B\010\n\006PacketB\031\252\002\026LiveStr"
+  "eamQuest.Protosb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_live_5fstream_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-  false, false, 922, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
-  &descriptor_table_live_5fstream_2eproto_once, descriptor_table_live_5fstream_2eproto_deps, 1, 10,
+  false, false, 983, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
+  &descriptor_table_live_5fstream_2eproto_once, descriptor_table_live_5fstream_2eproto_deps, 1, 11,
   schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
   file_level_metadata_live_5fstream_2eproto, file_level_enum_descriptors_live_5fstream_2eproto, file_level_service_descriptors_live_5fstream_2eproto,
 };
@@ -2011,30 +2034,181 @@ class StartMap::_Internal {
 
 StartMap::StartMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
   // @@protoc_insertion_point(arena_constructor:StartMap)
 }
 StartMap::StartMap(const StartMap& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  songtime_ = from.songtime_;
   // @@protoc_insertion_point(copy_constructor:StartMap)
 }
 
+inline void StartMap::SharedCtor() {
+songtime_ = 0;
+}
 
+StartMap::~StartMap() {
+  // @@protoc_insertion_point(destructor:StartMap)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
 
+inline void StartMap::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
 
+void StartMap::ArenaDtor(void* object) {
+  StartMap* _this = reinterpret_cast< StartMap* >(object);
+  (void)_this;
+}
+void StartMap::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void StartMap::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void StartMap::Clear() {
+// @@protoc_insertion_point(message_clear_start:StartMap)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  songtime_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* StartMap::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // float songTime = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 13)) {
+          songtime_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* StartMap::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:StartMap)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // float songTime = 1;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = this->_internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(1, this->_internal_songtime(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:StartMap)
+  return target;
+}
+
+size_t StartMap::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:StartMap)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // float songTime = 1;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = this->_internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    total_size += 1 + 4;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData StartMap::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    StartMap::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*StartMap::GetClassData() const { return &_class_data_; }
 
+void StartMap::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<StartMap *>(to)->MergeFrom(
+      static_cast<const StartMap &>(from));
+}
 
 
+void StartMap::MergeFrom(const StartMap& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:StartMap)
+  GOOGLE_DCHECK_NE(&from, this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = from._internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    _internal_set_songtime(from._internal_songtime());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void StartMap::CopyFrom(const StartMap& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:StartMap)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool StartMap::IsInitialized() const {
+  return true;
+}
+
+void StartMap::InternalSwap(StartMap* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(songtime_, other->songtime_);
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StartMap::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
@@ -2083,6 +2257,45 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ExitMap::GetClassData() const 
 
 // ===================================================================
 
+class PauseMap::_Internal {
+ public:
+};
+
+PauseMap::PauseMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:PauseMap)
+}
+PauseMap::PauseMap(const PauseMap& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:PauseMap)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PauseMap::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PauseMap::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata PauseMap::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_live_5fstream_2eproto_getter, &descriptor_table_live_5fstream_2eproto_once,
+      file_level_metadata_live_5fstream_2eproto[9]);
+}
+
+// ===================================================================
+
 class PacketWrapper::_Internal {
  public:
   static const ::UpdatePosition& updateposition(const PacketWrapper* msg);
@@ -2091,6 +2304,7 @@ class PacketWrapper::_Internal {
   static const ::ReadyUp& readyup(const PacketWrapper* msg);
   static const ::StartMap& startmap(const PacketWrapper* msg);
   static const ::ExitMap& exitmap(const PacketWrapper* msg);
+  static const ::PauseMap& pausemap(const PacketWrapper* msg);
 };
 
 const ::UpdatePosition&
@@ -2116,6 +2330,10 @@ PacketWrapper::_Internal::startmap(const PacketWrapper* msg) {
 const ::ExitMap&
 PacketWrapper::_Internal::exitmap(const PacketWrapper* msg) {
   return *msg->Packet_.exitmap_;
+}
+const ::PauseMap&
+PacketWrapper::_Internal::pausemap(const PacketWrapper* msg) {
+  return *msg->Packet_.pausemap_;
 }
 void PacketWrapper::set_allocated_updateposition(::UpdatePosition* updateposition) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -2207,6 +2425,21 @@ void PacketWrapper::set_allocated_exitmap(::ExitMap* exitmap) {
   }
   // @@protoc_insertion_point(field_set_allocated:PacketWrapper.exitMap)
 }
+void PacketWrapper::set_allocated_pausemap(::PauseMap* pausemap) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_Packet();
+  if (pausemap) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::PauseMap>::GetOwningArena(pausemap);
+    if (message_arena != submessage_arena) {
+      pausemap = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, pausemap, submessage_arena);
+    }
+    set_has_pausemap();
+    Packet_.pausemap_ = pausemap;
+  }
+  // @@protoc_insertion_point(field_set_allocated:PacketWrapper.pauseMap)
+}
 PacketWrapper::PacketWrapper(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -2244,6 +2477,10 @@ PacketWrapper::PacketWrapper(const PacketWrapper& from)
     }
     case kExitMap: {
       _internal_mutable_exitmap()->::ExitMap::MergeFrom(from._internal_exitmap());
+      break;
+    }
+    case kPauseMap: {
+      _internal_mutable_pausemap()->::PauseMap::MergeFrom(from._internal_pausemap());
       break;
     }
     case PACKET_NOT_SET: {
@@ -2318,6 +2555,12 @@ void PacketWrapper::clear_Packet() {
     case kExitMap: {
       if (GetArenaForAllocation() == nullptr) {
         delete Packet_.exitmap_;
+      }
+      break;
+    }
+    case kPauseMap: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete Packet_.pausemap_;
       }
       break;
     }
@@ -2398,6 +2641,14 @@ const char* PacketWrapper::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
           ptr = ctx->ParseMessage(_internal_mutable_exitmap(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .PauseMap pauseMap = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pausemap(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -2485,6 +2736,14 @@ uint8_t* PacketWrapper::_InternalSerialize(
         7, _Internal::exitmap(this), target, stream);
   }
 
+  // .PauseMap pauseMap = 8;
+  if (_internal_has_pausemap()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        8, _Internal::pausemap(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2549,6 +2808,13 @@ size_t PacketWrapper::ByteSizeLong() const {
           *Packet_.exitmap_);
       break;
     }
+    // .PauseMap pauseMap = 8;
+    case kPauseMap: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *Packet_.pausemap_);
+      break;
+    }
     case PACKET_NOT_SET: {
       break;
     }
@@ -2603,6 +2869,10 @@ void PacketWrapper::MergeFrom(const PacketWrapper& from) {
       _internal_mutable_exitmap()->::ExitMap::MergeFrom(from._internal_exitmap());
       break;
     }
+    case kPauseMap: {
+      _internal_mutable_pausemap()->::PauseMap::MergeFrom(from._internal_pausemap());
+      break;
+    }
     case PACKET_NOT_SET: {
       break;
     }
@@ -2632,7 +2902,7 @@ void PacketWrapper::InternalSwap(PacketWrapper* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PacketWrapper::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_live_5fstream_2eproto_getter, &descriptor_table_live_5fstream_2eproto_once,
-      file_level_metadata_live_5fstream_2eproto[9]);
+      file_level_metadata_live_5fstream_2eproto[10]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2663,6 +2933,9 @@ template<> PROTOBUF_NOINLINE ::StartMap* Arena::CreateMaybeMessage< ::StartMap >
 }
 template<> PROTOBUF_NOINLINE ::ExitMap* Arena::CreateMaybeMessage< ::ExitMap >(Arena* arena) {
   return Arena::CreateMessageInternal< ::ExitMap >(arena);
+}
+template<> PROTOBUF_NOINLINE ::PauseMap* Arena::CreateMaybeMessage< ::PauseMap >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::PauseMap >(arena);
 }
 template<> PROTOBUF_NOINLINE ::PacketWrapper* Arena::CreateMaybeMessage< ::PacketWrapper >(Arena* arena) {
   return Arena::CreateMessageInternal< ::PacketWrapper >(arena);

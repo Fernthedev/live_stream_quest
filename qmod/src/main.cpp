@@ -14,6 +14,7 @@
 #include "UnityEngine/SceneManagement/Scene.hpp"
 #include "UnityEngine/SceneManagement/SceneManager.hpp"
 
+#include "GlobalNamespace/AudioTimeSyncController.hpp"
 #include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "GlobalNamespace/GameSongController.hpp"
@@ -25,6 +26,7 @@
 #include "GlobalNamespace/PauseController.hpp"
 #include "GlobalNamespace/PauseController_InitData.hpp"
 #include "GlobalNamespace/PlayerTransforms.hpp"
+
 
 #include "MainThreadRunner.hpp"
 #include "PlayerPositionUpdater.hpp"
@@ -62,7 +64,8 @@ MAKE_HOOK_MATCH(
                      LevelCompletionResults *> *f14,
     System::Action_2<LevelScenesTransitionSetupDataSO *,
                      LevelCompletionResults *> *f15) {
-  Manager::GetInstance()->StartWait();
+  // TODO: Handle practice settings
+  Manager::GetInstance()->StartWait(0);
   MenuTransitionsHelper_StartStandardLevel(self, f1, f2, f3, f4, f5, f6, f7, f8,
                                            f9, f10, f11, f12, f13, f14, f15);
 
@@ -95,6 +98,24 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
   PacketWrapper packetWrapper;
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
+}
+
+MAKE_HOOK_MATCH(GameSongController_PauseSong, &GameSongController::PauseSong,
+                void, GameSongController *self) {
+  GameSongController_PauseSong(self);
+
+  Manager::GetInstance()->StartWait(self->audioTimeSyncController->songTime);
+
+  // Exit map
+  PacketWrapper packetWrapper;
+  packetWrapper.mutable_pausemap();
+  Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
+}
+
+MAKE_HOOK_MATCH(GameSongController_ResumeSong, &GameSongController::ResumeSong,
+                void, GameSongController *self) {
+  GameSongController_ResumeSong(self);
+  Manager::GetInstance()->ReadyQuestUp();
 }
 
 MAKE_HOOK_MATCH(GameSongController_StartSong, &GameSongController::StartSong,
@@ -225,6 +246,8 @@ extern "C" void load() {
   INSTALL_HOOK(getLoggerOld(),
                MenuTransitionsHelper_HandleMainGameSceneDidFinish)
   INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
+  INSTALL_HOOK(getLoggerOld(), GameSongController_ResumeSong)
+  INSTALL_HOOK(getLoggerOld(), GameSongController_PauseSong)
   // INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
   // INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
   //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)

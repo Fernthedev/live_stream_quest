@@ -37,14 +37,15 @@ namespace LiveStreamQuest.Protos {
             "aWdodFRyYW5zZm9ybSJLCgxTdGFydEJlYXRtYXASDwoHbGV2ZWxJZBgBIAEo",
             "CRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRISCgpkaWZmaWN1bHR5GAMgASgF",
             "IiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoFZXJyb3IYASABKAkiCQoHUmVh",
-            "ZHlVcCIKCghTdGFydE1hcCIJCgdFeGl0TWFwIpACCg1QYWNrZXRXcmFwcGVy",
-            "EhUKDXF1ZXJ5UmVzdWx0SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24YAiAB",
-            "KAsyDy5VcGRhdGVQb3NpdGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEoCzIN",
-            "LlN0YXJ0QmVhdG1hcEgAEjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCABKAsy",
-            "FC5TdGFydEJlYXRtYXBGYWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzIILlJl",
-            "YWR5VXBIABIdCghzdGFydE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoHZXhp",
-            "dE1hcBgHIAEoCzIILkV4aXRNYXBIAEIICgZQYWNrZXRCGaoCFkxpdmVTdHJl",
-            "YW1RdWVzdC5Qcm90b3NiBnByb3RvMw=="));
+            "ZHlVcCIcCghTdGFydE1hcBIQCghzb25nVGltZRgBIAEoAiIJCgdFeGl0TWFw",
+            "IgoKCFBhdXNlTWFwIq8CCg1QYWNrZXRXcmFwcGVyEhUKDXF1ZXJ5UmVzdWx0",
+            "SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24YAiABKAsyDy5VcGRhdGVQb3Np",
+            "dGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEoCzINLlN0YXJ0QmVhdG1hcEgA",
+            "EjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCABKAsyFC5TdGFydEJlYXRtYXBG",
+            "YWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzIILlJlYWR5VXBIABIdCghzdGFy",
+            "dE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoHZXhpdE1hcBgHIAEoCzIILkV4",
+            "aXRNYXBIABIdCghwYXVzZU1hcBgIIAEoCzIJLlBhdXNlTWFwSABCCAoGUGFj",
+            "a2V0QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -55,9 +56,10 @@ namespace LiveStreamQuest.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmap), global::LiveStreamQuest.Protos.StartBeatmap.Parser, new[]{ "LevelId", "Characteristic", "Difficulty" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmapFailure), global::LiveStreamQuest.Protos.StartBeatmapFailure.Parser, new[]{ "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ReadyUp), global::LiveStreamQuest.Protos.ReadyUp.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartMap), global::LiveStreamQuest.Protos.StartMap.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartMap), global::LiveStreamQuest.Protos.StartMap.Parser, new[]{ "SongTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ExitMap), global::LiveStreamQuest.Protos.ExitMap.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PacketWrapper), global::LiveStreamQuest.Protos.PacketWrapper.Parser, new[]{ "QueryResultId", "UpdatePosition", "StartBeatmap", "StartBeatmapFailure", "ReadyUp", "StartMap", "ExitMap" }, new[]{ "Packet" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PauseMap), global::LiveStreamQuest.Protos.PauseMap.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PacketWrapper), global::LiveStreamQuest.Protos.PacketWrapper.Parser, new[]{ "QueryResultId", "UpdatePosition", "StartBeatmap", "StartBeatmapFailure", "ReadyUp", "StartMap", "ExitMap", "PauseMap" }, new[]{ "Packet" }, null, null, null)
           }));
     }
     #endregion
@@ -1856,6 +1858,7 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public StartMap(StartMap other) : this() {
+      songTime_ = other.songTime_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1863,6 +1866,18 @@ namespace LiveStreamQuest.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public StartMap Clone() {
       return new StartMap(this);
+    }
+
+    /// <summary>Field number for the "songTime" field.</summary>
+    public const int SongTimeFieldNumber = 1;
+    private float songTime_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float SongTime {
+      get { return songTime_; }
+      set {
+        songTime_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1880,6 +1895,7 @@ namespace LiveStreamQuest.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(SongTime, other.SongTime)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1887,6 +1903,7 @@ namespace LiveStreamQuest.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (SongTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(SongTime);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1905,6 +1922,10 @@ namespace LiveStreamQuest.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (SongTime != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(SongTime);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1915,6 +1936,10 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (SongTime != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(SongTime);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1925,6 +1950,9 @@ namespace LiveStreamQuest.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (SongTime != 0F) {
+        size += 1 + 4;
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1936,6 +1964,9 @@ namespace LiveStreamQuest.Protos {
     public void MergeFrom(StartMap other) {
       if (other == null) {
         return;
+      }
+      if (other.SongTime != 0F) {
+        SongTime = other.SongTime;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1952,6 +1983,10 @@ namespace LiveStreamQuest.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
+          case 13: {
+            SongTime = input.ReadFloat();
+            break;
+          }
         }
       }
     #endif
@@ -1967,6 +2002,10 @@ namespace LiveStreamQuest.Protos {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
+          case 13: {
+            SongTime = input.ReadFloat();
+            break;
+          }
         }
       }
     }
@@ -2126,6 +2165,158 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  public sealed partial class PauseMap : pb::IMessage<PauseMap>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PauseMap> _parser = new pb::MessageParser<PauseMap>(() => new PauseMap());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PauseMap> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PauseMap() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PauseMap(PauseMap other) : this() {
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PauseMap Clone() {
+      return new PauseMap(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PauseMap);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PauseMap other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PauseMap other) {
+      if (other == null) {
+        return;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+        }
+      }
+    }
+    #endif
+
+  }
+
   public sealed partial class PacketWrapper : pb::IMessage<PacketWrapper>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -2140,7 +2331,7 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[9]; }
+      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2179,6 +2370,9 @@ namespace LiveStreamQuest.Protos {
           break;
         case PacketOneofCase.ExitMap:
           ExitMap = other.ExitMap.Clone();
+          break;
+        case PacketOneofCase.PauseMap:
+          PauseMap = other.PauseMap.Clone();
           break;
       }
 
@@ -2275,6 +2469,18 @@ namespace LiveStreamQuest.Protos {
       }
     }
 
+    /// <summary>Field number for the "pauseMap" field.</summary>
+    public const int PauseMapFieldNumber = 8;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LiveStreamQuest.Protos.PauseMap PauseMap {
+      get { return packetCase_ == PacketOneofCase.PauseMap ? (global::LiveStreamQuest.Protos.PauseMap) packet_ : null; }
+      set {
+        packet_ = value;
+        packetCase_ = value == null ? PacketOneofCase.None : PacketOneofCase.PauseMap;
+      }
+    }
+
     private object packet_;
     /// <summary>Enum of possible cases for the "Packet" oneof.</summary>
     public enum PacketOneofCase {
@@ -2285,6 +2491,7 @@ namespace LiveStreamQuest.Protos {
       ReadyUp = 5,
       StartMap = 6,
       ExitMap = 7,
+      PauseMap = 8,
     }
     private PacketOneofCase packetCase_ = PacketOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2322,6 +2529,7 @@ namespace LiveStreamQuest.Protos {
       if (!object.Equals(ReadyUp, other.ReadyUp)) return false;
       if (!object.Equals(StartMap, other.StartMap)) return false;
       if (!object.Equals(ExitMap, other.ExitMap)) return false;
+      if (!object.Equals(PauseMap, other.PauseMap)) return false;
       if (PacketCase != other.PacketCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2337,6 +2545,7 @@ namespace LiveStreamQuest.Protos {
       if (packetCase_ == PacketOneofCase.ReadyUp) hash ^= ReadyUp.GetHashCode();
       if (packetCase_ == PacketOneofCase.StartMap) hash ^= StartMap.GetHashCode();
       if (packetCase_ == PacketOneofCase.ExitMap) hash ^= ExitMap.GetHashCode();
+      if (packetCase_ == PacketOneofCase.PauseMap) hash ^= PauseMap.GetHashCode();
       hash ^= (int) packetCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2384,6 +2593,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(58);
         output.WriteMessage(ExitMap);
       }
+      if (packetCase_ == PacketOneofCase.PauseMap) {
+        output.WriteRawTag(66);
+        output.WriteMessage(PauseMap);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2422,6 +2635,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(58);
         output.WriteMessage(ExitMap);
       }
+      if (packetCase_ == PacketOneofCase.PauseMap) {
+        output.WriteRawTag(66);
+        output.WriteMessage(PauseMap);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2452,6 +2669,9 @@ namespace LiveStreamQuest.Protos {
       }
       if (packetCase_ == PacketOneofCase.ExitMap) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ExitMap);
+      }
+      if (packetCase_ == PacketOneofCase.PauseMap) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PauseMap);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2504,6 +2724,12 @@ namespace LiveStreamQuest.Protos {
             ExitMap = new global::LiveStreamQuest.Protos.ExitMap();
           }
           ExitMap.MergeFrom(other.ExitMap);
+          break;
+        case PacketOneofCase.PauseMap:
+          if (PauseMap == null) {
+            PauseMap = new global::LiveStreamQuest.Protos.PauseMap();
+          }
+          PauseMap.MergeFrom(other.PauseMap);
           break;
       }
 
@@ -2580,6 +2806,15 @@ namespace LiveStreamQuest.Protos {
             ExitMap = subBuilder;
             break;
           }
+          case 66: {
+            global::LiveStreamQuest.Protos.PauseMap subBuilder = new global::LiveStreamQuest.Protos.PauseMap();
+            if (packetCase_ == PacketOneofCase.PauseMap) {
+              subBuilder.MergeFrom(PauseMap);
+            }
+            input.ReadMessage(subBuilder);
+            PauseMap = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -2651,6 +2886,15 @@ namespace LiveStreamQuest.Protos {
             }
             input.ReadMessage(subBuilder);
             ExitMap = subBuilder;
+            break;
+          }
+          case 66: {
+            global::LiveStreamQuest.Protos.PauseMap subBuilder = new global::LiveStreamQuest.Protos.PauseMap();
+            if (packetCase_ == PacketOneofCase.PauseMap) {
+              subBuilder.MergeFrom(PauseMap);
+            }
+            input.ReadMessage(subBuilder);
+            PauseMap = subBuilder;
             break;
           }
         }

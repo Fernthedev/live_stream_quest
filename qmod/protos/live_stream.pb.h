@@ -48,7 +48,7 @@ struct TableStruct_live_5fstream_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ extern ExitMapDefaultTypeInternal _ExitMap_default_instance_;
 class PacketWrapper;
 struct PacketWrapperDefaultTypeInternal;
 extern PacketWrapperDefaultTypeInternal _PacketWrapper_default_instance_;
+class PauseMap;
+struct PauseMapDefaultTypeInternal;
+extern PauseMapDefaultTypeInternal _PauseMap_default_instance_;
 class Quaternion;
 struct QuaternionDefaultTypeInternal;
 extern QuaternionDefaultTypeInternal _Quaternion_default_instance_;
@@ -88,6 +91,7 @@ extern Vector3DefaultTypeInternal _Vector3_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::ExitMap* Arena::CreateMaybeMessage<::ExitMap>(Arena*);
 template<> ::PacketWrapper* Arena::CreateMaybeMessage<::PacketWrapper>(Arena*);
+template<> ::PauseMap* Arena::CreateMaybeMessage<::PauseMap>(Arena*);
 template<> ::Quaternion* Arena::CreateMaybeMessage<::Quaternion>(Arena*);
 template<> ::ReadyUp* Arena::CreateMaybeMessage<::ReadyUp>(Arena*);
 template<> ::StartBeatmap* Arena::CreateMaybeMessage<::StartBeatmap>(Arena*);
@@ -1286,9 +1290,10 @@ class ReadyUp final :
 // -------------------------------------------------------------------
 
 class StartMap final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:StartMap) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:StartMap) */ {
  public:
   inline StartMap() : StartMap(nullptr) {}
+  ~StartMap() override;
   explicit constexpr StartMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   StartMap(const StartMap& from);
@@ -1361,15 +1366,27 @@ class StartMap final :
   StartMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<StartMap>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const StartMap& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const StartMap& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
-  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const StartMap& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const StartMap& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(StartMap* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -1380,6 +1397,8 @@ class StartMap final :
   explicit StartMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -1391,6 +1410,18 @@ class StartMap final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kSongTimeFieldNumber = 1,
+  };
+  // float songTime = 1;
+  void clear_songtime();
+  float songtime() const;
+  void set_songtime(float value);
+  private:
+  float _internal_songtime() const;
+  void _internal_set_songtime(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:StartMap)
  private:
   class _Internal;
@@ -1398,6 +1429,7 @@ class StartMap final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  float songtime_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_live_5fstream_2eproto;
 };
@@ -1521,6 +1553,124 @@ class ExitMap final :
 };
 // -------------------------------------------------------------------
 
+class PauseMap final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:PauseMap) */ {
+ public:
+  inline PauseMap() : PauseMap(nullptr) {}
+  explicit constexpr PauseMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PauseMap(const PauseMap& from);
+  PauseMap(PauseMap&& from) noexcept
+    : PauseMap() {
+    *this = ::std::move(from);
+  }
+
+  inline PauseMap& operator=(const PauseMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PauseMap& operator=(PauseMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PauseMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PauseMap* internal_default_instance() {
+    return reinterpret_cast<const PauseMap*>(
+               &_PauseMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(PauseMap& a, PauseMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PauseMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PauseMap* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  PauseMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<PauseMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const PauseMap& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const PauseMap& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "PauseMap";
+  }
+  protected:
+  explicit PauseMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:PauseMap)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_live_5fstream_2eproto;
+};
+// -------------------------------------------------------------------
+
 class PacketWrapper final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:PacketWrapper) */ {
  public:
@@ -1571,6 +1721,7 @@ class PacketWrapper final :
     kReadyUp = 5,
     kStartMap = 6,
     kExitMap = 7,
+    kPauseMap = 8,
     PACKET_NOT_SET = 0,
   };
 
@@ -1579,7 +1730,7 @@ class PacketWrapper final :
                &_PacketWrapper_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(PacketWrapper& a, PacketWrapper& b) {
     a.Swap(&b);
@@ -1660,6 +1811,7 @@ class PacketWrapper final :
     kReadyUpFieldNumber = 5,
     kStartMapFieldNumber = 6,
     kExitMapFieldNumber = 7,
+    kPauseMapFieldNumber = 8,
   };
   // uint64 queryResultId = 1;
   void clear_queryresultid();
@@ -1778,6 +1930,24 @@ class PacketWrapper final :
       ::ExitMap* exitmap);
   ::ExitMap* unsafe_arena_release_exitmap();
 
+  // .PauseMap pauseMap = 8;
+  bool has_pausemap() const;
+  private:
+  bool _internal_has_pausemap() const;
+  public:
+  void clear_pausemap();
+  const ::PauseMap& pausemap() const;
+  PROTOBUF_NODISCARD ::PauseMap* release_pausemap();
+  ::PauseMap* mutable_pausemap();
+  void set_allocated_pausemap(::PauseMap* pausemap);
+  private:
+  const ::PauseMap& _internal_pausemap() const;
+  ::PauseMap* _internal_mutable_pausemap();
+  public:
+  void unsafe_arena_set_allocated_pausemap(
+      ::PauseMap* pausemap);
+  ::PauseMap* unsafe_arena_release_pausemap();
+
   void clear_Packet();
   PacketCase Packet_case() const;
   // @@protoc_insertion_point(class_scope:PacketWrapper)
@@ -1789,6 +1959,7 @@ class PacketWrapper final :
   void set_has_readyup();
   void set_has_startmap();
   void set_has_exitmap();
+  void set_has_pausemap();
 
   inline bool has_Packet() const;
   inline void clear_has_Packet();
@@ -1806,6 +1977,7 @@ class PacketWrapper final :
     ::ReadyUp* readyup_;
     ::StartMap* startmap_;
     ::ExitMap* exitmap_;
+    ::PauseMap* pausemap_;
   } Packet_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   uint32_t _oneof_case_[1];
@@ -2700,9 +2872,33 @@ inline void StartBeatmapFailure::set_allocated_error(std::string* error) {
 
 // StartMap
 
+// float songTime = 1;
+inline void StartMap::clear_songtime() {
+  songtime_ = 0;
+}
+inline float StartMap::_internal_songtime() const {
+  return songtime_;
+}
+inline float StartMap::songtime() const {
+  // @@protoc_insertion_point(field_get:StartMap.songTime)
+  return _internal_songtime();
+}
+inline void StartMap::_internal_set_songtime(float value) {
+  
+  songtime_ = value;
+}
+inline void StartMap::set_songtime(float value) {
+  _internal_set_songtime(value);
+  // @@protoc_insertion_point(field_set:StartMap.songTime)
+}
+
 // -------------------------------------------------------------------
 
 // ExitMap
+
+// -------------------------------------------------------------------
+
+// PauseMap
 
 // -------------------------------------------------------------------
 
@@ -3172,6 +3368,80 @@ inline ::ExitMap* PacketWrapper::mutable_exitmap() {
   return _msg;
 }
 
+// .PauseMap pauseMap = 8;
+inline bool PacketWrapper::_internal_has_pausemap() const {
+  return Packet_case() == kPauseMap;
+}
+inline bool PacketWrapper::has_pausemap() const {
+  return _internal_has_pausemap();
+}
+inline void PacketWrapper::set_has_pausemap() {
+  _oneof_case_[0] = kPauseMap;
+}
+inline void PacketWrapper::clear_pausemap() {
+  if (_internal_has_pausemap()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete Packet_.pausemap_;
+    }
+    clear_has_Packet();
+  }
+}
+inline ::PauseMap* PacketWrapper::release_pausemap() {
+  // @@protoc_insertion_point(field_release:PacketWrapper.pauseMap)
+  if (_internal_has_pausemap()) {
+    clear_has_Packet();
+      ::PauseMap* temp = Packet_.pausemap_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    Packet_.pausemap_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::PauseMap& PacketWrapper::_internal_pausemap() const {
+  return _internal_has_pausemap()
+      ? *Packet_.pausemap_
+      : reinterpret_cast< ::PauseMap&>(::_PauseMap_default_instance_);
+}
+inline const ::PauseMap& PacketWrapper::pausemap() const {
+  // @@protoc_insertion_point(field_get:PacketWrapper.pauseMap)
+  return _internal_pausemap();
+}
+inline ::PauseMap* PacketWrapper::unsafe_arena_release_pausemap() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:PacketWrapper.pauseMap)
+  if (_internal_has_pausemap()) {
+    clear_has_Packet();
+    ::PauseMap* temp = Packet_.pausemap_;
+    Packet_.pausemap_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void PacketWrapper::unsafe_arena_set_allocated_pausemap(::PauseMap* pausemap) {
+  clear_Packet();
+  if (pausemap) {
+    set_has_pausemap();
+    Packet_.pausemap_ = pausemap;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:PacketWrapper.pauseMap)
+}
+inline ::PauseMap* PacketWrapper::_internal_mutable_pausemap() {
+  if (!_internal_has_pausemap()) {
+    clear_Packet();
+    set_has_pausemap();
+    Packet_.pausemap_ = CreateMaybeMessage< ::PauseMap >(GetArenaForAllocation());
+  }
+  return Packet_.pausemap_;
+}
+inline ::PauseMap* PacketWrapper::mutable_pausemap() {
+  ::PauseMap* _msg = _internal_mutable_pausemap();
+  // @@protoc_insertion_point(field_mutable:PacketWrapper.pauseMap)
+  return _msg;
+}
+
 inline bool PacketWrapper::has_Packet() const {
   return Packet_case() != PACKET_NOT_SET;
 }
@@ -3184,6 +3454,8 @@ inline PacketWrapper::PacketCase PacketWrapper::Packet_case() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

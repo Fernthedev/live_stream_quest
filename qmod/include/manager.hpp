@@ -16,6 +16,7 @@ private:
     bool pcReady;
     bool questReady;
     bool waiting;
+    float songTime = 0;
 
     std::unique_ptr<SocketLibHandler> handler;
 
@@ -37,7 +38,7 @@ public:
         return *handler;
     }
 
-    void StartWait();
+    void StartWait(float songTime);
 
     void ReadyQuestUp();
 

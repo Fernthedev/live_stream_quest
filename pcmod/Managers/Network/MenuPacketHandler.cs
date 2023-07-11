@@ -26,7 +26,6 @@ public class MenuPacketHandler : IDisposable, IInitializable
     [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
 
     [Inject] private readonly PlayerDataModel _playerDataModel;
-
     [Inject] private readonly GameplaySetupViewController _gameplaySetupViewController;
 
 
@@ -36,7 +35,6 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     [Inject] private readonly GlobalStateManager _globalStateManager;
     [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
-
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
@@ -151,6 +149,28 @@ public class MenuPacketHandler : IDisposable, IInitializable
         }
 
         // TODO: Figure out why this null refs if single player hasn't been opened
+
+        // multiplayerLevelSelectionFlowCoordinator.Setup(x);
+        // _soloFreePlayFlowCoordinator.Setup(state);
+
+        {
+            var environmentSceneSetupData = new EnvironmentSceneSetupData(diffBeatmap.GetEnvironmentInfo(), levelPreview, false);
+            var standardGameplaySceneSetupData = new StandardGameplaySceneSetupData(_playerDataModel.playerData.playerSpecificSettings.autoRestart,
+                diffBeatmap.level, diffBeatmap.difficulty, diffBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic,
+                "", _gameplaySetupViewController.gameplayModifiers, true);
+            if (_menuTransitionsHelper._standardLevelScenesTransitionSetupData == null)
+                throw new InvalidOperationException();
+            var gameCoreSceneSetupData = new GameCoreSceneSetupData();
+        }
+
+        _playerDataModel.Load();
+        
+        _gameplaySetupViewController.Init();
+        _playerSettingsPanelController.SetIsDirty();
+        _playerSettingsPanelController.Refresh();
+        
+        
+        
         _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
             _playerDataModel.playerData.overrideEnvironmentSettings,
             _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null,

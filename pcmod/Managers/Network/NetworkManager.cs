@@ -45,13 +45,12 @@ public class NetworkManager : IDisposable, IInitializable
 
     public void Disconnect()
     {
-        if (_socket != null)
-        {
-            if (!_socket.Connected) return;
+        if (_socket == null) return;
+        if (!_socket.Connected) return;
 
-            _siraLog.Info("Disconnecting");
-            _socket.Disconnect(false);
-        }
+        _siraLog.Info("Disconnecting");
+        _socket.Disconnect(false);
+        _socket.Dispose();
     }
 
     public async Task Connect()

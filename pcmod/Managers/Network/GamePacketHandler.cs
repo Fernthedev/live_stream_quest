@@ -37,7 +37,16 @@ public class GamePacketHandler : IInitializable, IDisposable
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");
                 _pauseController.HandlePauseMenuManagerDidPressContinueButton();
-                _audioTimeSyncController.SeekTo(packetWrapper.StartMap.SongTime);
+                try
+                {
+                    _audioTimeSyncController.SeekTo(packetWrapper.StartMap.SongTime);
+                }
+                catch (NullReferenceException e)
+                {
+                    _siraLog.Error("AudioTimeSyncController is null?");
+                    _siraLog.Error(e);
+                }
+
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
                 _siraLog.Info("Exit the map");

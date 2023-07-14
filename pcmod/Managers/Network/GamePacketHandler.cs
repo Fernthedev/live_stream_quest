@@ -37,15 +37,12 @@ public class GamePacketHandler : IInitializable, IDisposable
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");
                 _pauseController.HandlePauseMenuManagerDidPressContinueButton();
-                try
+
+                if (_audioTimeSyncController is { isReady: true, isAudioLoaded: true, _canStartSong: true })
                 {
                     _audioTimeSyncController.SeekTo(packetWrapper.StartMap.SongTime);
                 }
-                catch (NullReferenceException e)
-                {
-                    _siraLog.Error("AudioTimeSyncController is null?");
-                    _siraLog.Error(e);
-                }
+
 
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
@@ -55,11 +52,11 @@ public class GamePacketHandler : IInitializable, IDisposable
             case PacketWrapper.PacketOneofCase.PauseMap:
                 _siraLog.Info("Pause map");
 
-                #if BS_1_29
+#if BS_1_29
                     _mainThreadDispatcher.Enqueue(PauseMap);
-                #else
-                    _mainThreadDispatcher.DispatchOnMainThread(PauseMap);
-                #endif
+#else
+                _mainThreadDispatcher.DispatchOnMainThread(PauseMap);
+#endif
                 break;
         }
     }
@@ -67,7 +64,7 @@ public class GamePacketHandler : IInitializable, IDisposable
     private void PauseMap()
     {
         _pauseController.Pause();
-                
+
         var pausePacketWrapper = new PacketWrapper
         {
             ReadyUp = new ReadyUp()

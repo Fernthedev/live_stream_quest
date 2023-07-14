@@ -187,6 +187,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     private void SendBeatmapStartError(string message)
     {
+        _siraLog.Error($"Suffered beatmap error {message}");
         _globalStateManager.StartingGameFromQuest = false;
         var packetWrapper = new PacketWrapper
         {

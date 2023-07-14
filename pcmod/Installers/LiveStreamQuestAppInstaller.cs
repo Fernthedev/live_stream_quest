@@ -25,13 +25,15 @@ internal class AppInstaller : Installer
 
         Container.BindInstance(_config);
         Container.BindInstance(_beatSaver);
+        
+        Container.BindInterfacesAndSelfTo<GlobalStateManager>().AsSingle();
+
         var networkManagerBind = Container.BindInterfacesAndSelfTo<NetworkManager>().AsSingle();
         if (_config.ConnectOnStartup)
         {
             networkManagerBind.NonLazy();
         }
 
-        Container.BindInterfacesAndSelfTo<GlobalStateManager>().AsSingle();
 
 #if BS_1_29
         Container.BindInstance(HMMainThreadDispatcher.instance);

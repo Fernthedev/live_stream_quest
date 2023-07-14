@@ -23,7 +23,11 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     [Inject] private readonly MenuTransitionsHelper _menuTransitionsHelper;
 
+#if BS_1_29
+    [Inject] private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection;
+#else
     [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
+#endif
 
     [Inject] private readonly PlayerDataModel _playerDataModel;
     [Inject] private readonly GameplaySetupViewController _gameplaySetupViewController;
@@ -34,7 +38,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
     [Inject] private readonly SiraLog _siraLog;
 
     [Inject] private readonly GlobalStateManager _globalStateManager;
-    [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
+    [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
@@ -57,7 +61,11 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     public void HandlePacket(PacketWrapper packetWrapper)
     {
+#if BS_1_29
+        _mainThreadDispatcher.Enqueue(() => HandlePacketMainThread(packetWrapper));
+#else
         _mainThreadDispatcher.DispatchOnMainThread(HandlePacketMainThread, packetWrapper);
+#endif
     }
 
     private async void HandlePacketMainThread(PacketWrapper packetWrapper)
@@ -124,7 +132,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             // TODO: User error dialog
             return;
         }
-
+        
         var beatmapCharacteristicSo =
             _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(packetWrapper.StartBeatmap
                 .Characteristic);
@@ -157,9 +165,16 @@ public class MenuPacketHandler : IDisposable, IInitializable
         _gameplaySetupViewController.Init();
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
-        
-        
-        
+
+
+#if BS_1_29
+        _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
+            _playerDataModel.playerData.overrideEnvironmentSettings, null,
+            _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
+            _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false,
+            true,
+            null, null, null);
+#else
         _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
             _playerDataModel.playerData.overrideEnvironmentSettings,
             _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null,
@@ -167,6 +182,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false,
             true,
             null, null, null);
+#endif
     }
 
     private void SendBeatmapStartError(string message)

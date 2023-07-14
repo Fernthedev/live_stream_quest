@@ -13,7 +13,7 @@ public class GamePacketHandler : IInitializable, IDisposable
     [Inject] private readonly PauseController _pauseController;
     [Inject] private readonly NetworkManager _networkManager;
     [Inject] private readonly Submission _submission;
-    [Inject] private readonly MainThreadDispatcher _mainThreadDispatcher;
+    [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
     [Inject] private readonly VRControllerManager _vrControllerManager;
     [Inject] private readonly SiraLog _siraLog;
@@ -46,7 +46,11 @@ public class GamePacketHandler : IInitializable, IDisposable
             case PacketWrapper.PacketOneofCase.PauseMap:
                 _siraLog.Info("Pause map");
 
-                _mainThreadDispatcher.DispatchOnMainThread(PauseMap);
+                #if BS_1_29
+                    _mainThreadDispatcher.Enqueue(PauseMap);
+                #else
+                    _mainThreadDispatcher.DispatchOnMainThread(PauseMap);
+                #endif
                 break;
         }
     }

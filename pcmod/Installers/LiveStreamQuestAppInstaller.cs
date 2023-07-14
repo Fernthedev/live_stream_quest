@@ -22,7 +22,7 @@ internal class AppInstaller : Installer
     {
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<PacketWrapper>();
-        
+
         Container.BindInstance(_config);
         Container.BindInstance(_beatSaver);
         var networkManagerBind = Container.BindInterfacesAndSelfTo<NetworkManager>().AsSingle();
@@ -32,5 +32,9 @@ internal class AppInstaller : Installer
         }
 
         Container.BindInterfacesAndSelfTo<GlobalStateManager>().AsSingle();
+
+#if BS_1_29
+        Container.BindInstance(HMMainThreadDispatcher.instance);
+#endif
     }
 }

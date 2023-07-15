@@ -32,7 +32,7 @@ public class VRControllerManager : IInitializable, ITickable
 
     public void Initialize()
     {
-        // _playerVRControllersManager.DisableAllVRControllers();
+        _playerVRControllersManager.DisableAllVRControllers();
     }
 
     public void Tick()
@@ -42,7 +42,6 @@ public class VRControllerManager : IInitializable, ITickable
         {
             return;
         }
-
         var unityDeltaTime = Time.deltaTime;
         var deltaTime = unityDeltaTime / deltaPacketTime;
         // TODO: Needed? Add or Sub?
@@ -63,35 +62,26 @@ public class VRControllerManager : IInitializable, ITickable
         if (updated)
         {
             _transformedHeadPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_headTransform?.Position.ToVector3() ??
-                                                                        UnityEngine.Vector3.zero);
+                _playerTransforms._originParentTransform.TransformPoint(_headTransform?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
             _transformedHeadRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_headTransform?.Rotation.ToQuaternion() ??
-                                                                           UnityEngine.Quaternion.identity);
+                _playerTransforms._originParentTransform.TransformRotation(_headTransform?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
 
             _transformedRightPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_rightHand?.Position.ToVector3() ??
-                                                                        UnityEngine.Vector3.zero);
+                _playerTransforms._originParentTransform.TransformPoint(_rightHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
             _transformedRightRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_rightHand?.Rotation.ToQuaternion() ??
-                                                                           UnityEngine.Quaternion.identity);
+                _playerTransforms._originParentTransform.TransformRotation(_rightHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
 
             _transformedLeftPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_leftHand?.Position.ToVector3() ??
-                                                                        UnityEngine.Vector3.zero);
+                _playerTransforms._originParentTransform.TransformPoint(_leftHand?.Position.ToVector3() ?? UnityEngine.Vector3.zero);
             _transformedLeftRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_leftHand?.Rotation.ToQuaternion() ??
-                                                                           UnityEngine.Quaternion.identity);
+                _playerTransforms._originParentTransform.TransformRotation(_leftHand?.Rotation.ToQuaternion() ?? UnityEngine.Quaternion.identity);
             updated = false;
         }
 
 
-        _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation,
-            deltaTime);
-        _playerTransforms._rightHandTransform.LerpToWorldSpace(_transformedRightPosition, _transformedRightRotation,
-            deltaTime);
-        _playerTransforms._leftHandTransform.LerpToWorldSpace(_transformedLeftPosition, _transformedLeftRotation,
-            deltaTime);
+        _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+        _playerTransforms._rightHandTransform.LerpToWorldSpace(_transformedRightPosition, _transformedRightRotation, deltaTime);
+        _playerTransforms._leftHandTransform.LerpToWorldSpace(_transformedLeftPosition, _transformedLeftRotation, deltaTime);
     }
 
     private void LocalTransformsUpdate(float deltaTime)
@@ -109,16 +99,12 @@ public class VRControllerManager : IInitializable, ITickable
             updated = false;
         }
 
-        _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation,
-            deltaTime);
-        _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation,
-            deltaTime);
-        _playerTransforms._leftHandTransform.LerpToRelativeSpace(_transformedLeftPosition, _transformedLeftRotation,
-            deltaTime);
+        _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+        _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation, deltaTime);
+        _playerTransforms._leftHandTransform.LerpToRelativeSpace(_transformedLeftPosition, _transformedLeftRotation, deltaTime);
     }
 
-    public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
-        Protos.Transform leftTransform, Google.Protobuf.WellKnownTypes.Timestamp time)
+    public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform, Protos.Transform leftTransform, Google.Protobuf.WellKnownTypes.Timestamp time)
     {
         updated = true;
         _headTransform = headTransform;
@@ -131,4 +117,5 @@ public class VRControllerManager : IInitializable, ITickable
 
         _lastPacketTime = dateTime;
     }
+
 }

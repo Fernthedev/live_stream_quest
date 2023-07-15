@@ -10,11 +10,6 @@ internal class GameInstaller : Installer, IDisposable
 {
     [Inject] private readonly GlobalStateManager _globalStateManager;
 
-    public GameInstaller()
-    {
-
-    }
-
     public override void InstallBindings()
     {
         if (!_globalStateManager.StartingGameFromQuest) return;

@@ -15,5 +15,8 @@ namespace LiveStreamQuest.Configuration
         public virtual string Address { get; set; } = "192.168.0.24";
         public virtual int Port { get; set; } = 9542;
         public virtual bool ConnectOnStartup { get; set; } = false;
+        public virtual int ReconnectionAttempts { get; set; } = 5;
+        public virtual int ConnectionTimeout { get; set; } = 180;
+        public virtual bool DontShowAgain { get; set; } = false;
     }
 }

@@ -1,3 +1,15 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-    <!-- Make your own UI here, using https://monkeymanboy.github.io/BSML-Docs/ -->
+    <modal id="setupModal" clickerino-offerino-closerino="true" move-to-center="true" size-delta-x="40" size-delta-y="20">
+        <scrollable-settings-container>
+            <text text="First time setup" />
+            <text text="For advanced users, it is recommended that you set up a reserved IP for your Quest as it will change if you let DHCP assign an IP Address to your Quest every time it gets powered on." />
+            
+            <string-setting text="IP Address" hover-hint="Set the IP of your Quest" />
+            <string-setting text="Port" hover-hint="Set the port of your Quest" />
+            <bool-setting text="Connect on startup" hover-hint="Lets the PC and Quest clients connect on startup." />        
+            <action-button text="Connect" />
+            
+            <bool-setting text="Don't show again" />
+        </scrollable-settings-container>
+    </modal>
 </bg>

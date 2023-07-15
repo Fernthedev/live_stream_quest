@@ -23,7 +23,7 @@ namespace LiveStreamQuest
         internal static IPALogger Log { get; private set; }
         internal PluginConfig _config;
 
-        public static Hive.Versioning.Version Version;
+        internal static Hive.Versioning.Version Version;
 
         private BeatSaver _beatSaver;
 

@@ -83,7 +83,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
                     _siraLog.Error(e);
                     SendBeatmapStartError(e.Message);
                 }
-
+                
                 break;
         }
     }

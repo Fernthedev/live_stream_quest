@@ -17,12 +17,10 @@ public class NetworkManager : IDisposable, IInitializable
 {
     private Socket? _socket;
 
-    [Inject]
-    private readonly PluginConfig _pluginConfig;
+    [Inject] private readonly PluginConfig _pluginConfig;
 
 
-    [Inject]
-    public readonly SignalBus PacketReceivedEvent;
+    [Inject] public readonly SignalBus PacketReceivedEvent;
 
     [Inject] private readonly SiraLog _siraLog;
 
@@ -45,12 +43,16 @@ public class NetworkManager : IDisposable, IInitializable
 
     public void Disconnect()
     {
-        if (_socket == null) return;
-        if (!_socket.Connected) return;
+        var socket = _socket;
+        if (socket == null) return;
+        // Set to null to mark an intentional disconnect
+        _socket = null;
+
+        if (!socket.Connected) return;
 
         _siraLog.Info("Disconnecting");
-        _socket.Disconnect(false);
-        _socket.Dispose();
+        socket.Disconnect(false);
+        socket.Dispose();
     }
 
     public async Task Connect()
@@ -70,8 +72,9 @@ public class NetworkManager : IDisposable, IInitializable
                 ProtocolType.Tcp
             )
             {
-                ReceiveTimeout = 30 * 1000,
-                SendTimeout = 30 * 1000
+                ReceiveTimeout = _pluginConfig.ConnectionTimeout * 1000,
+                SendTimeout = _pluginConfig.ConnectionTimeout * 1000,
+                NoDelay = true
             };
 
             _siraLog.Info($"Connecting to {endPoint}");
@@ -98,11 +101,12 @@ public class NetworkManager : IDisposable, IInitializable
     {
         if (_socket == null) throw new InvalidOperationException("Socket is null");
 
+        var socket = _socket;
+
         _siraLog.Info("Receiving");
         try
         {
-            using var networkStream = new NetworkStream(_socket, false);
-            var socket = _socket;
+            using var networkStream = new NetworkStream(socket, false);
 
             while (socket.Connected)
             {
@@ -115,6 +119,32 @@ public class NetworkManager : IDisposable, IInitializable
         }
 
         _siraLog.Info("Stopped Receiving");
+
+        if (_socket != null && socket == _socket)
+        {
+            await ReviveConnection();
+        }
+    }
+
+    private async Task ReviveConnection()
+    {
+        _siraLog.Info("Attempting to reconnect");
+
+        for (var i = 0; i < _pluginConfig.ReconnectionAttempts; i++)
+        {
+            // Break loop
+            if (_socket is { Connected: true }) break;
+
+            try
+            {
+                await Connect().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error($"Caught exception, retrying {i}th time");
+                _siraLog.Error(e);
+            }
+        }
     }
 
     private async Task OnReceive(NetworkStream stream)

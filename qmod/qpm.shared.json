@@ -39,7 +39,7 @@
       },
       {
         "id": "socket_lib",
-        "versionRange": "^0.8.2",
+        "versionRange": "^0.8.3",
         "additionalData": {}
       },
       {
@@ -60,17 +60,11 @@
     ],
     "workspace": {
       "scripts": {
-        "tomb": [
-          "pwsh ./scripts/pull-tombstone.ps1"
-        ],
-        "build": [
-          "pwsh ./scripts/build.ps1"
-        ],
         "logcat": [
           "pwsh ./scripts/start-logging.ps1"
         ],
-        "stack": [
-          "pwsh ./scripts/pull-tombstone.ps1 -Analyze"
+        "build": [
+          "pwsh ./scripts/build.ps1"
         ],
         "restart": [
           "pwsh ./scripts/restart-game.ps1"
@@ -81,6 +75,12 @@
         "qmod": [
           "pwsh ./scripts/build.ps1",
           "pwsh ./scripts/createqmod.ps1"
+        ],
+        "tomb": [
+          "pwsh ./scripts/pull-tombstone.ps1"
+        ],
+        "stack": [
+          "pwsh ./scripts/pull-tombstone.ps1 -Analyze"
         ]
       }
     }
@@ -146,16 +146,16 @@
     {
       "dependency": {
         "id": "socket_lib",
-        "versionRange": "=0.8.2",
+        "versionRange": "=0.8.3",
         "additionalData": {
-          "soLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.2/libsocket_lib.so",
-          "debugSoLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.2/debug_libsocket_lib.so",
+          "soLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.3/libsocket_lib.so",
+          "debugSoLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.3/debug_libsocket_lib.so",
           "overrideSoName": "libsocket_lib.so",
-          "modLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.2/socket_lib.qmod",
-          "branchName": "version-v0.8.2"
+          "modLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.8.3/socket_lib.qmod",
+          "branchName": "version-v0.8.3"
         }
       },
-      "version": "0.8.2"
+      "version": "0.8.3"
     },
     {
       "dependency": {

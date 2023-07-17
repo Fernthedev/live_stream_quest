@@ -14,6 +14,7 @@ void SocketLibHandler::listen(const int port) {
     SocketHandler& socketHandler = SocketHandler::getCommonSocketHandler();
 
     serverSocket = socketHandler.createServerSocket(port);
+    serverSocket->noDelay = true;
     serverSocket->bindAndListen();
     LOG_INFO("Started server");
 

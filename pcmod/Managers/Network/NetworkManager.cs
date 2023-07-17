@@ -135,6 +135,12 @@ public class NetworkManager : IDisposable, IInitializable
             // Break loop
             if (_socket is { Connected: true }) break;
 
+            if (i > 2)
+            {
+                // Wait before reconnecting
+                await Task.Delay(TimeSpan.FromSeconds(i + 5));
+            }
+            
             try
             {
                 await Connect().ConfigureAwait(false);

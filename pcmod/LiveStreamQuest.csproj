@@ -151,4 +151,9 @@
     <ItemGroup>
         <Content Include="LiveStreamQuest.csproj.user" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="UI\BSML\LiveStreamQuestView.bsml" />
+      <EmbeddedResource Include="UI\BSML\LiveStreamQuestView.bsml" />
+      <None Remove="UI\BSML\just_a_test.bsml" />
+    </ItemGroup>
 </Project>

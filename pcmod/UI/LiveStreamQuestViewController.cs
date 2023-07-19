@@ -1,9 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Settings;
 using HMUI;
 using LiveStreamQuest.Configuration;
+using LiveStreamQuest.Protos;
+using SiraUtil.Logging;
+using UnityEngine;
 using Zenject;
 
 namespace LiveStreamQuest.UI
@@ -11,18 +16,21 @@ namespace LiveStreamQuest.UI
     [HotReload]
     internal class LiveStreamQuestViewController : IInitializable, IDisposable, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged; // Use this to notify BSML of a UI Value change;
+        private const string UI_RESOURCE = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
 
-        // PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name of the Method)));
+        [Inject] private readonly SiraLog _siraLog;
+        
+        public event PropertyChangedEventHandler? PropertyChanged;
         private readonly PluginConfig _config;
+        [Inject] private MainMenuViewController _mainMenu;
 
         public LiveStreamQuestViewController(PluginConfig config)
         {
             _config = config;
         }
-        
+
         [UIComponent("setupModal")]
-        private readonly ModalView _modal = new();
+        private ModalView _modal;
 
         [UIValue("ipAddress")]
         internal string IPAddress
@@ -81,7 +89,19 @@ namespace LiveStreamQuest.UI
         
         public void Initialize()
         {
-            _modal.Show(true, true);
+            try
+            {
+                ModalHelper.Parse(_mainMenu.transform, UI_RESOURCE, _modal);
+                _modal.name = "LiveStreamQuestSetupModal";
+                _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, (float)-0.5);
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error(e.Message);
+                if (e.InnerException is not null)
+                    _siraLog.Error(e.InnerException);
+                _siraLog.Error(e.StackTrace);
+            }
         }
 
         public void Dispose()

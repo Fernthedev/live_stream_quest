@@ -13,9 +13,7 @@ using IPALogger = IPA.Logging.Logger;
 
 namespace LiveStreamQuest
 {
-    [Plugin(RuntimeOptions.DynamicInit),
-     NoEnableDisable] // NoEnableDisable supresses the warnings of not having a OnEnable/OnStart
-    // and OnDisable/OnExit methods
+    [Plugin(RuntimeOptions.DynamicInit), NoEnableDisable]
     public class Plugin
     {
         public const string ID = "LiveStreamQuest";
@@ -41,12 +39,10 @@ namespace LiveStreamQuest
 
             zenjector.UseLogger(logger);
             zenjector.UseMetadataBinder<Plugin>();
-
-            // This logic also goes for installing to Menu and Game. "Location." will give you a list of places to install to.
+            
             zenjector.Install<AppInstaller>(Location.App, config.Generated<PluginConfig>(), _beatSaver);
             zenjector.Install<MenuInstaller>(Location.Menu);
             zenjector.Install<GameInstaller>(Location.GameCore);
-            // zenjector.Install<{Menu|Game}Installer>(Location.{Menu|Game}>()); Remove the one you don't need and the { }.
         }
     }
 }

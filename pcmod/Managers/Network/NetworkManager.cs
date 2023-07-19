@@ -72,8 +72,8 @@ public class NetworkManager : IDisposable, IInitializable
                 ProtocolType.Tcp
             )
             {
-                ReceiveTimeout = _pluginConfig.ConnectionTimeout * 1000,
-                SendTimeout = _pluginConfig.ConnectionTimeout * 1000,
+                ReceiveTimeout = _pluginConfig.ConnectionTimeoutSeconds * 1000,
+                SendTimeout = _pluginConfig.ConnectionTimeoutSeconds * 1000,
                 NoDelay = true
             };
 

@@ -18,7 +18,7 @@ namespace LiveStreamQuest.Configuration
         public virtual int ReconnectionAttempts { get; set; } = 5;
         
         // Seconds
-        public virtual int ConnectionTimeout { get; set; } = 180;
+        public virtual int ConnectionTimeoutSeconds { get; set; } = 180;
         public virtual bool DontShowAgain { get; set; } = false;
     }
 }

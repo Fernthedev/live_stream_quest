@@ -57,10 +57,10 @@ namespace LiveStreamQuest.UI
         [UIValue("timeout")]
         internal int Timeout
         {
-            get => _config.ConnectionTimeout;
+            get => _config.ConnectionTimeoutSeconds;
             set
             {
-                _config.ConnectionTimeout = value;
+                _config.ConnectionTimeoutSeconds = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Timeout)));
             }
         }

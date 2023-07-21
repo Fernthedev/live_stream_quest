@@ -12,7 +12,7 @@ internal class MenuInstaller : Installer, IInitializable
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<MenuPacketHandler>().AsSingle();
-        Container.BindInterfacesAndSelfTo<LiveStreamQuestViewController>().AsSingle();
+        Container.BindInterfacesAndSelfTo<LiveStreamQuestViewController>().FromNewComponentAsViewController().AsSingle();
     }
 
     public void Initialize()

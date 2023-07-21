@@ -1,5 +1,7 @@
+<!--<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>-->
+	
 <horizontal bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-    <modal id="setupModal" clickerino-offerino-closerino="true" move-to-center="true">
+    <modal id="setupModal" clickerino-offerino-closerino="true" hide-event='close-modal' show-event='open-modal' move-to-center="true">
         <scrollable-settings-container pref-height="90" pref-width="110">
             <text text="First time setup" />
             <text text="For advanced users, it is recommended that you set up a reserved IP for your Quest as it will change if you let DHCP assign an IP Address to your Quest every time it gets powered on." />
@@ -13,3 +15,4 @@
         </scrollable-settings-container>
     </modal>
 </horizontal>
+<!--</bg>-->

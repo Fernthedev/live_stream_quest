@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.Settings;
+using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
@@ -13,24 +15,25 @@ using Zenject;
 
 namespace LiveStreamQuest.UI
 {
-    [HotReload]
-    internal class LiveStreamQuestViewController : IInitializable, IDisposable, INotifyPropertyChanged
+    [HotReload(RelativePathToLayout = "BSML.LiveStreamQuestView.bsml")]
+    [ViewDefinition(UI_RESOURCE)]
+    internal class LiveStreamQuestViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
         private const string UI_RESOURCE = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
 
         [Inject] private readonly SiraLog _siraLog;
-        
-        public event PropertyChangedEventHandler? PropertyChanged;
+
+        // public event PropertyChangedEventHandler? PropertyChanged;
         private readonly PluginConfig _config;
         [Inject] private MainMenuViewController _mainMenu;
 
+        [Inject]
         public LiveStreamQuestViewController(PluginConfig config)
         {
             _config = config;
         }
 
-        [UIComponent("setupModal")]
-        private ModalView _modal;
+        [UIComponent("setupModal")] private ModalView _modal;
 
         [UIValue("ipAddress")]
         internal string IPAddress
@@ -39,7 +42,7 @@ namespace LiveStreamQuest.UI
             set
             {
                 _config.Address = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IPAddress)));
+                NotifyPropertyChanged();
             }
         }
 
@@ -50,7 +53,7 @@ namespace LiveStreamQuest.UI
             set
             {
                 _config.Port = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Port)));
+                NotifyPropertyChanged();
             }
         }
 
@@ -61,7 +64,7 @@ namespace LiveStreamQuest.UI
             set
             {
                 _config.ConnectionTimeoutSeconds = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Timeout)));
+                NotifyPropertyChanged();
             }
         }
 
@@ -72,7 +75,7 @@ namespace LiveStreamQuest.UI
             set
             {
                 _config.ReconnectionAttempts = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ReconnectionAttempts)));
+                NotifyPropertyChanged();
             }
         }
 
@@ -83,24 +86,53 @@ namespace LiveStreamQuest.UI
             set
             {
                 _config.ConnectOnStartup = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConnectOnStartup)));
+                NotifyPropertyChanged();
             }
         }
-        
+
+        [UIParams] private readonly BSMLParserParams parserParams;
+
+        [UIAction("#post-parse")]
+        private void PostParse()
+        {
+            _siraLog.Info($"Opening modal {_modal}");
+            _modal.name = "LiveStreamQuestSetupModal";
+            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, (float)-0.5);
+            // parserParams.EmitEvent("close-modal");
+            // parserParams.EmitEvent("open-modal");
+            _modal.Show(true, true, () =>
+            {
+                 
+            });
+        }
+
         public void Initialize()
         {
-            try
+            void NewFunction()
             {
-                ModalHelper.Parse(_mainMenu.transform, UI_RESOURCE, _modal);
-                _modal.name = "LiveStreamQuestSetupModal";
-                _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, (float)-0.5);
+                try
+                {
+                    ModalHelper.Parse(_mainMenu.transform, UI_RESOURCE, this);
+                }
+                catch (Exception e)
+                {
+                    _siraLog.Error(e);
+                    if (e.InnerException is not null)
+                        _siraLog.Error(e.InnerException);
+                    _siraLog.Error(e.StackTrace);
+                }
             }
-            catch (Exception e)
+
+            if (_mainMenu.wasActivatedBefore)
             {
-                _siraLog.Error(e.Message);
-                if (e.InnerException is not null)
-                    _siraLog.Error(e.InnerException);
-                _siraLog.Error(e.StackTrace);
+                NewFunction();
+            }
+            else
+            {
+                _mainMenu.didActivateEvent += (firstActivation, hierarchy, enabling) =>
+                {
+                    if (firstActivation) NewFunction();
+                };
             }
         }
 

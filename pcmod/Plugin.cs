@@ -17,7 +17,6 @@ namespace LiveStreamQuest
     public class Plugin
     {
         public const string ID = "LiveStreamQuest";
-        internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
         internal PluginConfig _config;
 
@@ -29,7 +28,6 @@ namespace LiveStreamQuest
         [UsedImplicitly]
         public void Init(Zenjector zenjector, IPALogger logger, Config config, PluginMetadata metadata)
         {
-            Instance = this;
             Log = logger;
 
             Version = metadata.HVersion;

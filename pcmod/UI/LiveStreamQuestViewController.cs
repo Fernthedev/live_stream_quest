@@ -15,23 +15,17 @@ using Zenject;
 
 namespace LiveStreamQuest.UI
 {
-    [HotReload(RelativePathToLayout = "BSML.LiveStreamQuestView.bsml")]
-    [ViewDefinition(UI_RESOURCE)]
+    [ViewDefinition("LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml")]
+    [HotReload(RelativePathToLayout = @"..\UI\BSML\LiveStreamQuestView.bsml")]
     internal class LiveStreamQuestViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
-        private const string UI_RESOURCE = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
+        private const string UIResource = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
 
         [Inject] private readonly SiraLog _siraLog;
 
         // public event PropertyChangedEventHandler? PropertyChanged;
-        private readonly PluginConfig _config;
+        [Inject] private readonly PluginConfig _config = null!;
         [Inject] private MainMenuViewController _mainMenu;
-
-        [Inject]
-        public LiveStreamQuestViewController(PluginConfig config)
-        {
-            _config = config;
-        }
 
         [UIComponent("setupModal")] private ModalView _modal;
 
@@ -95,47 +89,45 @@ namespace LiveStreamQuest.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            _siraLog.Info($"Opening modal {_modal}");
             _modal.name = "LiveStreamQuestSetupModal";
-            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, (float)-0.5);
+            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, 0.5f);
             // parserParams.EmitEvent("close-modal");
             // parserParams.EmitEvent("open-modal");
-            _modal.Show(true, true, () =>
-            {
-                 
-            });
+            _siraLog.Info($"Opening modal {_modal.name}");
+            _modal.Show(true, true);
+            _siraLog.Info($"Opened modal {_modal.name}!");
         }
 
         public void Initialize()
         {
-            void NewFunction()
-            {
-                try
-                {
-                    ModalHelper.Parse(_mainMenu.transform, UI_RESOURCE, this);
-                }
-                catch (Exception e)
-                {
-                    _siraLog.Error(e);
-                    if (e.InnerException is not null)
-                        _siraLog.Error(e.InnerException);
-                    _siraLog.Error(e.StackTrace);
-                }
-            }
-
             if (_mainMenu.wasActivatedBefore)
             {
-                NewFunction();
+                InitializeModalUI();
             }
             else
             {
                 _mainMenu.didActivateEvent += (firstActivation, hierarchy, enabling) =>
                 {
-                    if (firstActivation) NewFunction();
+                    if (firstActivation) InitializeModalUI();
                 };
             }
         }
 
+        private void InitializeModalUI()
+        {
+            try
+            {
+                ModalHelper.Parse(_mainMenu.transform, UIResource, this);
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error(e);
+                if (e.InnerException is not null)
+                    _siraLog.Error(e.InnerException);
+                _siraLog.Error(e.StackTrace);
+            }
+        }
+        
         public void Dispose()
         {
         }

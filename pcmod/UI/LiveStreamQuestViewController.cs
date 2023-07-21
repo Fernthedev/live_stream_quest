@@ -11,6 +11,8 @@ using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 using Zenject;
 
 namespace LiveStreamQuest.UI
@@ -28,6 +30,7 @@ namespace LiveStreamQuest.UI
         [Inject] private MainMenuViewController _mainMenu;
 
         [UIComponent("setupModal")] private ModalView _modal;
+        [UIComponent("vert")] private VerticalLayoutGroup _vert;
 
         [UIValue("ipAddress")]
         internal string IPAddress
@@ -41,12 +44,12 @@ namespace LiveStreamQuest.UI
         }
 
         [UIValue("port")]
-        internal int Port
+        internal string Port
         {
-            get => _config.Port;
+            get => _config.Port.ToString();
             set
             {
-                _config.Port = value;
+                _config.Port = int.Parse(value);
                 NotifyPropertyChanged();
             }
         }
@@ -90,7 +93,7 @@ namespace LiveStreamQuest.UI
         private void PostParse()
         {
             _modal.name = "LiveStreamQuestSetupModal";
-            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, 0.5f);
+            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, 1.5f);
             // parserParams.EmitEvent("close-modal");
             // parserParams.EmitEvent("open-modal");
             _siraLog.Info($"Opening modal {_modal.name}");
@@ -100,6 +103,7 @@ namespace LiveStreamQuest.UI
 
         public void Initialize()
         {
+            this.transform.SetParent(_mainMenu.transform);
             if (_mainMenu.wasActivatedBefore)
             {
                 InitializeModalUI();
@@ -117,7 +121,7 @@ namespace LiveStreamQuest.UI
         {
             try
             {
-                ModalHelper.Parse(_mainMenu.transform, UIResource, this);
+                ModalHelper.Parse(transform, UIResource, this);
             }
             catch (Exception e)
             {

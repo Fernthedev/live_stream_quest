@@ -1,18 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
-using BeatSaberMarkupLanguage.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using LiveStreamQuest.Configuration;
-using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
-using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace LiveStreamQuest.UI
@@ -28,6 +21,7 @@ namespace LiveStreamQuest.UI
         // public event PropertyChangedEventHandler? PropertyChanged;
         [Inject] private readonly PluginConfig _config = null!;
         [Inject] private MainMenuViewController _mainMenu;
+        [Inject] private MainFlowCoordinator _mainMenuFlowCoordinator;
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
@@ -93,28 +87,46 @@ namespace LiveStreamQuest.UI
         private void PostParse()
         {
             _modal.name = "LiveStreamQuestSetupModal";
-            _modal.transform.localPosition = new UnityEngine.Vector3(0, 0, 1.5f);
+
             // parserParams.EmitEvent("close-modal");
             // parserParams.EmitEvent("open-modal");
             _siraLog.Info($"Opening modal {_modal.name}");
             _modal.Show(true, true);
+            _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
+            _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
             _siraLog.Info($"Opened modal {_modal.name}!");
+        }
+
+        private void OnModalOnblockerClickedEvent()
+        {
+            _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
+        }
+
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+            InitializeModalUI();
         }
 
         public void Initialize()
         {
-            this.transform.SetParent(_mainMenu.transform);
+            transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
             if (_mainMenu.wasActivatedBefore)
             {
-                InitializeModalUI();
+                _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
             }
             else
             {
-                _mainMenu.didActivateEvent += (firstActivation, hierarchy, enabling) =>
-                {
-                    if (firstActivation) InitializeModalUI();
-                };
+                _mainMenu.didActivateEvent -= MainMenuDidActivate;
+                _mainMenu.didActivateEvent += MainMenuDidActivate;
             }
+        }
+
+        private void MainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)
+        {
+            if (!firstActivation) return;
+            
+            _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
         }
 
         private void InitializeModalUI()
@@ -131,7 +143,7 @@ namespace LiveStreamQuest.UI
                 _siraLog.Error(e.StackTrace);
             }
         }
-        
+
         public void Dispose()
         {
         }

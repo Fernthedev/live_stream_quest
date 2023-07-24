@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -13,6 +14,7 @@ using LiveStreamQuest.Managers.Network;
 using SiraUtil.Logging;
 using UnityEngine.UI;
 using Zenject;
+using PropertyChangedEventArgs = BeatSaberMarkupLanguage.Notify.PropertyChangedEventArgs;
 
 namespace LiveStreamQuest.UI
 {
@@ -107,6 +109,15 @@ namespace LiveStreamQuest.UI
                 NotifyPropertyChanged();
             }
         }
+        
+        [UIValue("connecting")]
+        internal bool Connecting => _networkManager.Connecting; 
+        
+        // TODO: Disconnect
+        [UIValue("canConnect")]
+        internal bool CanConnect => !_networkManager.Connecting;
+        
+        
 
         [UIParams] private readonly BSMLParserParams parserParams;
 
@@ -115,6 +126,7 @@ namespace LiveStreamQuest.UI
         {
             _siraLog.Info("Connecting");
             await _networkManager.Connect().ConfigureAwait(false);
+            // TODO: Loading indicator
         }
 
         [Inject]
@@ -149,6 +161,8 @@ namespace LiveStreamQuest.UI
         // Display our new view coordinator as a child of the main menu view
         public void Initialize()
         {
+            _networkManager.ConnectStateChanged.Subscribe<NetworkManager.ConnectState>(OnConnectStateChanged);
+            
             transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
             
             if (!ShowMenuOnStartup) return;
@@ -161,6 +175,19 @@ namespace LiveStreamQuest.UI
                 _mainMenu.didActivateEvent -= OnMainMenuDidActivate;
                 _mainMenu.didActivateEvent += OnMainMenuDidActivate;
             }
+        }
+
+        private void OnConnectStateChanged(NetworkManager.ConnectState o)
+        {
+            //
+            // PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            // if (propertyChanged == null)
+            //     return;
+            //
+            // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
+            // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
+            NotifyPropertyChanged(nameof(Connecting));
+            NotifyPropertyChanged(nameof(CanConnect));
         }
 
         private void OnMainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)
@@ -231,6 +258,7 @@ namespace LiveStreamQuest.UI
 
         public void Dispose()
         {
+            _networkManager.ConnectStateChanged.Unsubscribe<NetworkManager.ConnectState>(OnConnectStateChanged);
             MenuButtons.instance.UnregisterButton(_menuButton);
             _modal.Hide(true);
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);

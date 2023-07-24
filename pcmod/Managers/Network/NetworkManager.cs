@@ -15,14 +15,18 @@ namespace LiveStreamQuest.Managers.Network;
 
 public class NetworkManager : IDisposable, IInitializable
 {
+    public struct ConnectState
+    {
+        
+    }
+    
     private Socket? _socket;
 
     [Inject] private readonly PluginConfig _pluginConfig;
-
-
     [Inject] public readonly SignalBus PacketReceivedEvent;
-
+    [Inject] public readonly SignalBus ConnectStateChanged;
     [Inject] private readonly SiraLog _siraLog;
+    public bool Connecting { get; private set; }
 
     public void Initialize()
     {
@@ -48,15 +52,25 @@ public class NetworkManager : IDisposable, IInitializable
         // Set to null to mark an intentional disconnect
         _socket = null;
 
-        if (!socket.Connected) return;
+        if (socket.Connected)
+        {
+            _siraLog.Info("Disconnecting");
+            socket.Disconnect(false);
+        }
 
-        _siraLog.Info("Disconnecting");
-        socket.Disconnect(false);
         socket.Dispose();
+        ConnectStateChanged.TryFire(new ConnectState());
     }
 
-    public async Task Connect()
+    public async Task Connect(bool cancelExisting = false)
     {
+        if (Connecting && !cancelExisting)
+        {
+            _siraLog.Info("Attempting to connect while an existing attempt is still running");
+            return;
+        }
+        Connecting = true;
+        ConnectStateChanged.TryFire(new ConnectState());
         try
         {
             var endPoint = new IPEndPoint(IPAddress.Parse(_pluginConfig.Address), _pluginConfig.Port);
@@ -94,6 +108,11 @@ public class NetworkManager : IDisposable, IInitializable
         catch (Exception e)
         {
             _siraLog.Error(e);
+        }
+        finally
+        {
+            Connecting = false;
+            ConnectStateChanged.TryFire(new ConnectState());
         }
     }
 

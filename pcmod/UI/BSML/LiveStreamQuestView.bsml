@@ -16,7 +16,7 @@
             <increment-setting value="timeout" apply-on-change="true" min="0" text="Timeout" hover-hint="Timeout connection tolerance in seconds" />
             <increment-setting value="reconnectionAttempts" apply-on-change="true" min="0" text="Reconnect attempts" hover-hint="Times to attempt to reconnect. Each attempt waits longer than the previous one. " />
             <bool-setting value="connectOnStartup" apply-on-change="true" text="Connect on startup" hover-hint="Lets the PC and Quest clients connect on startup." />        
-            <action-button text="Connect"  />
+            <action-button on-click="connect" text="Connect"  />
             
             <bool-setting value="showMenuOnStartup" apply-on-change="true" text="Show menu on startup" />
         </vertical>

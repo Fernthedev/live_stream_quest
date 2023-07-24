@@ -9,6 +9,7 @@ using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using LiveStreamQuest.Configuration;
+using LiveStreamQuest.Managers.Network;
 using SiraUtil.Logging;
 using UnityEngine.UI;
 using Zenject;
@@ -31,6 +32,7 @@ namespace LiveStreamQuest.UI
         [Inject] private readonly PluginConfig _config = null!;
         [Inject] private MainMenuViewController _mainMenu;
         [Inject] private MainFlowCoordinator _mainMenuFlowCoordinator;
+        [Inject] private NetworkManager _networkManager;
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
@@ -107,6 +109,13 @@ namespace LiveStreamQuest.UI
         }
 
         [UIParams] private readonly BSMLParserParams parserParams;
+
+        [UIAction("connect")]
+        private async void OnConnect()
+        {
+            _siraLog.Info("Connecting");
+            await _networkManager.Connect().ConfigureAwait(false);
+        }
 
         [Inject]
         private void Construct()

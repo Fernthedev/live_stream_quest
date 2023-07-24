@@ -13,6 +13,6 @@ namespace LiveStreamQuest.Configuration
         
         // Seconds
         public virtual int ConnectionTimeoutSeconds { get; set; } = 180;
-        public virtual bool DontShowAgain { get; set; } = false;
+        public virtual bool ShowMenuOnStartup { get; set; } = true;
     }
 }

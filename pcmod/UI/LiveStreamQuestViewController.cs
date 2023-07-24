@@ -86,6 +86,17 @@ namespace LiveStreamQuest.UI
                 NotifyPropertyChanged();
             }
         }
+        
+        [UIValue("showMenuOnStartup")]
+        internal bool ShowMenuOnStartup
+        {
+            get => _config.ShowMenuOnStartup;
+            set
+            {
+                _config.ShowMenuOnStartup = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         [UIParams] private readonly BSMLParserParams parserParams;
 
@@ -122,6 +133,8 @@ namespace LiveStreamQuest.UI
         public void Initialize()
         {
             transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
+            
+            if (!ShowMenuOnStartup) return;
             if (_mainMenu.wasActivatedBefore)
             {
                 ShowPage();

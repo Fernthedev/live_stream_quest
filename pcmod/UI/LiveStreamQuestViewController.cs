@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -17,6 +19,8 @@ namespace LiveStreamQuest.UI
         private const string UIResource = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
 
         [Inject] private readonly SiraLog _siraLog;
+
+        private Task _initializeTask;
 
         // public event PropertyChangedEventHandler? PropertyChanged;
         [Inject] private readonly PluginConfig _config = null!;
@@ -82,32 +86,35 @@ namespace LiveStreamQuest.UI
         }
 
         [UIParams] private readonly BSMLParserParams parserParams;
-
-        [UIAction("#post-parse")]
-        private void PostParse()
+        
+        [Inject]
+        private void Construct()
         {
-            _modal.name = "LiveStreamQuestSetupModal";
-
-            // parserParams.EmitEvent("close-modal");
-            // parserParams.EmitEvent("open-modal");
-            _siraLog.Info($"Opening modal {_modal.name}");
-            _modal.Show(true, true);
-            _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
-            _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
-            _siraLog.Info($"Opened modal {_modal.name}!");
+            InitializeUI();
         }
-
-        private void OnModalOnblockerClickedEvent()
+        
+        // Initialize BSML early on
+        private void InitializeUI()
         {
-            _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
-        }
+            _initializeTask = Task.Run(() =>
+            {
+                try
+                {
+                    ModalHelper.Parse(transform, UIResource, this);
+                }
+                catch (Exception e)
+                {
+                    _siraLog.Error(e);
+                    if (e.InnerException is not null)
+                        _siraLog.Error(e.InnerException);
+                    _siraLog.Error(e.StackTrace);
+                }
+            });
 
-        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
-        {
-            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-            InitializeModalUI();
         }
-
+        
+        // Setup modal if possible or wait
+        // Display our new view coordinator as a child of the main menu view
         public void Initialize()
         {
             transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
@@ -117,35 +124,60 @@ namespace LiveStreamQuest.UI
             }
             else
             {
-                _mainMenu.didActivateEvent -= MainMenuDidActivate;
-                _mainMenu.didActivateEvent += MainMenuDidActivate;
+                _mainMenu.didActivateEvent -= OnMainMenuDidActivate;
+                _mainMenu.didActivateEvent += OnMainMenuDidActivate;
             }
         }
-
-        private void MainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)
+        
+        private void OnMainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)
         {
             if (!firstActivation) return;
             
             _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
         }
-
-        private void InitializeModalUI()
+        
+        // Fixup modal after construction
+        [UIAction("#post-parse")]
+        private void PostParse()
         {
-            try
-            {
-                ModalHelper.Parse(transform, UIResource, this);
-            }
-            catch (Exception e)
-            {
-                _siraLog.Error(e);
-                if (e.InnerException is not null)
-                    _siraLog.Error(e.InnerException);
-                _siraLog.Error(e.StackTrace);
-            }
+            _modal.name = "LiveStreamQuestSetupModal";
+            
+            _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
+            _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
+        }
+        
+        // Dismiss view controller when modal is dismissed
+        private void OnModalOnblockerClickedEvent()
+        {
+            _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
+        }
+
+        // Display modal
+        protected override async void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+
+            // Don't block the main thread with BSML nonsense
+            await _initializeTask.ConfigureAwait(true);
+            _siraLog.Info($"Opening modal {_modal.name}");
+            _modal.Show(true, true);
+            _siraLog.Info($"Opened modal {_modal.name}!");
+            
+            // parserParams.EmitEvent("close-modal");
+            // parserParams.EmitEvent("open-modal");
+        }
+
+        // Close modal
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+            _modal.Hide(true);
         }
 
         public void Dispose()
         {
+            _modal.Hide(true);
+            _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
         }
     }
 }

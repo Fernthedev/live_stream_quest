@@ -53,7 +53,11 @@ namespace LiveStreamQuest.UI
             get => _config.Port.ToString();
             set
             {
-                _config.Port = int.Parse(value);
+                if (int.TryParse(value, out var newValue))
+                {
+                    _config.Port = newValue;
+                }
+                
                 NotifyPropertyChanged();
             }
         }

@@ -163,6 +163,10 @@ namespace LiveStreamQuest.UI
 
         private void ShowPage()
         {
+            if (isInViewControllerHierarchy)
+            {
+                return;
+            }
             _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
         }
 

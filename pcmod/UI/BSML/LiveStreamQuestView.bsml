@@ -12,7 +12,7 @@
             <text align="Top" word-wrapping="true" text="For advanced users, it is recommended that you set up a reserved IP for your Quest. This will ensure the Quest won't change IP when it powers on." />
                 
             <string-setting value="ipAddress" apply-on-change="true" text="IP Address" hover-hint="Set the IP of your Quest"  />
-            <string-setting value="port" apply-on-change="true" text="Port" hover-hint="Set the port of your Quest" />
+            <string-setting value="port" id="portField" apply-on-change="true" text="Port" hover-hint="Set the port of your Quest" />
             <increment-setting value="timeout" apply-on-change="true" min="0" text="Timeout" hover-hint="Timeout connection tolerance in seconds" />
             <increment-setting value="reconnectionAttempts" apply-on-change="true" min="0" text="Reconnect attempts" hover-hint="Times to attempt to reconnect. Each attempt waits longer than the previous one. " />
             <bool-setting value="connectOnStartup" apply-on-change="true" text="Connect on startup" hover-hint="Lets the PC and Quest clients connect on startup." />        

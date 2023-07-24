@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.MenuButtons;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -31,6 +34,7 @@ namespace LiveStreamQuest.UI
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
+        [UIComponent("portField")] private StringSetting _portField;
 
         [UIValue("ipAddress")]
         internal string IPAddress
@@ -166,6 +170,17 @@ namespace LiveStreamQuest.UI
 
             _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
             _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
+
+
+            
+            
+            var oldKeyboard = _portField.modalKeyboard.keyboard;
+            // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
+            // _portField.modalKeyboard.keyboard.keys.Clear();
+            // _portField.modalKeyboard.keyboard.AddKeys(KEYBOARD.NUMPAD);
+            // _portField.modalKeyboard.keyboard = new KEYBOARD(oldKeyboard.container, KEYBOARD.NUMPAD);
+            // _portField.gameObject.SetActive(true);
+            // _portField.modalKeyboard.OnEnable();
         }
 
         // Dismiss view controller when modal is dismissed
@@ -175,7 +190,7 @@ namespace LiveStreamQuest.UI
         }
 
         // Display modal
-        protected override async void DidActivate(bool firstActivation, bool addedToHierarchy,
+        public override async void DidActivate(bool firstActivation, bool addedToHierarchy,
             bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
@@ -191,7 +206,7 @@ namespace LiveStreamQuest.UI
         }
 
         // Close modal
-        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        public override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
             _modal.Hide(true);

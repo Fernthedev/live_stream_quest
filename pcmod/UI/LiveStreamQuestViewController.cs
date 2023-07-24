@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.MenuButtons;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
@@ -18,9 +18,11 @@ namespace LiveStreamQuest.UI
     {
         private const string UIResource = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
 
+        private Task _initializeTask;
+        private MenuButton _menuButton;
+
         [Inject] private readonly SiraLog _siraLog;
 
-        private Task _initializeTask;
 
         // public event PropertyChangedEventHandler? PropertyChanged;
         [Inject] private readonly PluginConfig _config = null!;
@@ -86,13 +88,13 @@ namespace LiveStreamQuest.UI
         }
 
         [UIParams] private readonly BSMLParserParams parserParams;
-        
+
         [Inject]
         private void Construct()
         {
             InitializeUI();
         }
-        
+
         // Initialize BSML early on
         private void InitializeUI()
         {
@@ -109,10 +111,12 @@ namespace LiveStreamQuest.UI
                         _siraLog.Error(e.InnerException);
                     _siraLog.Error(e.StackTrace);
                 }
-            });
 
+                _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
+                MenuButtons.instance.RegisterButton(_menuButton);
+            });
         }
-        
+
         // Setup modal if possible or wait
         // Display our new view coordinator as a child of the main menu view
         public void Initialize()
@@ -120,7 +124,7 @@ namespace LiveStreamQuest.UI
             transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
             if (_mainMenu.wasActivatedBefore)
             {
-                _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
+                ShowPage();
             }
             else
             {
@@ -128,24 +132,29 @@ namespace LiveStreamQuest.UI
                 _mainMenu.didActivateEvent += OnMainMenuDidActivate;
             }
         }
-        
+
         private void OnMainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)
         {
             if (!firstActivation) return;
-            
+
+            ShowPage();
+        }
+
+        private void ShowPage()
+        {
             _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
         }
-        
+
         // Fixup modal after construction
         [UIAction("#post-parse")]
         private void PostParse()
         {
             _modal.name = "LiveStreamQuestSetupModal";
-            
+
             _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
             _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
         }
-        
+
         // Dismiss view controller when modal is dismissed
         private void OnModalOnblockerClickedEvent()
         {
@@ -153,7 +162,8 @@ namespace LiveStreamQuest.UI
         }
 
         // Display modal
-        protected override async void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        protected override async void DidActivate(bool firstActivation, bool addedToHierarchy,
+            bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
@@ -162,7 +172,7 @@ namespace LiveStreamQuest.UI
             _siraLog.Info($"Opening modal {_modal.name}");
             _modal.Show(true, true);
             _siraLog.Info($"Opened modal {_modal.name}!");
-            
+
             // parserParams.EmitEvent("close-modal");
             // parserParams.EmitEvent("open-modal");
         }
@@ -176,6 +186,7 @@ namespace LiveStreamQuest.UI
 
         public void Dispose()
         {
+            MenuButtons.instance.UnregisterButton(_menuButton);
             _modal.Hide(true);
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
         }

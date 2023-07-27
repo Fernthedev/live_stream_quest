@@ -35,7 +35,7 @@ public class NetworkManager : IDisposable, IInitializable
         if (!_pluginConfig.ConnectOnStartup) return;
 
 
-        _ = Connect().ConfigureAwait(false);
+        _ = Task.Run(() => Connect()).ConfigureAwait(false);
     }
 
     public void Dispose()
@@ -128,7 +128,7 @@ public class NetworkManager : IDisposable, IInitializable
         {
             using var networkStream = new NetworkStream(socket, false);
 
-            while (socket.Connected)
+            while (_socket == socket && socket.Connected)
             {
                 await OnReceive(networkStream).ConfigureAwait(false);
             }

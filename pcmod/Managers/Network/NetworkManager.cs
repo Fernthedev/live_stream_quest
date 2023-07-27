@@ -27,6 +27,7 @@ public class NetworkManager : IDisposable, IInitializable
     [Inject] public readonly SignalBus ConnectStateChanged;
     [Inject] private readonly SiraLog _siraLog;
     public bool Connecting { get; private set; }
+    public bool Connected => _socket is { Connected: true };
 
     public void Initialize()
     {

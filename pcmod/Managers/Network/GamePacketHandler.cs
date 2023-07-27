@@ -15,11 +15,13 @@ public class GamePacketHandler : IInitializable, IDisposable
     [Inject] private readonly Submission _submission;
     [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
+    [Inject]
+    private readonly IReturnToMenuController _returnToMenuController;
     [Inject] private readonly VRControllerManager _vrControllerManager;
     [Inject] private readonly SiraLog _siraLog;
 
     private ulong _packetId;
-
+    private bool _ready;
 
     public void HandlePacket(PacketWrapper packetWrapper)
     {
@@ -36,18 +38,20 @@ public class GamePacketHandler : IInitializable, IDisposable
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");
-                _pauseController.HandlePauseMenuManagerDidPressContinueButton();
+                _ready = true;
+                ResumeMap();
 
                 if (_audioTimeSyncController is { isReady: true, isAudioLoaded: true, _canStartSong: true })
                 {
                     _audioTimeSyncController.SeekTo(packetWrapper.StartMap.SongTime);
                 }
 
-
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
                 _siraLog.Info("Exit the map");
                 _songController.StopSong();
+                _returnToMenuController.ReturnToMenu();
+                
                 break;
             case PacketWrapper.PacketOneofCase.PauseMap:
                 _siraLog.Info("Pause map");
@@ -61,22 +65,45 @@ public class GamePacketHandler : IInitializable, IDisposable
         }
     }
 
+    private void ResumeMap()
+    {
+        _pauseController.HandlePauseMenuManagerDidPressContinueButton();
+    }
+
     private void PauseMap()
     {
         _pauseController.Pause();
-
-        var pausePacketWrapper = new PacketWrapper
-        {
-            ReadyUp = new ReadyUp()
-        };
-        _networkManager.SendPacket(pausePacketWrapper);
+        // _songController.PauseSong();
+        // _audioTimeSyncController.Pause();
     }
 
     public void Initialize()
     {
         _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
         _submission.DisableScoreSubmission(Plugin.ID);
+        if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
+        {
+            AudioTimeSyncControllerOnstateChangedEvent();
+        }
+        _audioTimeSyncController.stateChangedEvent -= AudioTimeSyncControllerOnstateChangedEvent;
+        _audioTimeSyncController.stateChangedEvent += AudioTimeSyncControllerOnstateChangedEvent;
+    }
+
+    // Pause until ready
+    private void AudioTimeSyncControllerOnstateChangedEvent()
+    {
+        if (_ready) return;
+        if (_audioTimeSyncController.state != AudioTimeSyncController.State.Playing) return;
+        
         PauseMap();
+            
+        _siraLog.Info("Send ready up packet");
+        // Tell Quest we're ready
+        var pausePacketWrapper = new PacketWrapper
+        {
+            ReadyUp = new ReadyUp()
+        };
+        _networkManager.SendPacket(pausePacketWrapper);
     }
 
     public void Dispose()

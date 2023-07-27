@@ -100,11 +100,12 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
-MAKE_HOOK_MATCH(GameSongController_PauseSong, &GameSongController::PauseSong,
-                void, GameSongController *self) {
-  GameSongController_PauseSong(self);
+MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
+                &AudioTimeSyncController::Pause, void,
+                AudioTimeSyncController *self) {
+  AudioTimeSyncController_PauseSong(self);
 
-  Manager::GetInstance()->StartWait(self->audioTimeSyncController->songTime);
+  Manager::GetInstance()->StartWait(self->songTime);
 
   // Exit map
   PacketWrapper packetWrapper;
@@ -112,21 +113,24 @@ MAKE_HOOK_MATCH(GameSongController_PauseSong, &GameSongController::PauseSong,
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
-MAKE_HOOK_MATCH(GameSongController_ResumeSong, &GameSongController::ResumeSong,
-                void, GameSongController *self) {
-  GameSongController_ResumeSong(self);
+MAKE_HOOK_MATCH(AudioTimeSyncController_ResumeSong,
+                &AudioTimeSyncController::Resume, void,
+                AudioTimeSyncController *self) {
+  AudioTimeSyncController_ResumeSong(self);
   Manager::GetInstance()->ReadyQuestUp();
 }
 
-MAKE_HOOK_MATCH(GameSongController_StartSong, &GameSongController::StartSong,
-                void, GameSongController *self, float songTimeOffset) {
-  GameSongController_StartSong(self, songTimeOffset);
+MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong,
+                &AudioTimeSyncController::StartSong, void,
+                AudioTimeSyncController *self, float songTimeOffset) {
+  AudioTimeSyncController_StartSong(self, songTimeOffset);
   Manager::GetInstance()->ReadyQuestUp();
 }
 
-MAKE_HOOK_MATCH(GameSongController_StopSong, &GameSongController::StopSong,
-                void, GameSongController *self) {
-  GameSongController_StopSong(self);
+MAKE_HOOK_MATCH(AudioTimeSyncController_StopSong,
+                &AudioTimeSyncController::StopSong, void,
+                AudioTimeSyncController *self) {
+  AudioTimeSyncController_StopSong(self);
 
   // Exit map
   PacketWrapper packetWrapper;
@@ -245,9 +249,9 @@ extern "C" void load() {
   INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
   INSTALL_HOOK(getLoggerOld(),
                MenuTransitionsHelper_HandleMainGameSceneDidFinish)
-  INSTALL_HOOK(getLoggerOld(), GameSongController_StartSong)
-  INSTALL_HOOK(getLoggerOld(), GameSongController_ResumeSong)
-  INSTALL_HOOK(getLoggerOld(), GameSongController_PauseSong)
+  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_StartSong)
+  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_ResumeSong)
+  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_PauseSong)
   // INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
   // INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
   //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)

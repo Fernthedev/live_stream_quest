@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
 using SiraUtil.Submissions;
+using UnityEngine;
 using Zenject;
 
 namespace LiveStreamQuest.Managers.Network;
@@ -14,9 +16,10 @@ public class GamePacketHandler : IInitializable, IDisposable
     [Inject] private readonly NetworkManager _networkManager;
     [Inject] private readonly Submission _submission;
     [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
+    [Inject(Optional = true)] private FirstPersonFlyingController? _fpfc;
 
-    [Inject]
-    private readonly IReturnToMenuController _returnToMenuController;
+
+    [Inject] private readonly IReturnToMenuController _returnToMenuController;
     [Inject] private readonly VRControllerManager _vrControllerManager;
     [Inject] private readonly SiraLog _siraLog;
 
@@ -51,7 +54,7 @@ public class GamePacketHandler : IInitializable, IDisposable
                 _siraLog.Info("Exit the map");
                 _songController.StopSong();
                 _returnToMenuController.ReturnToMenu();
-                
+
                 break;
             case PacketWrapper.PacketOneofCase.PauseMap:
                 _siraLog.Info("Pause map");
@@ -67,11 +70,21 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     private void ResumeMap()
     {
+        if (_fpfc != null)
+        {
+            _fpfc.enabled = false;
+        }
+
         _pauseController.HandlePauseMenuManagerDidPressContinueButton();
     }
 
     private void PauseMap()
     {
+        if (_fpfc != null)
+        {
+            _fpfc.enabled = _fpfc._shouldBeEnabled;
+        }
+
         _pauseController.Pause();
         // _songController.PauseSong();
         // _audioTimeSyncController.Pause();
@@ -79,12 +92,14 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     public void Initialize()
     {
+        _fpfc ??= Resources.FindObjectsOfTypeAll<FirstPersonFlyingController>().FirstOrDefault();
         _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
         _submission.DisableScoreSubmission(Plugin.ID);
         if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
         {
             AudioTimeSyncControllerOnstateChangedEvent();
         }
+
         _audioTimeSyncController.stateChangedEvent -= AudioTimeSyncControllerOnstateChangedEvent;
         _audioTimeSyncController.stateChangedEvent += AudioTimeSyncControllerOnstateChangedEvent;
     }
@@ -94,9 +109,9 @@ public class GamePacketHandler : IInitializable, IDisposable
     {
         if (_ready) return;
         if (_audioTimeSyncController.state != AudioTimeSyncController.State.Playing) return;
-        
+
         PauseMap();
-            
+
         _siraLog.Info("Send ready up packet");
         // Tell Quest we're ready
         var pausePacketWrapper = new PacketWrapper
@@ -108,6 +123,11 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     public void Dispose()
     {
+        if (_fpfc != null)
+        {
+            _fpfc.enabled = _fpfc._shouldBeEnabled;
+        }
+
         _submission.Dispose();
         _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
     }

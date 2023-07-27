@@ -15,11 +15,6 @@ public class GamePacketHandler : IInitializable, IDisposable
     [Inject] private readonly NetworkManager _networkManager;
     [Inject] private readonly Submission _submission;
     [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
-    [Inject(Optional = true)] private IFPFCSettings? _siraFpfc;
-    [Inject(Optional = true)] private FirstPersonFlyingController? _fpfc;
-
-    private bool _fpfcEnabled = false;
-    private bool _lockCameraView = false;
 
 
     [Inject] private readonly IReturnToMenuController _returnToMenuController;
@@ -105,9 +100,6 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     public void Initialize()
     {
-        _fpfcEnabled = _siraFpfc?.Enabled ?? false;
-        _lockCameraView = _siraFpfc?.LockViewOnDisable ?? false;
-
         _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
         _submission.DisableScoreSubmission(Plugin.ID);
         if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
@@ -138,16 +130,6 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     public void Dispose()
     {
-        if (_fpfc != null)
-        {
-            _fpfc.enabled = _fpfc._shouldBeEnabled;
-        }
-
-        if (_siraFpfc != null)
-        {
-            _siraFpfc.Enabled = _fpfcEnabled;
-        }
-
         _submission.Dispose();
         _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
     }

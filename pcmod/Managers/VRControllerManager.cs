@@ -19,8 +19,6 @@ public class VRControllerManager : IInitializable, ITickable
     [Inject] private readonly PlayerTransforms _playerTransforms;
     [Inject] private readonly SiraLog _siraLog;
     [Inject] private readonly PauseController _pauseController;
-    [Inject(Optional = true)] private readonly IFPFCSettings? _fpfc;
-    [Inject(Optional = true)] private readonly FirstPersonFlyingController? _fpfcController;
     [Inject(Optional = true)] private readonly MainCamera? _mainCamera;
 
 
@@ -46,25 +44,8 @@ public class VRControllerManager : IInitializable, ITickable
     {
         _playerVRControllersManager.DisableAllVRControllers();
 
-
-        var smoothCamera = Resources.FindObjectsOfTypeAll<SmoothCamera>()
-            .FirstOrDefault(x => x.transform
-                                     .parent.name == "LocalPlayerGameCore"
-                                 && x.gameObject.activeInHierarchy);
-
+        // TODO: Replace with a GameObject and parent so we can disable/enable the offset
         _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
-        // else if (smoothCamera != null)
-        // {
-        //     _properCameraTransform = smoothCamera.transform;
-        // }
-        // else if (_fpfcController != null && (_fpfc is { Enabled: true } || _fpfcController.enabled))
-        // {
-        //     _properCameraTransform = _fpfcController._cameraTransform;
-        // }
-        // else if (Camera.main != null)
-        // {
-        //     _properCameraTransform = Camera.main.transform;
-        // }
     }
 
     public void Tick()
@@ -151,29 +132,11 @@ public class VRControllerManager : IInitializable, ITickable
             updated = false;
         }
 
+        // only move if not paused
         if (!_pauseController._paused)
         {
             _properCameraTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
-            // var headResult =
-            //     _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation,
-            //         deltaTime);
-            //
-            // if (_properCameraTransform != null)
-            // {
-            //     _properCameraTransform.SetPositionAndRotation(headResult.Item1, headResult.Item2);
-            // }
         }
-        
-        // var headResult =
-        //     _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation,
-        //         deltaTime);
-        //
-        //
-        // if (_properCameraTransform != null)
-        // {
-        //     _properCameraTransform.SetPositionAndRotation(_playerTransforms._headTransform.position,
-        //         _playerTransforms._headTransform.rotation);
-        // }
 
         _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation,
             deltaTime);

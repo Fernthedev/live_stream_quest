@@ -29,30 +29,31 @@ namespace LiveStreamQuest.Protos {
             "GAMgASgCIjgKClF1YXRlcm5pb24SCQoBeBgBIAEoAhIJCgF5GAIgASgCEgkK",
             "AXoYAyABKAISCQoBdxgEIAEoAiJGCglUcmFuc2Zvcm0SGgoIcG9zaXRpb24Y",
             "ASABKAsyCC5WZWN0b3IzEh0KCHJvdGF0aW9uGAIgASgLMgsuUXVhdGVybmlv",
-            "biLqAQoOVXBkYXRlUG9zaXRpb24SJgoNaGVhZFRyYW5zZm9ybRgBIAEoCzIK",
+            "biL8AQoOVXBkYXRlUG9zaXRpb24SJgoNaGVhZFRyYW5zZm9ybRgBIAEoCzIK",
             "LlRyYW5zZm9ybUgAiAEBEiYKDWxlZnRUcmFuc2Zvcm0YAiABKAsyCi5UcmFu",
             "c2Zvcm1IAYgBARInCg5yaWdodFRyYW5zZm9ybRgDIAEoCzIKLlRyYW5zZm9y",
             "bUgCiAEBEigKBHRpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
-            "YW1wQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9sZWZ0VHJhbnNmb3JtQhEKD19y",
-            "aWdodFRyYW5zZm9ybSJLCgxTdGFydEJlYXRtYXASDwoHbGV2ZWxJZBgBIAEo",
-            "CRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRISCgpkaWZmaWN1bHR5GAMgASgF",
-            "IiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoFZXJyb3IYASABKAkiCQoHUmVh",
-            "ZHlVcCIcCghTdGFydE1hcBIQCghzb25nVGltZRgBIAEoAiIJCgdFeGl0TWFw",
-            "IgoKCFBhdXNlTWFwIq8CCg1QYWNrZXRXcmFwcGVyEhUKDXF1ZXJ5UmVzdWx0",
-            "SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24YAiABKAsyDy5VcGRhdGVQb3Np",
-            "dGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEoCzINLlN0YXJ0QmVhdG1hcEgA",
-            "EjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCABKAsyFC5TdGFydEJlYXRtYXBG",
-            "YWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzIILlJlYWR5VXBIABIdCghzdGFy",
-            "dE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoHZXhpdE1hcBgHIAEoCzIILkV4",
-            "aXRNYXBIABIdCghwYXVzZU1hcBgIIAEoCzIJLlBhdXNlTWFwSABCCAoGUGFj",
-            "a2V0QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJvdG9zYgZwcm90bzM="));
+            "YW1wEhAKCHNvbmdUaW1lGAUgASgCQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9s",
+            "ZWZ0VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJLCgxTdGFydEJlYXRt",
+            "YXASDwoHbGV2ZWxJZBgBIAEoCRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRIS",
+            "CgpkaWZmaWN1bHR5GAMgASgFIiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoF",
+            "ZXJyb3IYASABKAkiCQoHUmVhZHlVcCIcCghTdGFydE1hcBIQCghzb25nVGlt",
+            "ZRgBIAEoAiIJCgdFeGl0TWFwIgoKCFBhdXNlTWFwIq8CCg1QYWNrZXRXcmFw",
+            "cGVyEhUKDXF1ZXJ5UmVzdWx0SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24Y",
+            "AiABKAsyDy5VcGRhdGVQb3NpdGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEo",
+            "CzINLlN0YXJ0QmVhdG1hcEgAEjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCAB",
+            "KAsyFC5TdGFydEJlYXRtYXBGYWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzII",
+            "LlJlYWR5VXBIABIdCghzdGFydE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoH",
+            "ZXhpdE1hcBgHIAEoCzIILkV4aXRNYXBIABIdCghwYXVzZU1hcBgIIAEoCzIJ",
+            "LlBhdXNlTWFwSABCCAoGUGFja2V0QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJv",
+            "dG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Vector3), global::LiveStreamQuest.Protos.Vector3.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Quaternion), global::LiveStreamQuest.Protos.Quaternion.Parser, new[]{ "X", "Y", "Z", "W" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Transform), global::LiveStreamQuest.Protos.Transform.Parser, new[]{ "Position", "Rotation" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform", "Time" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform", "Time", "SongTime" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmap), global::LiveStreamQuest.Protos.StartBeatmap.Parser, new[]{ "LevelId", "Characteristic", "Difficulty" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmapFailure), global::LiveStreamQuest.Protos.StartBeatmapFailure.Parser, new[]{ "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ReadyUp), global::LiveStreamQuest.Protos.ReadyUp.Parser, null, null, null, null, null),
@@ -66,6 +67,7 @@ namespace LiveStreamQuest.Protos {
 
   }
   #region Messages
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class Vector3 : pb::IMessage<Vector3>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -329,6 +331,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class Quaternion : pb::IMessage<Quaternion>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -629,6 +632,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class Transform : pb::IMessage<Transform>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -873,6 +877,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class UpdatePosition : pb::IMessage<UpdatePosition>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -911,6 +916,7 @@ namespace LiveStreamQuest.Protos {
       leftTransform_ = other.leftTransform_ != null ? other.leftTransform_.Clone() : null;
       rightTransform_ = other.rightTransform_ != null ? other.rightTransform_.Clone() : null;
       time_ = other.time_ != null ? other.time_.Clone() : null;
+      songTime_ = other.songTime_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -971,6 +977,18 @@ namespace LiveStreamQuest.Protos {
       }
     }
 
+    /// <summary>Field number for the "songTime" field.</summary>
+    public const int SongTimeFieldNumber = 5;
+    private float songTime_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float SongTime {
+      get { return songTime_; }
+      set {
+        songTime_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -990,6 +1008,7 @@ namespace LiveStreamQuest.Protos {
       if (!object.Equals(LeftTransform, other.LeftTransform)) return false;
       if (!object.Equals(RightTransform, other.RightTransform)) return false;
       if (!object.Equals(Time, other.Time)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(SongTime, other.SongTime)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1001,6 +1020,7 @@ namespace LiveStreamQuest.Protos {
       if (leftTransform_ != null) hash ^= LeftTransform.GetHashCode();
       if (rightTransform_ != null) hash ^= RightTransform.GetHashCode();
       if (time_ != null) hash ^= Time.GetHashCode();
+      if (SongTime != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(SongTime);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1035,6 +1055,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(34);
         output.WriteMessage(Time);
       }
+      if (SongTime != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(SongTime);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1061,6 +1085,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(34);
         output.WriteMessage(Time);
       }
+      if (SongTime != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(SongTime);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1082,6 +1110,9 @@ namespace LiveStreamQuest.Protos {
       }
       if (time_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Time);
+      }
+      if (SongTime != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1118,6 +1149,9 @@ namespace LiveStreamQuest.Protos {
           Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
         }
         Time.MergeFrom(other.Time);
+      }
+      if (other.SongTime != 0F) {
+        SongTime = other.SongTime;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1160,6 +1194,10 @@ namespace LiveStreamQuest.Protos {
               Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             input.ReadMessage(Time);
+            break;
+          }
+          case 45: {
+            SongTime = input.ReadFloat();
             break;
           }
         }
@@ -1205,6 +1243,10 @@ namespace LiveStreamQuest.Protos {
             input.ReadMessage(Time);
             break;
           }
+          case 45: {
+            SongTime = input.ReadFloat();
+            break;
+          }
         }
       }
     }
@@ -1212,6 +1254,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class StartBeatmap : pb::IMessage<StartBeatmap>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -1672,6 +1715,7 @@ namespace LiveStreamQuest.Protos {
   /// PC/Quest will wait until both are ready and loaded
   /// Quest will then send the Start packet and the level starts
   /// </summary>
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class ReadyUp : pb::IMessage<ReadyUp>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -1824,6 +1868,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class StartMap : pb::IMessage<StartMap>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -2013,6 +2058,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class ExitMap : pb::IMessage<ExitMap>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -2165,6 +2211,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class PauseMap : pb::IMessage<PauseMap>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -2317,6 +2364,7 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  [System.ComponentModel.ImmutableObject(true)]
   public sealed partial class PacketWrapper : pb::IMessage<PacketWrapper>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage

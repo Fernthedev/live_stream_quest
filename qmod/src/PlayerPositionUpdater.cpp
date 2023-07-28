@@ -4,13 +4,16 @@
 
 #include "custom-types/shared/coroutine.hpp"
 
+#include "UnityEngine/Resources.hpp"
+#include "UnityEngine/Transform.hpp"
 #include "UnityEngine/WaitForSecondsRealtime.hpp"
 
 #include <chrono>
 
 DEFINE_TYPE(LiveStreamQuest, PlayerPositionUpdater);
 
-google::protobuf::Timestamp ConvertToProtobufTimestamp(const std::chrono::time_point<std::chrono::system_clock> &timePoint) {
+google::protobuf::Timestamp ConvertToProtobufTimestamp(
+    const std::chrono::time_point<std::chrono::system_clock> &timePoint) {
   std::chrono::nanoseconds duration = timePoint.time_since_epoch();
   std::chrono::seconds seconds =
       std::chrono::duration_cast<std::chrono::seconds>(duration);
@@ -52,6 +55,11 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
 
     auto *updatePosition = packetWrapper.mutable_updateposition();
 
+    // Song Time
+    if (self->audioTimeSyncController) {
+      updatePosition->set_songtime(self->audioTimeSyncController->songTime);
+    }
+
     auto playerTransform = self->playerTransforms;
 
     // Head
@@ -88,6 +96,10 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
 
 void LiveStreamQuest::PlayerPositionUpdater::Awake() {
   this->playerTransforms = GetComponent<GlobalNamespace::PlayerTransforms *>();
+  this->audioTimeSyncController =
+      UnityEngine::Resources::FindObjectsOfTypeAll<
+          GlobalNamespace::AudioTimeSyncController *>()
+          .FirstOrDefault();
   CRASH_UNLESS(this->playerTransforms);
 
   this->StartCoroutine(

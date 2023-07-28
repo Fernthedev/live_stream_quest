@@ -752,6 +752,7 @@ class UpdatePosition final :
     kLeftTransformFieldNumber = 2,
     kRightTransformFieldNumber = 3,
     kTimeFieldNumber = 4,
+    kSongTimeFieldNumber = 5,
   };
   // optional .Transform headTransform = 1;
   bool has_headtransform() const;
@@ -825,6 +826,15 @@ class UpdatePosition final :
       ::PROTOBUF_NAMESPACE_ID::Timestamp* time);
   ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_time();
 
+  // float songTime = 5;
+  void clear_songtime();
+  float songtime() const;
+  void set_songtime(float value);
+  private:
+  float _internal_songtime() const;
+  void _internal_set_songtime(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:UpdatePosition)
  private:
   class _Internal;
@@ -838,6 +848,7 @@ class UpdatePosition final :
   ::Transform* lefttransform_;
   ::Transform* righttransform_;
   ::PROTOBUF_NAMESPACE_ID::Timestamp* time_;
+  float songtime_;
   friend struct ::TableStruct_live_5fstream_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2681,6 +2692,26 @@ inline void UpdatePosition::set_allocated_time(::PROTOBUF_NAMESPACE_ID::Timestam
   }
   time_ = time;
   // @@protoc_insertion_point(field_set_allocated:UpdatePosition.time)
+}
+
+// float songTime = 5;
+inline void UpdatePosition::clear_songtime() {
+  songtime_ = 0;
+}
+inline float UpdatePosition::_internal_songtime() const {
+  return songtime_;
+}
+inline float UpdatePosition::songtime() const {
+  // @@protoc_insertion_point(field_get:UpdatePosition.songTime)
+  return _internal_songtime();
+}
+inline void UpdatePosition::_internal_set_songtime(float value) {
+  
+  songtime_ = value;
+}
+inline void UpdatePosition::set_songtime(float value) {
+  _internal_set_songtime(value);
+  // @@protoc_insertion_point(field_set:UpdatePosition.songTime)
 }
 
 // -------------------------------------------------------------------

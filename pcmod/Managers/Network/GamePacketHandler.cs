@@ -2,7 +2,6 @@
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
 using SiraUtil.Submissions;
-using SiraUtil.Tools.FPFC;
 using Zenject;
 
 namespace LiveStreamQuest.Managers.Network;
@@ -19,6 +18,7 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     [Inject] private readonly IReturnToMenuController _returnToMenuController;
     [Inject] private readonly VRControllerManager _vrControllerManager;
+    [Inject] private readonly TimeDesyncFixManager _timeDesyncFixManager;
     [Inject] private readonly SiraLog _siraLog;
 
     private ulong _packetId;
@@ -36,6 +36,7 @@ public class GamePacketHandler : IInitializable, IDisposable
 
                 _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform,
                     updatePositionData.RightTransform, updatePositionData.LeftTransform, updatePositionData.Time);
+                _timeDesyncFixManager.UpdateTime(packetWrapper.UpdatePosition.SongTime);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");

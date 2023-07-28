@@ -63,7 +63,8 @@ constexpr UpdatePosition::UpdatePosition(
   : headtransform_(nullptr)
   , lefttransform_(nullptr)
   , righttransform_(nullptr)
-  , time_(nullptr){}
+  , time_(nullptr)
+  , songtime_(0){}
 struct UpdatePositionDefaultTypeInternal {
   constexpr UpdatePositionDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -199,9 +200,11 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, lefttransform_),
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, righttransform_),
   PROTOBUF_FIELD_OFFSET(::UpdatePosition, time_),
+  PROTOBUF_FIELD_OFFSET(::UpdatePosition, songtime_),
   0,
   1,
   2,
+  ~0u,
   ~0u,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::StartBeatmap, _internal_metadata_),
@@ -264,14 +267,14 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, -1, sizeof(::Vector3)},
   { 9, -1, -1, sizeof(::Quaternion)},
   { 19, -1, -1, sizeof(::Transform)},
-  { 27, 37, -1, sizeof(::UpdatePosition)},
-  { 41, -1, -1, sizeof(::StartBeatmap)},
-  { 50, -1, -1, sizeof(::StartBeatmapFailure)},
-  { 57, -1, -1, sizeof(::ReadyUp)},
-  { 63, -1, -1, sizeof(::StartMap)},
-  { 70, -1, -1, sizeof(::ExitMap)},
-  { 76, -1, -1, sizeof(::PauseMap)},
-  { 82, -1, -1, sizeof(::PacketWrapper)},
+  { 27, 38, -1, sizeof(::UpdatePosition)},
+  { 43, -1, -1, sizeof(::StartBeatmap)},
+  { 52, -1, -1, sizeof(::StartBeatmapFailure)},
+  { 59, -1, -1, sizeof(::ReadyUp)},
+  { 65, -1, -1, sizeof(::StartMap)},
+  { 72, -1, -1, sizeof(::ExitMap)},
+  { 78, -1, -1, sizeof(::PauseMap)},
+  { 84, -1, -1, sizeof(::PacketWrapper)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -294,33 +297,34 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VA
   "\002 \001(\002\022\t\n\001z\030\003 \001(\002\"8\n\nQuaternion\022\t\n\001x\030\001 \001("
   "\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002\022\t\n\001w\030\004 \001(\002\"F\n\tTr"
   "ansform\022\032\n\010position\030\001 \001(\0132\010.Vector3\022\035\n\010r"
-  "otation\030\002 \001(\0132\013.Quaternion\"\352\001\n\016UpdatePos"
+  "otation\030\002 \001(\0132\013.Quaternion\"\374\001\n\016UpdatePos"
   "ition\022&\n\rheadTransform\030\001 \001(\0132\n.Transform"
   "H\000\210\001\001\022&\n\rleftTransform\030\002 \001(\0132\n.Transform"
   "H\001\210\001\001\022\'\n\016rightTransform\030\003 \001(\0132\n.Transfor"
   "mH\002\210\001\001\022(\n\004time\030\004 \001(\0132\032.google.protobuf.T"
-  "imestampB\020\n\016_headTransformB\020\n\016_leftTrans"
-  "formB\021\n\017_rightTransform\"K\n\014StartBeatmap\022"
-  "\017\n\007levelId\030\001 \001(\t\022\026\n\016characteristic\030\002 \001(\t"
-  "\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatmapFail"
-  "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\034\n\010StartMa"
-  "p\022\020\n\010songTime\030\001 \001(\002\"\t\n\007ExitMap\"\n\n\010PauseM"
-  "ap\"\257\002\n\rPacketWrapper\022\025\n\rqueryResultId\030\001 "
-  "\001(\004\022)\n\016updatePosition\030\002 \001(\0132\017.UpdatePosi"
-  "tionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r.StartBeat"
-  "mapH\000\0223\n\023startBeatmapFailure\030\004 \001(\0132\024.Sta"
-  "rtBeatmapFailureH\000\022\033\n\007readyUp\030\005 \001(\0132\010.Re"
-  "adyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.StartMapH\000\022\033"
-  "\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000\022\035\n\010pauseMap\030"
-  "\010 \001(\0132\t.PauseMapH\000B\010\n\006PacketB\031\252\002\026LiveStr"
-  "eamQuest.Protosb\006proto3"
+  "imestamp\022\020\n\010songTime\030\005 \001(\002B\020\n\016_headTrans"
+  "formB\020\n\016_leftTransformB\021\n\017_rightTransfor"
+  "m\"K\n\014StartBeatmap\022\017\n\007levelId\030\001 \001(\t\022\026\n\016ch"
+  "aracteristic\030\002 \001(\t\022\022\n\ndifficulty\030\003 \001(\005\"$"
+  "\n\023StartBeatmapFailure\022\r\n\005error\030\001 \001(\t\"\t\n\007"
+  "ReadyUp\"\034\n\010StartMap\022\020\n\010songTime\030\001 \001(\002\"\t\n"
+  "\007ExitMap\"\n\n\010PauseMap\"\257\002\n\rPacketWrapper\022\025"
+  "\n\rqueryResultId\030\001 \001(\004\022)\n\016updatePosition\030"
+  "\002 \001(\0132\017.UpdatePositionH\000\022%\n\014startBeatmap"
+  "\030\003 \001(\0132\r.StartBeatmapH\000\0223\n\023startBeatmapF"
+  "ailure\030\004 \001(\0132\024.StartBeatmapFailureH\000\022\033\n\007"
+  "readyUp\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 "
+  "\001(\0132\t.StartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.Exit"
+  "MapH\000\022\035\n\010pauseMap\030\010 \001(\0132\t.PauseMapH\000B\010\n\006"
+  "PacketB\031\252\002\026LiveStreamQuest.Protosb\006proto"
+  "3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_live_5fstream_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-  false, false, 983, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
+  false, false, 1001, descriptor_table_protodef_live_5fstream_2eproto, "live_stream.proto", 
   &descriptor_table_live_5fstream_2eproto_once, descriptor_table_live_5fstream_2eproto_deps, 1, 11,
   schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
   file_level_metadata_live_5fstream_2eproto, file_level_enum_descriptors_live_5fstream_2eproto, file_level_service_descriptors_live_5fstream_2eproto,
@@ -1225,14 +1229,15 @@ UpdatePosition::UpdatePosition(const UpdatePosition& from)
   } else {
     time_ = nullptr;
   }
+  songtime_ = from.songtime_;
   // @@protoc_insertion_point(copy_constructor:UpdatePosition)
 }
 
 inline void UpdatePosition::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&headtransform_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&time_) -
-    reinterpret_cast<char*>(&headtransform_)) + sizeof(time_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&songtime_) -
+    reinterpret_cast<char*>(&headtransform_)) + sizeof(songtime_));
 }
 
 UpdatePosition::~UpdatePosition() {
@@ -1285,6 +1290,7 @@ void UpdatePosition::Clear() {
     delete time_;
   }
   time_ = nullptr;
+  songtime_ = 0;
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1325,6 +1331,14 @@ const char* UpdatePosition::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_time(), ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float songTime = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 45)) {
+          songtime_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -1390,6 +1404,16 @@ uint8_t* UpdatePosition::_InternalSerialize(
         4, _Internal::time(this), target, stream);
   }
 
+  // float songTime = 5;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = this->_internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_songtime(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1437,6 +1461,15 @@ size_t UpdatePosition::ByteSizeLong() const {
         *time_);
   }
 
+  // float songTime = 5;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = this->_internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    total_size += 1 + 4;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -1474,6 +1507,13 @@ void UpdatePosition::MergeFrom(const UpdatePosition& from) {
   if (from._internal_has_time()) {
     _internal_mutable_time()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_time());
   }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_songtime = from._internal_songtime();
+  uint32_t raw_songtime;
+  memcpy(&raw_songtime, &tmp_songtime, sizeof(tmp_songtime));
+  if (raw_songtime != 0) {
+    _internal_set_songtime(from._internal_songtime());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1493,8 +1533,8 @@ void UpdatePosition::InternalSwap(UpdatePosition* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UpdatePosition, time_)
-      + sizeof(UpdatePosition::time_)
+      PROTOBUF_FIELD_OFFSET(UpdatePosition, songtime_)
+      + sizeof(UpdatePosition::songtime_)
       - PROTOBUF_FIELD_OFFSET(UpdatePosition, headtransform_)>(
           reinterpret_cast<char*>(&headtransform_),
           reinterpret_cast<char*>(&other->headtransform_));

@@ -166,7 +166,7 @@ bool shouldBePaused() {
 }
 
 custom_types::Helpers::Coroutine
-updatePositionCoro(SafePtrUnity<PauseController> self) {
+updatePauseState(SafePtrUnity<PauseController> self) {
   while (true) {
     if (!self)
       co_return;
@@ -185,7 +185,7 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
   if (shouldBePaused()) {
     self->initData->startPaused = true;
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
-        updatePositionCoro, SafePtrUnity(self)));
+        updatePauseState, SafePtrUnity(self)));
   }
 
   PauseController_Start(self);

@@ -32,6 +32,7 @@ message UpdatePosition {
   optional Transform rightTransform = 3;
 
   google.protobuf.Timestamp time = 4;
+  float songTime = 5;
 }
 
 message StartBeatmap {

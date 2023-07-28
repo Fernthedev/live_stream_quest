@@ -25,8 +25,7 @@ internal class GameInstaller : Installer, IDisposable
         // Delegate control to FpfcManager
         // _fpfcSettings.Enabled = false;
         Container.BindInterfacesAndSelfTo<FpfcManager>().AsSingle().NonLazy();
-        
-        
+        Container.BindInterfacesAndSelfTo<TimeDesyncFixManager>().AsSingle().NonLazy();
     }
 
     public void Dispose()

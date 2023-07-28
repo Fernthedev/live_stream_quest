@@ -18,7 +18,6 @@ public class VRControllerManager : IInitializable, ITickable
     [Inject] private readonly SiraLog _siraLog;
     [Inject] private readonly PauseController _pauseController;
     [Inject(Optional = true)] private readonly MainCamera? _mainCamera;
-    [Inject(Optional = true)] private readonly SmoothCameraController? _smoothCameraController;
 
 
     // Set late
@@ -45,17 +44,7 @@ public class VRControllerManager : IInitializable, ITickable
 
 
         // TODO: Replace with a GameObject and parent so we can disable/enable the offset
-        if (_smoothCameraController != null)
-        {
-            _properCameraTransform = _smoothCameraController._smoothCamera._mainCamera.transform;
-        } else if (_mainCamera != null)
-        {
-            _properCameraTransform = _mainCamera.transform;
-        }
-        else
-        {
-            _properCameraTransform = _playerTransforms._headTransform;
-        }
+        _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
     }
 
     public void Tick()
@@ -71,6 +60,7 @@ public class VRControllerManager : IInitializable, ITickable
         // TODO: Needed? Add or Sub?
         // _deltaPacketTime = _deltaPacketTime.Add(TimeSpan.FromSeconds(unityDeltaTime));
 
+        
         if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
         {
             PseudoLocalTransform(deltaTime);
@@ -107,18 +97,11 @@ public class VRControllerManager : IInitializable, ITickable
                                                                            Quaternion.identity);
             _updated = false;
         }
-
+        
         if (!_pauseController._paused)
         {
             _properCameraTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
-            // var headResult =
-            //     _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation,
-            //         deltaTime);
-            //
-            // if (_properCameraTransform != null)
-            // {
-            //     _properCameraTransform.SetPositionAndRotation(headResult.Item1, headResult.Item2);
-            // }
+            _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
         }
 
         _playerTransforms._rightHandTransform.LerpToWorldSpace(_transformedRightPosition, _transformedRightRotation,
@@ -146,6 +129,7 @@ public class VRControllerManager : IInitializable, ITickable
         if (!_pauseController._paused)
         {
             _properCameraTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+            _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
         }
 
         _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation,

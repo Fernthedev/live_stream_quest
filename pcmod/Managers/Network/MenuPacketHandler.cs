@@ -100,9 +100,10 @@ public class MenuPacketHandler : IDisposable, IInitializable
             var hash = id.Substring(CustomLevelPrefix.Length);
             if (!SongDownloader.IsSongDownloaded(hash))
             {
-                var beatmap = await _beatSaver.BeatmapByHash(hash).ConfigureAwait(true);
+                _siraLog.Info($"Song not downloaded {hash}");
+                var beatmap = await _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token).ConfigureAwait(true);
 
-                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token);
+                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
 

@@ -15,16 +15,12 @@ namespace LiveStreamQuest.Managers.Network;
 
 public class NetworkManager : IDisposable, IInitializable
 {
-    public struct ConnectState
-    {
-        
-    }
-    
     private Socket? _socket;
 
     [Inject] private readonly PluginConfig _pluginConfig;
-    [Inject] public readonly SignalBus PacketReceivedEvent;
-    [Inject] public readonly SignalBus ConnectStateChanged;
+    public event Action<PacketWrapper>? PacketReceivedEvent;
+    public event Action? ConnectStateChanged;
+
     [Inject] private readonly SiraLog _siraLog;
     public bool Connecting { get; private set; }
     public bool Connected => _socket is { Connected: true };
@@ -60,7 +56,7 @@ public class NetworkManager : IDisposable, IInitializable
         }
 
         socket.Dispose();
-        ConnectStateChanged.TryFire(new ConnectState());
+        ConnectStateChanged?.Invoke();
     }
 
     public async Task Connect(bool cancelExisting = false)
@@ -70,8 +66,9 @@ public class NetworkManager : IDisposable, IInitializable
             _siraLog.Info("Attempting to connect while an existing attempt is still running");
             return;
         }
+
         Connecting = true;
-        ConnectStateChanged.TryFire(new ConnectState());
+        ConnectStateChanged?.Invoke();
         try
         {
             var endPoint = new IPEndPoint(IPAddress.Parse(_pluginConfig.Address), _pluginConfig.Port);
@@ -113,7 +110,7 @@ public class NetworkManager : IDisposable, IInitializable
         finally
         {
             Connecting = false;
-            ConnectStateChanged.TryFire(new ConnectState());
+            ConnectStateChanged?.Invoke();
         }
     }
 
@@ -160,7 +157,7 @@ public class NetworkManager : IDisposable, IInitializable
                 // Wait before reconnecting
                 await Task.Delay(TimeSpan.FromSeconds(i + 5));
             }
-            
+
             try
             {
                 await Connect().ConfigureAwait(false);
@@ -196,17 +193,16 @@ public class NetworkManager : IDisposable, IInitializable
 
         var packetWrapper = PacketWrapper.Parser.ParseFrom(bytes);
 
-        HandlePacket(packetWrapper);
+        // Fire and forget
+        _ = Task.Run(() => HandlePacket(packetWrapper)).ConfigureAwait(false);
     }
 
     private void HandlePacket(PacketWrapper packetWrapper)
     {
         // Don't bother fire
-        if (PacketReceivedEvent.NumSubscribers == 0) return;
-
         try
         {
-            PacketReceivedEvent.TryFire(packetWrapper);
+            PacketReceivedEvent?.Invoke(packetWrapper);
         }
         catch (Exception e)
         {

@@ -109,7 +109,8 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     public void Initialize()
     {
-        _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
+        _networkManager.PacketReceivedEvent -= HandlePacket;
+        _networkManager.PacketReceivedEvent += HandlePacket;
         _submission.DisableScoreSubmission(Plugin.ID);
         if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
         {
@@ -132,6 +133,6 @@ public class GamePacketHandler : IInitializable, IDisposable
     public void Dispose()
     {
         _submission.Dispose();
-        _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
+        _networkManager.PacketReceivedEvent -= HandlePacket;
     }
 }

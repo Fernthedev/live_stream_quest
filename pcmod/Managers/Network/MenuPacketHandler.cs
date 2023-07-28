@@ -42,19 +42,19 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
-    [Inject(Optional = true)]
-    private PlayerSettingsPanelController _playerSettingsPanelController = null!;
+    [Inject(Optional = true)] private PlayerSettingsPanelController _playerSettingsPanelController = null!;
 
 
     public void Initialize()
     {
         _playerSettingsPanelController ??= Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
-        _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
+        _networkManager.PacketReceivedEvent -= HandlePacket;
+        _networkManager.PacketReceivedEvent += HandlePacket;
     }
 
     public void Dispose()
     {
-        _networkManager.PacketReceivedEvent.Unsubscribe<PacketWrapper>(HandlePacket);
+        _networkManager.PacketReceivedEvent -= HandlePacket;
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
     }
@@ -84,7 +84,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
                     _siraLog.Error(e);
                     SendBeatmapStartError(e.Message);
                 }
-                
+
                 break;
         }
     }
@@ -103,7 +103,8 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 _siraLog.Info($"Song not downloaded {hash}");
                 var beatmap = await _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token).ConfigureAwait(true);
 
-                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token).ConfigureAwait(true);
+                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token)
+                    .ConfigureAwait(true);
             }
         }
 
@@ -134,7 +135,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             // TODO: User error dialog
             return;
         }
-        
+
         var beatmapCharacteristicSo =
             _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(packetWrapper.StartBeatmap
                 .Characteristic);

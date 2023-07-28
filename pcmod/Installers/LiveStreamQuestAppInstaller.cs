@@ -20,9 +20,6 @@ internal class AppInstaller : Installer
 
     public override void InstallBindings()
     {
-        SignalBusInstaller.Install(Container);
-        Container.DeclareSignal<PacketWrapper>();
-        Container.DeclareSignal<NetworkManager.ConnectState>();
 
         Container.BindInstance(_config);
         Container.BindInstance(_beatSaver);

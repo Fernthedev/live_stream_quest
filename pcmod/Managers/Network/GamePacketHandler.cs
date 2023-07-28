@@ -94,6 +94,15 @@ public class GamePacketHandler : IInitializable, IDisposable
         // }
 
         _pauseController.Pause();
+        
+        _siraLog.Info("Send ready up packet");
+        // Tell Quest we're ready
+        var pausePacketWrapper = new PacketWrapper
+        {
+            ReadyUp = new ReadyUp()
+        };
+        _networkManager.SendPacket(pausePacketWrapper);
+        
         // _songController.PauseSong();
         // _audioTimeSyncController.Pause();
     }
@@ -119,13 +128,7 @@ public class GamePacketHandler : IInitializable, IDisposable
 
         PauseMap();
 
-        _siraLog.Info("Send ready up packet");
-        // Tell Quest we're ready
-        var pausePacketWrapper = new PacketWrapper
-        {
-            ReadyUp = new ReadyUp()
-        };
-        _networkManager.SendPacket(pausePacketWrapper);
+
     }
 
     public void Dispose()

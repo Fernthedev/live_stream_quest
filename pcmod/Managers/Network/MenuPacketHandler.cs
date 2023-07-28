@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
+using BeatSaverSharp.Models;
+using LiveStreamQuest.Extensions;
 using LiveStreamQuest.Protos;
 using Polyglot;
 using SiraUtil.Logging;
@@ -39,6 +41,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     [Inject] private readonly GlobalStateManager _globalStateManager;
     [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
+    [Inject] private readonly ICoroutineStarter _coroutineStarter;
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
@@ -77,7 +80,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 try
                 {
                     _globalStateManager.StartingGameFromQuest = true;
-                    await StartLevel(packetWrapper).ConfigureAwait(true);
+                    _coroutineStarter.StartCoroutine(StartLevel(packetWrapper));
                 }
                 catch (Exception e)
                 {
@@ -89,7 +92,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         }
     }
 
-    private async Task StartLevel(PacketWrapper packetWrapper)
+    private IEnumerator StartLevel(PacketWrapper packetWrapper)
     {
         var id = packetWrapper.StartBeatmap.LevelId;
 
@@ -100,11 +103,15 @@ public class MenuPacketHandler : IDisposable, IInitializable
             var hash = id.Substring(CustomLevelPrefix.Length);
             if (!SongDownloader.IsSongDownloaded(hash))
             {
-                _siraLog.Info($"Song not downloaded {hash}");
-                var beatmap = await _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token).ConfigureAwait(true);
+                // I want UniTask
 
-                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token)
-                    .ConfigureAwait(true);
+                _siraLog.Info($"Song not downloaded {hash}");
+                Beatmap? beatmap = null;
+                yield return _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token)
+                    .AsCoroutine(b => beatmap = b);
+
+                yield return SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token)
+                    .AsCoroutine();
             }
         }
 
@@ -114,7 +121,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         {
             SendBeatmapStartError("levelPreview is null");
             // TODO: User error dialog
-            return;
+            yield break;
         }
 
         var levelPack = custom ? SongCore.Loader.CustomLevelsPack : _beatmapLevelsModel.GetLevelPackForLevelId(id);
@@ -123,17 +130,18 @@ public class MenuPacketHandler : IDisposable, IInitializable
         {
             SendBeatmapStartError("levelPack is null");
             // TODO: User error dialog
-            return;
+            yield break;
         }
 
-        var beatmapResult = await _beatmapLevelsModel.GetBeatmapLevelAsync(id, _cancellationTokenSource.Token)
-            .ConfigureAwait(true);
+        BeatmapLevelsModel.GetBeatmapLevelResult? beatmapLevelResult = null;
+        yield return _beatmapLevelsModel.GetBeatmapLevelAsync(id, _cancellationTokenSource.Token)
+            .AsCoroutine(b => beatmapLevelResult = b);
 
-        if (beatmapResult.beatmapLevel == null || beatmapResult.isError)
+        if (beatmapLevelResult?.beatmapLevel == null || beatmapLevelResult?.isError == true)
         {
             SendBeatmapStartError("beatmap level is null");
             // TODO: User error dialog
-            return;
+            yield break;
         }
 
         var beatmapCharacteristicSo =
@@ -142,21 +150,21 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
         var beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
         var diffBeatmap =
-            beatmapResult.beatmapLevel.beatmapLevelData.GetDifficultyBeatmap(beatmapCharacteristicSo,
+            beatmapLevelResult!.Value.beatmapLevel.beatmapLevelData.GetDifficultyBeatmap(beatmapCharacteristicSo,
                 beatmapDifficulty);
 
         if (beatmapCharacteristicSo == null)
         {
             SendBeatmapStartError("beatmapCharacteristicSo is null");
             // TODO: User error dialog
-            return;
+            yield break;
         }
 
         if (diffBeatmap == null)
         {
             SendBeatmapStartError("diffBeatmap is null");
             // TODO: User error dialog
-            return;
+            yield break;
         }
 
         // TODO: Figure out why this null refs if single player hasn't been opened

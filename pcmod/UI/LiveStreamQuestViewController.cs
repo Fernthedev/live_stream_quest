@@ -23,7 +23,7 @@ namespace LiveStreamQuest.UI
     internal class LiveStreamQuestViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
         private const string UIResource = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
-        
+
         private MenuButton _menuButton;
 
         [Inject] private readonly SiraLog _siraLog;
@@ -34,6 +34,7 @@ namespace LiveStreamQuest.UI
         [Inject] private MainMenuViewController _mainMenu;
         [Inject] private MainFlowCoordinator _mainMenuFlowCoordinator;
         [Inject] private NetworkManager _networkManager;
+        [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
@@ -121,8 +122,7 @@ namespace LiveStreamQuest.UI
         private async void OnConnect()
         {
             _siraLog.Info("Connecting");
-            await _networkManager.Connect().ConfigureAwait(false);
-            // TODO: Loading indicator
+            _ = Task.Run(() => _networkManager.Connect()).ConfigureAwait(false);
         }
 
 
@@ -178,10 +178,13 @@ namespace LiveStreamQuest.UI
             //
             // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
             // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
-            if (!isInViewControllerHierarchy) return;
+            _mainThreadDispatcher.DispatchOnMainThread(() =>
+            {
+                if (!isInViewControllerHierarchy) return;
 
-            NotifyPropertyChanged(nameof(Connecting));
-            NotifyPropertyChanged(nameof(CanConnect));
+                NotifyPropertyChanged(nameof(Connecting));
+                NotifyPropertyChanged(nameof(CanConnect));
+            });
         }
 
         private void OnMainMenuDidActivate(bool firstActivation, bool hierarchy, bool enabling)

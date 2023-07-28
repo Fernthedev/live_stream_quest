@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Google.Protobuf.WellKnownTypes;
 using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
-using SiraUtil.Tools.FPFC;
 using UnityEngine;
 using Zenject;
 using Quaternion = UnityEngine.Quaternion;
@@ -20,11 +18,12 @@ public class VRControllerManager : IInitializable, ITickable
     [Inject] private readonly SiraLog _siraLog;
     [Inject] private readonly PauseController _pauseController;
     [Inject(Optional = true)] private readonly MainCamera? _mainCamera;
+    [Inject(Optional = true)] private readonly SmoothCameraController? _smoothCameraController;
 
 
     // Set late
     private Protos.Transform? _headTransform, _rightHand, _leftHand;
-    private bool updated;
+    private bool _updated;
 
     private Vector3 _transformedHeadPosition;
     private Quaternion _transformedHeadRotation;
@@ -44,8 +43,19 @@ public class VRControllerManager : IInitializable, ITickable
     {
         _playerVRControllersManager.DisableAllVRControllers();
 
+
         // TODO: Replace with a GameObject and parent so we can disable/enable the offset
-        _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
+        if (_smoothCameraController != null)
+        {
+            _properCameraTransform = _smoothCameraController._smoothCamera._mainCamera.transform;
+        } else if (_mainCamera != null)
+        {
+            _properCameraTransform = _mainCamera.transform;
+        }
+        else
+        {
+            _properCameraTransform = _playerTransforms._headTransform;
+        }
     }
 
     public void Tick()
@@ -73,7 +83,7 @@ public class VRControllerManager : IInitializable, ITickable
 
     private void PseudoLocalTransform(float deltaTime)
     {
-        if (updated)
+        if (_updated)
         {
             _transformedHeadPosition =
                 _playerTransforms._originParentTransform.TransformPoint(_headTransform?.Position.ToVector3() ??
@@ -95,7 +105,7 @@ public class VRControllerManager : IInitializable, ITickable
             _transformedLeftRotation =
                 _playerTransforms._originParentTransform.TransformRotation(_leftHand?.Rotation.ToQuaternion() ??
                                                                            Quaternion.identity);
-            updated = false;
+            _updated = false;
         }
 
         if (!_pauseController._paused)
@@ -119,7 +129,7 @@ public class VRControllerManager : IInitializable, ITickable
 
     private void LocalTransformsUpdate(float deltaTime)
     {
-        if (updated)
+        if (_updated)
         {
             _transformedHeadPosition = _headTransform?.Position.ToVector3() ?? Vector3.zero;
             _transformedHeadRotation = _headTransform?.Rotation.ToQuaternion() ?? Quaternion.identity;
@@ -129,7 +139,7 @@ public class VRControllerManager : IInitializable, ITickable
 
             _transformedRightPosition = _rightHand?.Position.ToVector3() ?? Vector3.zero;
             _transformedRightRotation = _rightHand?.Rotation.ToQuaternion() ?? Quaternion.identity;
-            updated = false;
+            _updated = false;
         }
 
         // only move if not paused
@@ -147,7 +157,7 @@ public class VRControllerManager : IInitializable, ITickable
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
         Protos.Transform leftTransform, Timestamp time)
     {
-        updated = true;
+        _updated = true;
         _headTransform = headTransform;
         _rightHand = rightTransform;
         _leftHand = leftTransform;

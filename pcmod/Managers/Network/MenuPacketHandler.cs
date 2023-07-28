@@ -42,12 +42,13 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
-    private PlayerSettingsPanelController _playerSettingsPanelController;
+    [Inject(Optional = true)]
+    private PlayerSettingsPanelController _playerSettingsPanelController = null!;
 
 
     public void Initialize()
     {
-        _playerSettingsPanelController = Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
+        _playerSettingsPanelController ??= Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
         _networkManager.PacketReceivedEvent.Subscribe<PacketWrapper>(HandlePacket);
     }
 

@@ -23,8 +23,7 @@ namespace LiveStreamQuest.UI
     internal class LiveStreamQuestViewController : BSMLAutomaticViewController, IInitializable, IDisposable
     {
         private const string UIResource = "LiveStreamQuest.UI.BSML.LiveStreamQuestView.bsml";
-
-        private Task _initializeTask;
+        
         private MenuButton _menuButton;
 
         [Inject] private readonly SiraLog _siraLog;
@@ -35,7 +34,6 @@ namespace LiveStreamQuest.UI
         [Inject] private MainMenuViewController _mainMenu;
         [Inject] private MainFlowCoordinator _mainMenuFlowCoordinator;
         [Inject] private NetworkManager _networkManager;
-        [Inject] private MainThreadDispatcher _mainThreadDispatcher;
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
@@ -62,7 +60,7 @@ namespace LiveStreamQuest.UI
                 {
                     _config.Port = newValue;
                 }
-                
+
                 NotifyPropertyChanged();
             }
         }
@@ -99,7 +97,7 @@ namespace LiveStreamQuest.UI
                 NotifyPropertyChanged();
             }
         }
-        
+
         [UIValue("showMenuOnStartup")]
         internal bool ShowMenuOnStartup
         {
@@ -110,15 +108,12 @@ namespace LiveStreamQuest.UI
                 NotifyPropertyChanged();
             }
         }
-        
-        [UIValue("connecting")]
-        internal bool Connecting => _networkManager.Connecting; 
-        
+
+        [UIValue("connecting")] internal bool Connecting => _networkManager.Connecting;
+
         // TODO: Disconnect
-        [UIValue("canConnect")]
-        internal bool CanConnect => !_networkManager.Connecting;
-        
-        
+        [UIValue("canConnect")] internal bool CanConnect => !_networkManager.Connecting;
+
 
         [UIParams] private readonly BSMLParserParams parserParams;
 
@@ -130,42 +125,18 @@ namespace LiveStreamQuest.UI
             // TODO: Loading indicator
         }
 
-        [Inject]
-        private void Construct()
-        {
-            InitializeUI();
-        }
-
-        // Initialize BSML early on
-        private void InitializeUI()
-        {
-            _initializeTask = Task.Run(() =>
-            {
-                try
-                {
-                    ModalHelper.Parse(transform, UIResource, this);
-                }
-                catch (Exception e)
-                {
-                    _siraLog.Error(e);
-                    if (e.InnerException is not null)
-                        _siraLog.Error(e.InnerException);
-                    _siraLog.Error(e.StackTrace);
-                }
-
-                _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
-                MenuButtons.instance.RegisterButton(_menuButton);
-            });
-        }
 
         // Setup modal if possible or wait
         // Display our new view coordinator as a child of the main menu view
         public void Initialize()
         {
-            _networkManager.ConnectStateChanged.Subscribe<NetworkManager.ConnectState>(OnConnectStateChanged);
-            
+            InitializeUI();
+
+            _networkManager.ConnectStateChanged -= OnConnectStateChanged;
+            _networkManager.ConnectStateChanged += OnConnectStateChanged;
+
             transform.localPosition = new UnityEngine.Vector3(0, 0, 5.5f);
-            
+
             if (!ShowMenuOnStartup) return;
             if (_mainMenu.wasActivatedBefore)
             {
@@ -178,7 +149,27 @@ namespace LiveStreamQuest.UI
             }
         }
 
-        private void OnConnectStateChanged(NetworkManager.ConnectState o)
+
+        // Initialize BSML early on
+        private void InitializeUI()
+        {
+            try
+            {
+                ModalHelper.Parse(transform, UIResource, this);
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error(e);
+                if (e.InnerException is not null)
+                    _siraLog.Error(e.InnerException);
+                _siraLog.Error(e.StackTrace);
+            }
+
+            _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
+            MenuButtons.instance.RegisterButton(_menuButton);
+        }
+
+        private void OnConnectStateChanged()
         {
             //
             // PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
@@ -188,7 +179,7 @@ namespace LiveStreamQuest.UI
             // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
             // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
             if (!isInViewControllerHierarchy) return;
-            
+
             NotifyPropertyChanged(nameof(Connecting));
             NotifyPropertyChanged(nameof(CanConnect));
         }
@@ -206,6 +197,7 @@ namespace LiveStreamQuest.UI
             {
                 return;
             }
+
             _mainMenuFlowCoordinator.PresentViewController(this, immediately: true);
         }
 
@@ -213,22 +205,17 @@ namespace LiveStreamQuest.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
+            _modal.name = "LiveStreamQuestSetupModal";
             _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
             _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
-            
-            _mainThreadDispatcher.DispatchOnMainThread(modal =>
-            {
-                modal.name = "LiveStreamQuestSetupModal";
 
-                // var oldKeyboard = _portField.modalKeyboard.keyboard;
-                // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
-                // _portField.modalKeyboard.keyboard.keys.Clear();
-                // _portField.modalKeyboard.keyboard.AddKeys(KEYBOARD.NUMPAD);
-                // _portField.modalKeyboard.keyboard = new KEYBOARD(oldKeyboard.container, KEYBOARD.NUMPAD);
-                // _portField.gameObject.SetActive(true);
-                // _portField.modalKeyboard.OnEnable();
-            }, _modal);
-
+            // var oldKeyboard = _portField.modalKeyboard.keyboard;
+            // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
+            // _portField.modalKeyboard.keyboard.keys.Clear();
+            // _portField.modalKeyboard.keyboard.AddKeys(KEYBOARD.NUMPAD);
+            // _portField.modalKeyboard.keyboard = new KEYBOARD(oldKeyboard.container, KEYBOARD.NUMPAD);
+            // _portField.gameObject.SetActive(true);
+            // _portField.modalKeyboard.OnEnable();
         }
 
         // Dismiss view controller when modal is dismissed
@@ -238,13 +225,12 @@ namespace LiveStreamQuest.UI
         }
 
         // Display modal
-        public override async void DidActivate(bool firstActivation, bool addedToHierarchy,
+        public override void DidActivate(bool firstActivation, bool addedToHierarchy,
             bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
             // Don't block the main thread with BSML nonsense
-            await _initializeTask.ConfigureAwait(true);
             _siraLog.Info($"Opening modal {_modal.name}");
             _modal.Show(true, true);
             _siraLog.Info($"Opened modal {_modal.name}!");
@@ -262,7 +248,7 @@ namespace LiveStreamQuest.UI
 
         public void Dispose()
         {
-            _networkManager.ConnectStateChanged.Unsubscribe<NetworkManager.ConnectState>(OnConnectStateChanged);
+            _networkManager.ConnectStateChanged -= OnConnectStateChanged;
             MenuButtons.instance.UnregisterButton(_menuButton);
             _modal.Hide(true);
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);

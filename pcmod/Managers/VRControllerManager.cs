@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Google.Protobuf.WellKnownTypes;
 using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
@@ -41,8 +42,7 @@ public class VRControllerManager : IInitializable, ITickable
     public void Initialize()
     {
         _playerVRControllersManager.DisableAllVRControllers();
-
-
+        
         // TODO: Replace with a GameObject and parent so we can disable/enable the offset
         _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
     }
@@ -60,84 +60,29 @@ public class VRControllerManager : IInitializable, ITickable
         // TODO: Needed? Add or Sub?
         // _deltaPacketTime = _deltaPacketTime.Add(TimeSpan.FromSeconds(unityDeltaTime));
 
-        
-        if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
-        {
-            PseudoLocalTransform(deltaTime);
-        }
-        else
-        {
-            LocalTransformsUpdate(deltaTime);
-        }
-    }
-
-    private void PseudoLocalTransform(float deltaTime)
-    {
         if (_updated)
         {
-            _transformedHeadPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_headTransform?.Position.ToVector3() ??
-                                                                        Vector3.zero);
-            _transformedHeadRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_headTransform?.Rotation.ToQuaternion() ??
-                                                                           Quaternion.identity);
-
-            _transformedRightPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_rightHand?.Position.ToVector3() ??
-                                                                        Vector3.zero);
-            _transformedRightRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_rightHand?.Rotation.ToQuaternion() ??
-                                                                           Quaternion.identity);
-
-            _transformedLeftPosition =
-                _playerTransforms._originParentTransform.TransformPoint(_leftHand?.Position.ToVector3() ??
-                                                                        Vector3.zero);
-            _transformedLeftRotation =
-                _playerTransforms._originParentTransform.TransformRotation(_leftHand?.Rotation.ToQuaternion() ??
-                                                                           Quaternion.identity);
+            ConvertProto(ref _headTransform, ref _transformedHeadPosition, ref _transformedHeadRotation);
+            ConvertProto(ref _leftHand, ref _transformedLeftPosition, ref _transformedLeftRotation);
+            ConvertProto(ref _rightHand, ref _transformedRightPosition, ref _transformedRightRotation);
             _updated = false;
         }
-        
-        if (!_pauseController._paused)
-        {
-            _properCameraTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
-            _playerTransforms._headTransform.LerpToWorldSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
-        }
 
-        _playerTransforms._rightHandTransform.LerpToWorldSpace(_transformedRightPosition, _transformedRightRotation,
-            deltaTime);
-        _playerTransforms._leftHandTransform.LerpToWorldSpace(_transformedLeftPosition, _transformedLeftRotation,
-            deltaTime);
-    }
-
-    private void LocalTransformsUpdate(float deltaTime)
-    {
-        if (_updated)
-        {
-            _transformedHeadPosition = _headTransform?.Position.ToVector3() ?? Vector3.zero;
-            _transformedHeadRotation = _headTransform?.Rotation.ToQuaternion() ?? Quaternion.identity;
-
-            _transformedLeftPosition = _leftHand?.Position.ToVector3() ?? Vector3.zero;
-            _transformedLeftRotation = _leftHand?.Rotation.ToQuaternion() ?? Quaternion.identity;
-
-            _transformedRightPosition = _rightHand?.Position.ToVector3() ?? Vector3.zero;
-            _transformedRightRotation = _rightHand?.Rotation.ToQuaternion() ?? Quaternion.identity;
-            _updated = false;
-        }
 
         // only move if not paused
         if (!_pauseController._paused)
         {
-            _properCameraTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
-            _playerTransforms._headTransform.LerpToRelativeSpace(_transformedHeadPosition, _transformedHeadRotation, deltaTime);
+            LerpProper(_properCameraTransform, _transformedHeadPosition, _transformedHeadRotation, deltaTime);
+            LerpProper(_playerTransforms._headTransform, _transformedHeadPosition, _transformedHeadRotation,
+                deltaTime);
         }
 
-        _playerTransforms._rightHandTransform.LerpToRelativeSpace(_transformedRightPosition, _transformedRightRotation,
+        LerpProper(_playerTransforms._rightHandTransform, _transformedRightPosition, _transformedRightRotation,
             deltaTime);
-        _playerTransforms._leftHandTransform.LerpToRelativeSpace(_transformedLeftPosition, _transformedLeftRotation,
+        LerpProper(_playerTransforms._leftHandTransform, _transformedLeftPosition, _transformedLeftRotation,
             deltaTime);
     }
-
+    
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
         Protos.Transform leftTransform, Timestamp time)
     {
@@ -151,5 +96,56 @@ public class VRControllerManager : IInitializable, ITickable
         _deltaPacketTime = dateTime.Subtract(_lastPacketTime);
 
         _lastPacketTime = dateTime;
+    }
+    
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ConvertProto(ref Protos.Transform? transform, ref Vector3 vec3, ref Quaternion quat)
+    {
+        if (transform == null) return;
+        
+        vec3 = TransformPointProper(transform.Position);
+        quat = TransformRotationProper(transform.Rotation);
+        
+        transform = null;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void LerpProper(Transform transform, in Vector3 pos, in Quaternion rot, float t)
+    {
+        if (_playerTransforms._useOriginParentTransformForPseudoLocalCalculations)
+        {
+            transform.LerpToWorldSpace(pos, rot, t);
+        }
+        else
+        {
+            transform.LerpToRelativeSpace(pos, rot, t);
+        }
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Vector3 TransformPointProper(Protos.Vector3? protoVec)
+    {
+        if (protoVec == null) return Vector3.zero;
+
+
+        var vec = protoVec.ToVector3();
+
+        return _playerTransforms._useOriginParentTransformForPseudoLocalCalculations
+            ? _playerTransforms._originParentTransform.TransformPoint(vec)
+            : vec;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Quaternion TransformRotationProper(Protos.Quaternion? protoQuat)
+    {
+        if (protoQuat == null) return Quaternion.identity;
+
+
+        var quat = protoQuat.ToQuaternion();
+
+        return _playerTransforms._useOriginParentTransformForPseudoLocalCalculations
+            ? _playerTransforms._originParentTransform.TransformRotation(quat)
+            : quat;
     }
 }

@@ -115,6 +115,11 @@ void Manager::StartWait(float songTime) {
     questReady = false;
     this->songTime = songTime;
 }
+void Manager::StopWait() {
+    waiting = false;
+    pcReady = false;
+    questReady = false;
+}
 
 void Manager::readyPCUp() {
     pcReady = true;

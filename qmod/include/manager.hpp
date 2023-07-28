@@ -39,6 +39,7 @@ public:
     }
 
     void StartWait(float songTime);
+    void StopWait();
 
     void ReadyQuestUp();
 

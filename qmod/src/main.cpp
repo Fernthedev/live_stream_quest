@@ -95,6 +95,8 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
       self, standardLevelScenesTransitionSetupData, levelCompletionResults);
 
   // Exit map
+  Manager::GetInstance()->StopWait();
+  
   PacketWrapper packetWrapper;
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);

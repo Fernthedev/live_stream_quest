@@ -35,6 +35,7 @@ namespace LiveStreamQuest.UI
         [Inject] private MainMenuViewController _mainMenu;
         [Inject] private MainFlowCoordinator _mainMenuFlowCoordinator;
         [Inject] private NetworkManager _networkManager;
+        [Inject] private MainThreadDispatcher _mainThreadDispatcher;
 
         [UIComponent("setupModal")] private ModalView _modal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
@@ -186,6 +187,8 @@ namespace LiveStreamQuest.UI
             //
             // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
             // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
+            if (!isInViewControllerHierarchy) return;
+            
             NotifyPropertyChanged(nameof(Connecting));
             NotifyPropertyChanged(nameof(CanConnect));
         }
@@ -210,21 +213,22 @@ namespace LiveStreamQuest.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            _modal.name = "LiveStreamQuestSetupModal";
-
             _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
             _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
-
-
             
-            
-            var oldKeyboard = _portField.modalKeyboard.keyboard;
-            // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
-            // _portField.modalKeyboard.keyboard.keys.Clear();
-            // _portField.modalKeyboard.keyboard.AddKeys(KEYBOARD.NUMPAD);
-            // _portField.modalKeyboard.keyboard = new KEYBOARD(oldKeyboard.container, KEYBOARD.NUMPAD);
-            // _portField.gameObject.SetActive(true);
-            // _portField.modalKeyboard.OnEnable();
+            _mainThreadDispatcher.DispatchOnMainThread(modal =>
+            {
+                modal.name = "LiveStreamQuestSetupModal";
+
+                // var oldKeyboard = _portField.modalKeyboard.keyboard;
+                // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
+                // _portField.modalKeyboard.keyboard.keys.Clear();
+                // _portField.modalKeyboard.keyboard.AddKeys(KEYBOARD.NUMPAD);
+                // _portField.modalKeyboard.keyboard = new KEYBOARD(oldKeyboard.container, KEYBOARD.NUMPAD);
+                // _portField.gameObject.SetActive(true);
+                // _portField.modalKeyboard.OnEnable();
+            }, _modal);
+
         }
 
         // Dismiss view controller when modal is dismissed

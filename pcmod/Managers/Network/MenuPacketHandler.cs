@@ -89,7 +89,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         }
     }
 
-    private async Task StartLevel(PacketWrapper packetWrapper)
+    private async ValueTask StartLevel(PacketWrapper packetWrapper)
     {
         var id = packetWrapper.StartBeatmap.LevelId;
 

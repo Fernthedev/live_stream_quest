@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage.Animations;
 using Google.Protobuf;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
@@ -59,7 +59,7 @@ public class NetworkManager : IDisposable, IInitializable
         ConnectStateChanged?.Invoke();
     }
 
-    public async Task Connect(bool cancelExisting = false)
+    public async ValueTask Connect(bool cancelExisting = false)
     {
         if (Connecting && !cancelExisting)
         {
@@ -114,7 +114,7 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async Task OnReceiveLoop()
+    private async ValueTask OnReceiveLoop()
     {
         if (_socket == null) throw new InvalidOperationException("Socket is null");
 
@@ -123,11 +123,15 @@ public class NetworkManager : IDisposable, IInitializable
         _siraLog.Info("Receiving");
         try
         {
+            // What if I was crazy and decided to use some unsafe code here? :smirk:
             using var networkStream = new NetworkStream(socket, false);
+
+            // Reuse byte array and overwrite
+            var bytePool = new byte[int.MaxValue];
 
             while (_socket == socket && socket.Connected)
             {
-                await OnReceive(networkStream).ConfigureAwait(false);
+                await OnReceive(networkStream, bytePool).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -143,7 +147,7 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async Task ReviveConnection()
+    private async ValueTask ReviveConnection()
     {
         _siraLog.Info("Attempting to reconnect");
 
@@ -170,7 +174,7 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async Task OnReceive(NetworkStream stream)
+    private async ValueTask OnReceive(NetworkStream stream, byte[] bytePool)
     {
         if (!stream.DataAvailable)
         {
@@ -178,24 +182,29 @@ public class NetworkManager : IDisposable, IInitializable
             return;
         }
 
-        using var binaryReader = new BinaryReader(stream, new UTF8Encoding(), true);
-
+        // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
-        var len = (int)IPAddress.NetworkToHostOrder((long)binaryReader.ReadUInt64());
-
-        var bytes = new byte[len];
+        var len = (int) stream.ReadUInt64();
 
         var readCount = 0;
         while (readCount < len)
         {
-            readCount = await stream.ReadAsync(bytes, readCount, len - readCount).ConfigureAwait(false);
-        }
+            var tempReadCount = await stream.ReadAsync(bytePool, readCount, len - readCount).ConfigureAwait(false);
 
-        var packetWrapper = PacketWrapper.Parser.ParseFrom(bytes);
+            if (tempReadCount == 0)
+            {
+                throw new IOException("Connection was closed unexpectedly!");
+            }
+            readCount += tempReadCount;
+        }
+        
+        var packetWrapper = PacketWrapper.Parser.ParseFrom(bytePool, 0, len);
 
         // Fire and forget
         _ = Task.Run(() => HandlePacket(packetWrapper)).ConfigureAwait(false);
     }
+
+
 
     private void HandlePacket(PacketWrapper packetWrapper)
     {

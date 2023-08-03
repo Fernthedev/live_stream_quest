@@ -179,12 +179,13 @@ public class NetworkManager : IDisposable, IInitializable
         if (!stream.DataAvailable)
         {
             await Task.Yield();
+            await Task.Delay(new TimeSpan(seconds: 0, days: 0, hours: 0, minutes: 0, milliseconds: 2));
             return;
         }
 
         // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
-        var len = (int) IPAddress.NetworkToHostOrder((long) stream.ReadUint64(bytePool));
+        var len = (int)IPAddress.NetworkToHostOrder((long)stream.ReadUint64(bytePool));
 
         var readCount = 0;
         while (readCount < len)
@@ -195,15 +196,15 @@ public class NetworkManager : IDisposable, IInitializable
             {
                 throw new IOException("Connection was closed unexpectedly!");
             }
+
             readCount += tempReadCount;
         }
-        
+
         var packetWrapper = PacketWrapper.Parser.ParseFrom(bytePool, 0, len);
 
         // Fire and forget
         _ = Task.Run(() => HandlePacket(packetWrapper)).ConfigureAwait(false);
     }
-
 
 
     private void HandlePacket(PacketWrapper packetWrapper)

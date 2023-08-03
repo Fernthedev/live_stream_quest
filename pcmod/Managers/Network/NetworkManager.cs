@@ -4,10 +4,10 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using BeatSaberMarkupLanguage.Animations;
 using Google.Protobuf;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
+using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
 using Zenject;
 
@@ -184,7 +184,7 @@ public class NetworkManager : IDisposable, IInitializable
 
         // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
-        var len = (int) stream.ReadUInt64();
+        var len = (int) IPAddress.NetworkToHostOrder((long) stream.ReadUint64(bytePool));
 
         var readCount = 0;
         while (readCount < len)

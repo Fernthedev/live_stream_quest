@@ -5,16 +5,17 @@ namespace LiveStreamQuest.Extensions;
 
 public static class StreamExtensions
 {
-    public static ulong ReadUint64(this Stream stream)
+    private const int Uint64BytesToRead = 8;
+
+    public static ulong ReadUint64(this Stream stream, byte[]? lengthBuffer)
     {
+        lengthBuffer ??= new byte[Uint64BytesToRead];
         // Read the length (UInt64) of the message
-        const int bytesToRead = 8;
-        var lengthBuffer = new byte[bytesToRead];
         var totalBytesRead = 0;
 
-        while (totalBytesRead < bytesToRead)
+        while (totalBytesRead < Uint64BytesToRead)
         {
-            var bytesRead = stream.Read(lengthBuffer, totalBytesRead, bytesToRead - totalBytesRead);
+            var bytesRead = stream.Read(lengthBuffer, totalBytesRead, Uint64BytesToRead - totalBytesRead);
             if (bytesRead == 0)
             {
                 throw new IOException("Connection closed prematurely.");

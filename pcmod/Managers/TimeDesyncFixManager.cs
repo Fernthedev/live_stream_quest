@@ -11,14 +11,15 @@ public class TimeDesyncFixManager : ITickable
 
     private float _questSongTimeSeconds;
 
-    private DateTime _lastPacketTime;
+    private DateTime? _lastPacketTime;
 
     // the amount of time since the last time a packet was sent
     // resets every tick
-    private TimeSpan _deltaPacketTime;
+    private TimeSpan _deltaPacketTime = new(0);
 
     public void Tick()
     {
+        if (_lastPacketTime == null) return;
         var deltaPacketTime = _deltaPacketTime;
 
         // reset to 0
@@ -44,7 +45,12 @@ public class TimeDesyncFixManager : ITickable
 
         var dateTime = DateTime.Now;
 
-        _deltaPacketTime += dateTime.Subtract(_lastPacketTime);
+        var lastPacketTime = _lastPacketTime;
+        if (lastPacketTime != null)
+        {
+            _deltaPacketTime += dateTime.Subtract(lastPacketTime.Value);
+        }
+
         _lastPacketTime = dateTime;
     }
 }

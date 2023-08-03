@@ -1,29 +1,37 @@
-<modal id="setupModal" 
+<modal id="setupModal"
        size-delta-x="130"
        size-delta-y="90"
-       clickerino-offerino-closerino="true" hide-event='close-modal' show-event='open-modal' move-to-center="true" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+       clickerino-offerino-closerino="true" hide-event='close-modal' show-event='open-modal' move-to-center="true"
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
     <horizontal>
-        <vertical id="vert" 
+        <vertical id="vert"
                   pad="8"
                   child-control-height="true"
                   pref-height="90" pref-width="130"
-                  bg="round-rect-panel" >
-            <text align="Top" text="LiveStreamQuest Setup" />
-            <text align="Top" word-wrapping="true" text="For advanced users, it is recommended that you set up a reserved IP for your Quest. This will ensure the Quest won't change IP when it powers on." />
-                
-            <string-setting value="ipAddress" apply-on-change="true" text="IP Address" hover-hint="Set the IP of your Quest"  />
-            <string-setting value="port" id="portField" apply-on-change="true" text="Port" hover-hint="Set the port of your Quest" />
-            <increment-setting value="timeout" apply-on-change="true" min="0" text="Timeout" hover-hint="Timeout connection tolerance in seconds" />
-            <increment-setting value="reconnectionAttempts" apply-on-change="true" min="0" text="Reconnect attempts" hover-hint="Times to attempt to reconnect. Each attempt waits longer than the previous one. " />
-            <bool-setting value="connectOnStartup" apply-on-change="true" text="Connect on startup" hover-hint="Lets the PC and Quest clients connect on startup." />        
-            <action-button on-click="connect" text="Connect" interactable="~canConnect" />
-<!--            TODO: Disconnect button -->
+                  bg="round-rect-panel">
+
+            <text align="Top" text="LiveStreamQuest Setup"/>
+            <text align="Top" word-wrapping="true"
+                  text="For advanced users, it is recommended that you set up a reserved IP for your Quest. This will ensure the Quest won't change IP when it powers on."/>
+
+            <string-setting value="ipAddress" apply-on-change="true" text="IP Address"
+                            hover-hint="Set the IP of your Quest"/>
+            <string-setting value="port" id="portField" apply-on-change="true" text="Port"
+                            hover-hint="Set the port of your Quest"/>
+            <increment-setting value="timeout" apply-on-change="true" min="0" text="Timeout"
+                               hover-hint="Timeout connection tolerance in seconds"/>
+            <increment-setting value="reconnectionAttempts" apply-on-change="true" min="0" text="Reconnect attempts"
+                               hover-hint="Times to attempt to reconnect. Each attempt waits longer than the previous one. "/>
+            <bool-setting value="connectOnStartup" apply-on-change="true" text="Connect on startup"
+                          hover-hint="Lets the PC and Quest clients connect on startup."/>
+            <action-button on-click="connect" text="~connectAction" interactable="~canConnect"/>
+            <!--            TODO: Disconnect button -->
             <vertical child-expand-height="false" child-expand-width="false" pref-height="10" pref-width="10">
-            <loading-indicator active="~connecting" />
-                
+                <loading-indicator active="~connecting"/>
             </vertical>
-            
-            <bool-setting value="showMenuOnStartup" apply-on-change="true" text="Show menu on startup" />
+
+            <bool-setting value="showMenuOnStartup" apply-on-change="true" text="Show menu on startup"/>
         </vertical>
     </horizontal>
 </modal>

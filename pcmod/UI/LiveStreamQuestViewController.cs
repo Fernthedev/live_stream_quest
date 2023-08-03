@@ -36,7 +36,7 @@ namespace LiveStreamQuest.UI
         [Inject] private NetworkManager _networkManager;
         [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
-        [UIComponent("setupModal")] private ModalView _modal;
+        [UIComponent("setupModal")] private ModalView _mainModal;
         [UIComponent("vert")] private VerticalLayoutGroup _vert;
         [UIComponent("portField")] private StringSetting _portField;
 
@@ -49,7 +49,10 @@ namespace LiveStreamQuest.UI
                 _config.Address = value;
                 NotifyPropertyChanged();
             }
-        }
+        }  
+        
+        [UIValue("connectAction")]
+        internal string ConnectActionButton => _networkManager.Connected ? "Disconnect" : "Connect";
 
         [UIValue("port")]
         internal string Port
@@ -184,6 +187,7 @@ namespace LiveStreamQuest.UI
 
                 NotifyPropertyChanged(nameof(Connecting));
                 NotifyPropertyChanged(nameof(CanConnect));
+                NotifyPropertyChanged(nameof(ConnectActionButton));
             });
         }
 
@@ -208,9 +212,9 @@ namespace LiveStreamQuest.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            _modal.name = "LiveStreamQuestSetupModal";
-            _modal.blockerClickedEvent -= OnModalOnblockerClickedEvent;
-            _modal.blockerClickedEvent += OnModalOnblockerClickedEvent;
+            _mainModal.name = "LiveStreamQuestSetupModal";
+            _mainModal.blockerClickedEvent -= OnMainModalOnblockerClickedEvent;
+            _mainModal.blockerClickedEvent += OnMainModalOnblockerClickedEvent;
 
             // var oldKeyboard = _portField.modalKeyboard.keyboard;
             // _portField.modalKeyboard.keyboard.UpdateKeyText(KEYBOARD.NUMPAD);
@@ -222,7 +226,7 @@ namespace LiveStreamQuest.UI
         }
 
         // Dismiss view controller when modal is dismissed
-        private void OnModalOnblockerClickedEvent()
+        private void OnMainModalOnblockerClickedEvent()
         {
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
         }
@@ -234,9 +238,9 @@ namespace LiveStreamQuest.UI
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
             // Don't block the main thread with BSML nonsense
-            _siraLog.Info($"Opening modal {_modal.name}");
-            _modal.Show(true, true);
-            _siraLog.Info($"Opened modal {_modal.name}!");
+            _siraLog.Info($"Opening modal {_mainModal.name}");
+            _mainModal.Show(true, true);
+            _siraLog.Info($"Opened modal {_mainModal.name}!");
 
             // parserParams.EmitEvent("close-modal");
             // parserParams.EmitEvent("open-modal");
@@ -246,14 +250,14 @@ namespace LiveStreamQuest.UI
         public override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
-            _modal.Hide(true);
+            _mainModal.Hide(true);
         }
 
         public void Dispose()
         {
             _networkManager.ConnectStateChanged -= OnConnectStateChanged;
             MenuButtons.instance.UnregisterButton(_menuButton);
-            _modal.Hide(true);
+            _mainModal.Hide(true);
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
         }
     }

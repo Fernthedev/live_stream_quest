@@ -58,6 +58,9 @@ void SocketLibHandler::listenOnEvents(
 
   auto &pendingPacket = channelIncomingQueue[&client];
   if (!pendingPacket.has_value()) {
+    if (incomingQueue.queueSize() < 8)
+      return;
+    
     auto lenBytes = incomingQueue.dequeueAsVec(8);
     auto len = ntohq(*reinterpret_cast<size_t *>(lenBytes.data()));
 

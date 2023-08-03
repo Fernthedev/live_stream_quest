@@ -129,6 +129,7 @@ public class NetworkManager : IDisposable, IInitializable
             // Reuse byte array and overwrite
             var bytePool = new byte[int.MaxValue];
 
+
             while (_socket == socket && socket.Connected)
             {
                 await OnReceive(networkStream, bytePool).ConfigureAwait(false);
@@ -174,19 +175,17 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async ValueTask OnReceive(NetworkStream stream, byte[] bytePool)
+    private async ValueTask OnReceive(Stream stream, byte[] bytePool)
     {
-        if (!stream.DataAvailable)
-        {
-            await Task.Yield();
-            await Task.Delay(new TimeSpan(seconds: 0, days: 0, hours: 0, minutes: 0, milliseconds: 2));
-            return;
-        }
+        var read = await _socket.ReceiveAsync(new ArraySegment<byte>(bytePool, 0, 8), SocketFlags.None).ConfigureAwait(false);
 
+        // TODO: Better
+        if (read < 8) return;
+        
         // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
-        var len = (int)IPAddress.NetworkToHostOrder((long)stream.ReadUint64(bytePool));
-
+        var len = (int)IPAddress.NetworkToHostOrder((long)BitConverter.ToUInt64(bytePool, 0));
+        
         var readCount = 0;
         while (readCount < len)
         {

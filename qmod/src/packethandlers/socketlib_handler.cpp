@@ -2,125 +2,97 @@
 
 #include "MainThreadRunner.hpp"
 #include "main.hpp"
+#include <mutex>
+#include <vector>
 
 using namespace SocketLib;
 
 void handleLog(LoggerLevel level, std::string_view const tag,
                std::string_view const log) {
-  LOG_INFO("[{}] ({}): {}", SocketLib::Logger::loggerLevelToStr(level), tag, log);
+  LOG_INFO("[{}] ({}): {}", SocketLib::Logger::loggerLevelToStr(level), tag,
+           log);
 }
 
 void SocketLibHandler::listen(const int port) {
-    SocketHandler& socketHandler = SocketHandler::getCommonSocketHandler();
+  SocketHandler &socketHandler = SocketHandler::getCommonSocketHandler();
+  socketHandler.getLogger().DebugEnabled = true;
 
-    serverSocket = socketHandler.createServerSocket(port);
-    serverSocket->noDelay = true;
-    serverSocket->bindAndListen();
-    LOG_INFO("Started server");
+  serverSocket = socketHandler.createServerSocket(port);
+  serverSocket->noDelay = true;
+  serverSocket->bindAndListen();
+  LOG_INFO("Started server");
 
-    ServerSocket& serverSocket = *this->serverSocket;
+  ServerSocket &serverSocket = *this->serverSocket;
 
-    // Subscribe to logger
-    SocketHandler::getCommonSocketHandler().getLogger().loggerCallback +=
-        handleLog;
-    serverSocket.connectCallback += {&SocketLibHandler::connectEvent, this};
-    serverSocket.listenCallback += {&SocketLibHandler::listenOnEvents, this};
+  // Subscribe to logger
+  SocketHandler::getCommonSocketHandler().getLogger().loggerCallback +=
+      handleLog;
+  serverSocket.connectCallback += {&SocketLibHandler::connectEvent, this};
+  serverSocket.listenCallback += {&SocketLibHandler::listenOnEvents, this};
 }
 
-void SocketLibHandler::scheduleAsync(std::function<void()>&& f) {
-    serverSocket->getSocketHandler()->queueWork(std::move(f));
+void SocketLibHandler::scheduleAsync(std::function<void()> &&f) {
+  std::thread([func = std::move(f)]() {
+    IL2CPP_CATCH_HANDLER(func();)
+  }).detach();
 }
 
 bool SocketLibHandler::hasConnection() {
-    return !serverSocket->getClients().empty();
+  return !serverSocket->getClients().empty();
 }
 
-void SocketLibHandler::connectEvent(Channel& channel, bool connected) {
-    LOG_INFO("Connected {} status: {}", channel.clientDescriptor, connected ? "connected" : "disconnected");
-    if (!connected)
-        channelIncomingQueue.erase(&channel);
-    else
-        channelIncomingQueue.try_emplace(&channel, 0);
+void SocketLibHandler::connectEvent(Channel &channel, bool connected) {
+  LOG_INFO("Connected {} status: {}", channel.clientDescriptor,
+           connected ? "connected" : "disconnected");
 }
 
-void SocketLibHandler::listenOnEvents(Channel& client, const Message& message) {
-    // read the bytes
-    // if no packet is being parsed, get the first 8 bytes
-    // the first 8 bytes are the size frame, which dictate the size of the incoming packet (excluding the frame)
-    // then continue reading bytes until the expected size matches the current byte size
-    // if excess bytes, loop again
+void SocketLibHandler::listenOnEvents(
+    Channel &client, SocketLib::ReadOnlyStreamQueue &incomingQueue) {
+  // read the bytes
+  // if no packet is being parsed, get the first 8 bytes
+  // the first 8 bytes are the size frame, which dictate the size of the
+  // incoming packet (excluding the frame) then continue reading bytes until the
+  // expected size matches the current byte size if excess bytes, loop again
 
-    std::span<const byte> receivedBytes = message;
-    auto &pendingPacket = channelIncomingQueue.at(&client);
+  std::unique_lock lock(this->mutex);
 
-    // start of a new packet
-    if (!pendingPacket.isValid()) {
-        // get the first 8 bytes, then cast to size_t
-        size_t expectedLength = *reinterpret_cast<size_t const *>(receivedBytes.first(sizeof(size_t)).data());
-        expectedLength = ntohq(expectedLength);
-        
-        // LOG_INFO("Starting packet: is little endian {} {} flipped {} {}", std::endian::native == std::endian::little, expectedLength, ntohq(expectedLength), receivedBytes);
+  auto &pendingPacket = channelIncomingQueue[&client];
+  if (!pendingPacket.has_value()) {
+    auto lenBytes = incomingQueue.dequeueAsVec(8);
+    auto len = ntohq(*reinterpret_cast<size_t *>(lenBytes.data()));
 
-        pendingPacket = {expectedLength};
+    pendingPacket.emplace(len);
+  }
 
-        auto subspanData = receivedBytes.subspan(sizeof(size_t));
-        pendingPacket.insertBytes(subspanData);
-        // continue appending to existing packet
-    } else {
-        pendingPacket.insertBytes(receivedBytes);
-    }
+  if (incomingQueue.queueSize() < pendingPacket.value())
+    return;
 
-    if (pendingPacket.getCurrentLength() < pendingPacket.getExpectedLength()) {
-        return;
-    }
+  auto packetBytes =
+      std::move(incomingQueue.dequeueAsVec(pendingPacket.value()));
+  lock.unlock();
 
-    auto stream = std::move(pendingPacket.getData()); // avoid copying
-    std::span<const byte> const finalMessage = stream;
-    auto const packetBytes = (finalMessage).subspan(0, pendingPacket.getExpectedLength());
-
-    if (pendingPacket.getCurrentLength() > pendingPacket.getExpectedLength()) {
-        auto excessData = finalMessage.subspan(pendingPacket.getExpectedLength());
-        // get the first 8 bytes, then cast to size_t
-        size_t expectedLength = *reinterpret_cast<size_t const*>(excessData.data());
-
-        pendingPacket = IncomingPacket(expectedLength); // reset with excess data
-
-        auto excessDataWithoutSize = excessData.subspan(sizeof(size_t));
-
-        // insert excess data, ignoring the size prefix
-        pendingPacket.insertBytes(excessDataWithoutSize);
-    } else {
-        pendingPacket = IncomingPacket(); // reset 
-    }
-
-    PacketWrapper packet;
-    packet.ParseFromArray(packetBytes.data(), packetBytes.size());
-    scheduleFunction([this, packet = std::move(packet)]() {
-        onReceivePacket(packet);
-    });
-
-    // Parse the next packet as it is ready
-    if (pendingPacket.isValid() && pendingPacket.getCurrentLength()  >= pendingPacket.getExpectedLength()) {
-        listenOnEvents(client, Message(""));
-    }
+  PacketWrapper packet;
+  packet.ParseFromArray(packetBytes.data(), packetBytes.size());
+  scheduleFunction(
+      [this, packet = std::move(packet)]() { onReceivePacket(packet); });
 }
 
-void SocketLibHandler::sendPacket(const PacketWrapper& packet) {
-    packet.CheckInitialized();
-    size_t size = packet.ByteSizeLong();
-    // send size header
-    // send message with that size
-    // construct message size
-    Message message(sizeof(size_t) + size);
-    auto networkSize = htonq(size); // convert to big endian
+void SocketLibHandler::sendPacket(const PacketWrapper &packet) {
+  packet.CheckInitialized();
+  size_t size = packet.ByteSizeLong();
+  // send size header
+  // send message with that size
+  // construct message size
+  Message message(sizeof(size_t) + size);
+  auto networkSize = htonq(size); // convert to big endian
 
-    //set size header
-    *reinterpret_cast<size_t*>(message.data()) = networkSize;
+  // set size header
+  *reinterpret_cast<size_t *>(message.data()) = networkSize;
 
-    packet.SerializeToArray(message.data() + sizeof(size_t), size); // payload
+  packet.SerializeToArray(message.data() + sizeof(size_t), size); // payload
 
-    for (auto const& [id, client] : serverSocket->getClients()) {
-        client->queueWrite(message);
-        // LOG_INFO("Sending to {} bytes {} {}", id, size, finishedBytes);
-    }
+  for (auto const &[id, client] : serverSocket->getClients()) {
+    client->queueWrite(message);
+    // LOG_INFO("Sending to {} bytes {} {}", id, size, finishedBytes);
+  }
 }

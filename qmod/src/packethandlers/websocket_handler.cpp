@@ -66,14 +66,15 @@ void WebSocketHandler::stop() {
             LOG_INFO("Close failed because: ({})", e.what());
         }
     }
-    serverSocket.release();
+    serverSocket.reset();
     connections.clear();
 }
 
 void WebSocketHandler::scheduleAsync(std::function<void()> &&f)
 {
-    // TODO: Thread pool or something
-    SocketLib::SocketHandler::getCommonSocketHandler().queueWork(std::move(f));
+    std::thread([func = std::move(f)]() {
+      IL2CPP_CATCH_HANDLER(func();)
+    }).detach();
 }
 
 bool WebSocketHandler::hasConnection() {

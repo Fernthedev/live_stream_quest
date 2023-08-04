@@ -112,18 +112,6 @@ public class VRControllerManager : IInitializable, ITickable
             percentDeltaTime);
         LerpProper(_playerTransforms._leftHandTransform, _transformedLeftPosition, _transformedLeftRotation,
             percentDeltaTime);
-
-
-        var subTime = TimeSpan.FromSeconds(_deltaPacketTime.TotalSeconds * percentDeltaTime);
-
-        if (subTime <= _deltaPacketTime)
-        {
-            _deltaPacketTime -= subTime;
-        }
-        else
-        {
-            _deltaPacketTime = new TimeSpan(0);
-        }
     }
 
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,

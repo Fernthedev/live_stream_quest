@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
-using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
 using Zenject;
 
@@ -25,6 +25,8 @@ public class NetworkManager : IDisposable, IInitializable
     public bool Connecting { get; private set; }
     public bool Connected => _socket is { Connected: true };
 
+    private CancellationTokenSource _cancellationTokenSource = new();
+
     public void Initialize()
     {
         _siraLog.Info("Initializing network manager");
@@ -39,6 +41,8 @@ public class NetworkManager : IDisposable, IInitializable
         _siraLog.Info("Closing network stream");
         Disconnect();
         _socket?.Dispose();
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
     }
 
 
@@ -53,10 +57,17 @@ public class NetworkManager : IDisposable, IInitializable
         {
             _siraLog.Info("Disconnecting");
             socket.Disconnect(false);
+            CancelAll();
         }
 
         socket.Dispose();
         ConnectStateChanged?.Invoke();
+    }
+
+    private void CancelAll()
+    {
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     public async ValueTask Connect(bool cancelExisting = false)
@@ -66,6 +77,8 @@ public class NetworkManager : IDisposable, IInitializable
             _siraLog.Info("Attempting to connect while an existing attempt is still running");
             return;
         }
+
+        var token = _cancellationTokenSource.Token;
 
         Connecting = true;
         ConnectStateChanged?.Invoke();
@@ -99,6 +112,8 @@ public class NetworkManager : IDisposable, IInitializable
                 return;
             }
 
+            token.ThrowIfCancellationRequested();
+
             _siraLog.Info("Connected successfully");
 
             _ = Task.Run(OnReceiveLoop);
@@ -129,10 +144,12 @@ public class NetworkManager : IDisposable, IInitializable
             // Reuse byte array and overwrite
             var bytePool = new byte[int.MaxValue];
 
+            var token = _cancellationTokenSource.Token;
 
             while (_socket == socket && socket.Connected)
             {
-                await OnReceive(networkStream, bytePool).ConfigureAwait(false);
+                token.ThrowIfCancellationRequested();
+                await OnReceive(networkStream, bytePool, token).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -175,21 +192,22 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async ValueTask OnReceive(Stream stream, byte[] bytePool)
+    private async ValueTask OnReceive(Stream stream, byte[] bytePool, CancellationToken token)
     {
-        var read = await _socket.ReceiveAsync(new ArraySegment<byte>(bytePool, 0, 8), SocketFlags.None).ConfigureAwait(false);
-
+        var read = await stream.ReadAsync(bytePool, 0, 8, token)
+            .ConfigureAwait(false);
         // TODO: Better
         if (read < 8) return;
-        
+
         // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
         var len = (int)IPAddress.NetworkToHostOrder((long)BitConverter.ToUInt64(bytePool, 0));
-        
+
         var readCount = 0;
         while (readCount < len)
         {
-            var tempReadCount = await stream.ReadAsync(bytePool, readCount, len - readCount).ConfigureAwait(false);
+            var tempReadCount =
+                await stream.ReadAsync(bytePool, readCount, len - readCount, token).ConfigureAwait(false);
 
             if (tempReadCount == 0)
             {
@@ -199,10 +217,12 @@ public class NetworkManager : IDisposable, IInitializable
             readCount += tempReadCount;
         }
 
+        token.ThrowIfCancellationRequested();
+
         var packetWrapper = PacketWrapper.Parser.ParseFrom(bytePool, 0, len);
 
         // Fire and forget
-        _ = Task.Run(() => HandlePacket(packetWrapper)).ConfigureAwait(false);
+        _ = Task.Run(() => HandlePacket(packetWrapper), token).ConfigureAwait(false);
     }
 
 
@@ -235,7 +255,9 @@ public class NetworkManager : IDisposable, IInitializable
 
     public void SendPacket(PacketWrapper packetWrapper)
     {
-        Task.Run(() =>
+        var token = _cancellationTokenSource.Token;
+        var socket = _socket;
+        Task.Run(async () =>
         {
             try
             {
@@ -244,18 +266,18 @@ public class NetworkManager : IDisposable, IInitializable
 
                 var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(len));
 
-                return Task.FromResult(_socket.SendAsync(new List<ArraySegment<byte>>
+                return await socket.SendAsync(new List<ArraySegment<byte>>
                     {
                         new(lenBytes),
                         new(byteArray)
                     }, SocketFlags.None)
-                    .ConfigureAwait(false));
+                    .ConfigureAwait(false);
             }
             catch (Exception e)
             {
                 _siraLog.Error(e);
                 throw;
             }
-        });
+        }, token);
     }
 }

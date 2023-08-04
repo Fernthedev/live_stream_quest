@@ -35,7 +35,7 @@ public class GamePacketHandler : IInitializable, IDisposable
                 _packetId = packetWrapper.QueryResultId;
 
                 _vrControllerManager.UpdateTransforms(updatePositionData.HeadTransform,
-                    updatePositionData.RightTransform, updatePositionData.LeftTransform);
+                    updatePositionData.RightTransform, updatePositionData.LeftTransform, updatePositionData.Time);
                 _timeDesyncFixManager.UpdateTime(packetWrapper.UpdatePosition.SongTime);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:

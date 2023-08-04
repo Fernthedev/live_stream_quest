@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Google.Protobuf.WellKnownTypes;
 using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -34,8 +35,14 @@ public class VRControllerManager : IInitializable, ITickable
     private Quaternion _transformedRightRotation;
 
     // PC Time
-    private DateTime _lastPacketTime;
+    // e.g time between receiving packetA and packetB
+    private DateTime _lastPacketTime = DateTime.MinValue;
     private TimeSpan _deltaPacketTime;
+
+    // Movement duration is quest time 
+    // e.g time elapsed between sending packetA and packetB
+    private DateTime _lastMovementTime;
+    private TimeSpan _movementDuration;
 
     private Transform _properCameraTransform = null!;
 
@@ -49,16 +56,38 @@ public class VRControllerManager : IInitializable, ITickable
 
     public void Tick()
     {
-        // total
-        var deltaPacketTime = (float)_deltaPacketTime.TotalSeconds;
-        if (deltaPacketTime <= 0)
+        // THIS SOMEHOW WORKS AND IT'S FLAWLESS (totally)
+        
+        // total time the animation took on Quest
+        // basically time between packetA and packetB being **sent**
+        var totalTime = (float)_movementDuration.TotalSeconds;
+        if (totalTime <= 0)
         {
             return;
         }
+
+        // Time it took to **receive** packetA and packetB
+        // subtracted by totalTime to get the time difference the network adds
+        // aka get latency
+        var latencyTime = Math.Abs(_deltaPacketTime.TotalSeconds - totalTime);
         
-        var unityDeltaTime = Time.deltaTime; // frame time
-        var percentDeltaTime = unityDeltaTime / deltaPacketTime;
+        // divided by the time the animation takes
+        // so this becomes a percent
+        // e.g latency took 2% of the animation time away
+        var latencyOffset = (float)latencyTime / totalTime;
+        
+        // frame time
+        var unityDeltaTime = Time.deltaTime; 
+        
+        // unity frame time / totalTime =>
+        // percent of the animation
+        var percentDeltaTime = latencyOffset + unityDeltaTime / totalTime;
+        
+        // subtract the packet time and movement duration the unity frame time
+        // since we're doing that now
+        // think of this as time remaining
         _deltaPacketTime -= TimeSpan.FromSeconds(unityDeltaTime);
+        _movementDuration -= TimeSpan.FromSeconds(unityDeltaTime);
 
         if (_updated)
         {
@@ -96,17 +125,21 @@ public class VRControllerManager : IInitializable, ITickable
     }
 
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
-        Protos.Transform leftTransform)
+        Protos.Transform leftTransform, Timestamp newMovemenTimestamp)
     {
         _updated = true;
         _headTransform = headTransform;
         _rightHand = rightTransform;
         _leftHand = leftTransform;
 
-        var dateTime = DateTime.Now;
+        var dateTime = DateTime.Now; // time.ToDateTime();
+        var movementTimestamp = newMovemenTimestamp.ToDateTime(); // time.ToDateTime();
 
         _deltaPacketTime = dateTime.Subtract(_lastPacketTime);
+        _movementDuration = movementTimestamp.Subtract(_lastMovementTime);
+
         _lastPacketTime = dateTime;
+        _lastMovementTime = movementTimestamp;
     }
 
 

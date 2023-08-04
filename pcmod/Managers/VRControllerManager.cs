@@ -60,28 +60,30 @@ public class VRControllerManager : IInitializable, ITickable
         
         // total time the animation took on Quest
         // basically time between packetA and packetB being **sent**
-        var totalTime = (float)_movementDuration.TotalSeconds;
-        if (totalTime <= 0)
+        var movementDurationTime =_movementDuration.TotalSeconds;
+        if (movementDurationTime <= 0)
         {
             return;
         }
 
+        var totalTime = _deltaPacketTime.TotalSeconds;
+
         // Time it took to **receive** packetA and packetB
         // subtracted by totalTime to get the time difference the network adds
         // aka get latency
-        var latencyTime = Math.Abs(_deltaPacketTime.TotalSeconds - totalTime);
+        var latencyTime = Math.Abs(_deltaPacketTime.TotalSeconds - movementDurationTime);
         
         // divided by the time the animation takes
         // so this becomes a percent
         // e.g latency took 2% of the animation time away
-        var latencyOffset = (float)latencyTime / totalTime;
+        var latencyOffset = latencyTime / totalTime;
         
         // frame time
         var unityDeltaTime = Time.deltaTime; 
         
         // unity frame time / totalTime =>
         // percent of the animation
-        var percentDeltaTime = latencyOffset + unityDeltaTime / totalTime;
+        var percentDeltaTime = (float)(latencyOffset + unityDeltaTime / movementDurationTime);
         
         // subtract the packet time and movement duration the unity frame time
         // since we're doing that now

@@ -49,8 +49,8 @@ namespace LiveStreamQuest.UI
                 _config.Address = value;
                 NotifyPropertyChanged();
             }
-        }  
-        
+        }
+
         [UIValue("connectAction")]
         internal string ConnectActionButton => _networkManager.Connected ? "Disconnect" : "Connect";
 
@@ -181,7 +181,11 @@ namespace LiveStreamQuest.UI
             //
             // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
             // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
+#if BS_1_29
+            _mainThreadDispatcher.Enqueue(() =>
+#else
             _mainThreadDispatcher.DispatchOnMainThread(() =>
+#endif
             {
                 if (!isInViewControllerHierarchy) return;
 

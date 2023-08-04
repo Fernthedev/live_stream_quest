@@ -16,6 +16,7 @@ public class TimeDesyncFixManager : ITickable
     // the amount of time since the last time a packet was sent
     // resets every tick
     private TimeSpan _deltaPacketTime = new(0);
+    private float _songTimeAtPacket = 0;
 
     public void Tick()
     {
@@ -31,13 +32,13 @@ public class TimeDesyncFixManager : ITickable
         
         // Adjust for network latency
         // TODO: Actually be smart and statistical about this
-        var deltaSongTime = Math.Abs(_questSongTimeSeconds - _syncController.songTime);
+        var deltaSongTime = Math.Abs(_questSongTimeSeconds - _songTimeAtPacket);
         
         // if distance is greater than 0.25s
         // if song time delta is greater than 75% of the packet time
         // we need to adjust
-        if (deltaSongTime <= 0.25 || deltaSongTime <= deltaPacketTime.TotalSeconds * 0.75) return;
-        var adjustedQuestSongTime = _questSongTimeSeconds + deltaPacketTime.TotalSeconds * 0.75;
+        if (deltaSongTime <= 0.25 || deltaSongTime <= deltaPacketTime.TotalSeconds * 0.50) return;
+        var adjustedQuestSongTime = _questSongTimeSeconds + deltaPacketTime.TotalSeconds * 0.50;
             
         _siraLog.Info($"Adjusting song time from {_syncController.songTime} to {adjustedQuestSongTime} to account for latency ({deltaSongTime}");
         _syncController.SeekTo((float)adjustedQuestSongTime);
@@ -55,6 +56,7 @@ public class TimeDesyncFixManager : ITickable
             _deltaPacketTime += dateTime.Subtract(lastPacketTime.Value);
         }
 
+        _songTimeAtPacket = _syncController.songTime;
         _lastPacketTime = dateTime;
     }
 }

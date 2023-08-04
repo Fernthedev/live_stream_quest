@@ -110,10 +110,14 @@ void Manager::tryStartGame() {
 }
 
 void Manager::StartWait(float songTime) {
+// already waiting
+    this->songTime = songTime;
+    
+    if (waiting) return;
+
     waiting = true;
     pcReady = false;
     questReady = false;
-    this->songTime = songTime;
 }
 void Manager::StopWait() {
     waiting = false;

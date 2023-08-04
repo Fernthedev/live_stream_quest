@@ -6,16 +6,16 @@
 #include "packethandlers/websocket_handler.hpp"
 
 #include <sstream>
+#include <atomic>
 
 class Manager {
 private:
     void processMessage(const PacketWrapper &packet);
 
-
-    bool initialized;
-    bool pcReady;
-    bool questReady;
-    bool waiting;
+    std::atomic_bool initialized;
+    std::atomic_bool pcReady;
+    std::atomic_bool questReady;
+    std::atomic_bool waiting;
     float songTime = 0;
 
     std::unique_ptr<SocketLibHandler> handler;

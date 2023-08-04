@@ -107,7 +107,9 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
                 AudioTimeSyncController *self) {
   AudioTimeSyncController_PauseSong(self);
 
+
   Manager::GetInstance()->StartWait(self->songTime);
+  Manager::GetInstance()->ReadyQuestUp();
 
   // Exit map
   PacketWrapper packetWrapper;
@@ -177,11 +179,14 @@ updatePauseState(SafePtrUnity<PauseController> self) {
   }
 
   // Resume
-  self->HandlePauseMenuManagerDidPressContinueButton();
+  if (self->paused || self->wantsToPause) {
+    self->HandlePauseMenuManagerDidPressContinueButton();
+  }
 }
 
 MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
+  Manager::GetInstance()->ReadyQuestUp();
   if (shouldBePaused()) {
     self->initData->startPaused = true;
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
@@ -246,8 +251,8 @@ extern "C" void load() {
   LOG_INFO("Installing hooks...");
   INSTALL_HOOK(getLoggerOld(), PlayerTransforms_Awake)
   INSTALL_HOOK(getLoggerOld(), PauseController_Start)
-  INSTALL_HOOK(getLoggerOld(),
-               PauseController_HandlePauseMenuManagerDidPressContinueButton)
+  // INSTALL_HOOK(getLoggerOld(),
+  //              PauseController_HandlePauseMenuManagerDidPressContinueButton)
   INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
   INSTALL_HOOK(getLoggerOld(),
                MenuTransitionsHelper_HandleMainGameSceneDidFinish)

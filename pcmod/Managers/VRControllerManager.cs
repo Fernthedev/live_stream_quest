@@ -34,29 +34,36 @@ public class VRControllerManager : IInitializable, ITickable
     private Vector3 _transformedRightPosition;
     private Quaternion _transformedRightRotation;
 
+    // PC Time
     private DateTime _lastPacketTime;
     private TimeSpan _deltaPacketTime;
+
+    // Movement duration is quest time 
+    private DateTime _lastMovementTime;
+    private TimeSpan _movementDuration;
 
     private Transform _properCameraTransform = null!;
 
     public void Initialize()
     {
         _playerVRControllersManager.DisableAllVRControllers();
-        
+
         // TODO: Replace with a GameObject and parent so we can disable/enable the offset
         _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
     }
 
     public void Tick()
     {
+        // total
         var deltaPacketTime = (float)_deltaPacketTime.TotalSeconds;
         if (deltaPacketTime <= 0)
         {
             return;
         }
-
-        var unityDeltaTime = Time.deltaTime;
-        var deltaTime = unityDeltaTime / deltaPacketTime;
+        
+        var unityDeltaTime = Time.deltaTime; // frame time
+        var percentDeltaTime = unityDeltaTime / deltaPacketTime;
+        _deltaPacketTime -= TimeSpan.FromSeconds(unityDeltaTime);
         // TODO: Needed? Add or Sub?
         // _deltaPacketTime = _deltaPacketTime.Add(TimeSpan.FromSeconds(unityDeltaTime));
 
@@ -72,41 +79,56 @@ public class VRControllerManager : IInitializable, ITickable
         // only move if not paused
         if (!_pauseController._paused)
         {
-            LerpProper(_properCameraTransform, _transformedHeadPosition, _transformedHeadRotation, deltaTime);
+            LerpProper(_properCameraTransform, _transformedHeadPosition, _transformedHeadRotation, percentDeltaTime);
             LerpProper(_playerTransforms._headTransform, _transformedHeadPosition, _transformedHeadRotation,
-                deltaTime);
+                percentDeltaTime);
         }
 
         LerpProper(_playerTransforms._rightHandTransform, _transformedRightPosition, _transformedRightRotation,
-            deltaTime);
+            percentDeltaTime);
         LerpProper(_playerTransforms._leftHandTransform, _transformedLeftPosition, _transformedLeftRotation,
-            deltaTime);
+            percentDeltaTime);
+
+
+        var subTime = TimeSpan.FromSeconds(_deltaPacketTime.TotalSeconds * percentDeltaTime);
+
+        if (subTime <= _deltaPacketTime)
+        {
+            _deltaPacketTime -= subTime;
+        }
+        else
+        {
+            _deltaPacketTime = new TimeSpan(0);
+        }
     }
-    
+
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
-        Protos.Transform leftTransform, Timestamp time)
+        Protos.Transform leftTransform, Timestamp newMovemenTimestamp)
     {
         _updated = true;
         _headTransform = headTransform;
         _rightHand = rightTransform;
         _leftHand = leftTransform;
 
-        var dateTime = time.ToDateTime();
+        var dateTime = DateTime.Now; // time.ToDateTime();
+        var movementTimestamp = newMovemenTimestamp.ToDateTime(); // time.ToDateTime();
 
         _deltaPacketTime = dateTime.Subtract(_lastPacketTime);
+        _movementDuration += movementTimestamp.Subtract(_lastMovementTime);
 
+        _lastMovementTime = movementTimestamp;
         _lastPacketTime = dateTime;
     }
-    
-    
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ConvertProto(ref Protos.Transform? transform, ref Vector3 vec3, ref Quaternion quat)
     {
         if (transform == null) return;
-        
+
         vec3 = TransformPointProper(transform.Position);
         quat = TransformRotationProper(transform.Rotation);
-        
+
         transform = null;
     }
 
@@ -122,7 +144,7 @@ public class VRControllerManager : IInitializable, ITickable
             transform.LerpToRelativeSpace(pos, rot, t);
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Vector3 TransformPointProper(Protos.Vector3? protoVec)
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using Google.Protobuf.WellKnownTypes;
 using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -38,10 +37,6 @@ public class VRControllerManager : IInitializable, ITickable
     private DateTime _lastPacketTime;
     private TimeSpan _deltaPacketTime;
 
-    // Movement duration is quest time 
-    private DateTime _lastMovementTime;
-    private TimeSpan _movementDuration;
-
     private Transform _properCameraTransform = null!;
 
     public void Initialize()
@@ -64,8 +59,6 @@ public class VRControllerManager : IInitializable, ITickable
         var unityDeltaTime = Time.deltaTime; // frame time
         var percentDeltaTime = unityDeltaTime / deltaPacketTime;
         _deltaPacketTime -= TimeSpan.FromSeconds(unityDeltaTime);
-        // TODO: Needed? Add or Sub?
-        // _deltaPacketTime = _deltaPacketTime.Add(TimeSpan.FromSeconds(unityDeltaTime));
 
         if (_updated)
         {
@@ -103,20 +96,16 @@ public class VRControllerManager : IInitializable, ITickable
     }
 
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
-        Protos.Transform leftTransform, Timestamp newMovemenTimestamp)
+        Protos.Transform leftTransform)
     {
         _updated = true;
         _headTransform = headTransform;
         _rightHand = rightTransform;
         _leftHand = leftTransform;
 
-        var dateTime = DateTime.Now; // time.ToDateTime();
-        var movementTimestamp = newMovemenTimestamp.ToDateTime(); // time.ToDateTime();
+        var dateTime = DateTime.Now;
 
         _deltaPacketTime = dateTime.Subtract(_lastPacketTime);
-        _movementDuration += movementTimestamp.Subtract(_lastMovementTime);
-
-        _lastMovementTime = movementTimestamp;
         _lastPacketTime = dateTime;
     }
 

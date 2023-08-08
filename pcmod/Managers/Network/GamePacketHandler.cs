@@ -69,31 +69,11 @@ public class GamePacketHandler : IInitializable, IDisposable
 
     private void ResumeMap()
     {
-        // if (_fpfc != null)
-        // {
-        //     _fpfc.enabled = false;
-        // }
-        //
-        // if (_siraFpfc != null)
-        // {
-        //     _siraFpfc.Enabled = false;
-        // }
-
         _pauseController.HandlePauseMenuManagerDidPressContinueButton();
     }
 
     private void PauseMap()
     {
-        // if (_fpfc != null)
-        // {
-        //     _fpfc.enabled = _fpfc._shouldBeEnabled;
-        // }
-        //
-        // if (_siraFpfc != null)
-        // {
-        //     _siraFpfc.Enabled = _fpfcEnabled;
-        // }
-
         _pauseController.Pause();
 
         _siraLog.Info("Send ready up packet");
@@ -103,9 +83,6 @@ public class GamePacketHandler : IInitializable, IDisposable
             ReadyUp = new ReadyUp()
         };
         _networkManager.SendPacket(pausePacketWrapper);
-
-        // _songController.PauseSong();
-        // _audioTimeSyncController.Pause();
     }
 
     public void Initialize()

@@ -11,7 +11,6 @@ public class FpfcManager : IInitializable, IDisposable
     // [Inject(Optional = true)] private SmoothCameraController? _smoothCameraController;
     
     [Inject] private readonly PauseController _pauseController;
-    [Inject] private readonly MainSettingsModelSO _mainSettingsModel;
     [Inject] private readonly SiraLog _siraLog;
 
     public void Initialize()

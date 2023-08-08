@@ -9,7 +9,6 @@ namespace LiveStreamQuest.Installers;
 internal class GameInstaller : Installer, IDisposable
 {
     [Inject] private readonly GlobalStateManager _globalStateManager;
-    [Inject] private readonly MainSettingsModelSO _mainSettingsModelSo;
     [Inject] private readonly IFPFCSettings _fpfcSettings;
 
     public override void InstallBindings()
@@ -20,7 +19,6 @@ internal class GameInstaller : Installer, IDisposable
         Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle().NonLazy();
         
         // Only enable if smooth camera is enabled
-        // if (!_mainSettingsModelSo.smoothCameraThirdPersonEnabled) return;
         
         // Delegate control to FpfcManager
         // _fpfcSettings.Enabled = false;

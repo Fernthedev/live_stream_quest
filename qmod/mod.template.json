@@ -5,13 +5,7 @@
   "author": "Fernthedev",
   "version": "${version}",
   "description": "Streams your Quest movements to PC",
-  "dependencies": [
-    {
-      "id": "socket_lib",
-      "downloadIfMissing": "https://cdn.discordapp.com/attachments/735992632240504955/1140299479791173742/socket_lib.qmod",
-      "version": "^0.9.0"
-    }
-  ],
+  "dependencies": [],
   "modFiles": [],
   "libraryFiles": [],
   "fileCopies": [],

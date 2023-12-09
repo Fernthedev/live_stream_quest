@@ -20,6 +20,10 @@ set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.tool
 string(REPLACE "\\" "/" VCPKG_ROOT_WINDOWS_FIX $ENV{VCPKG_ROOT})
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT_WINDOWS_FIX}/scripts/buildsystems/vcpkg.cmake)
 
+# c++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED 20)
+
 project(${COMPILE_ID})
 
 # export compile commands for significantly better intellisense
@@ -27,9 +31,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 
-# c++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED 20)
+
 
 # define that stores the actual source directory
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)

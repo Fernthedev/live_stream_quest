@@ -1,5 +1,6 @@
 {
   "config": {
+    "version": "0.2.0",
     "sharedDir": "shared",
     "dependenciesDir": "extern",
     "info": {
@@ -150,17 +151,17 @@
     {
       "dependency": {
         "id": "socket_lib",
-        "versionRange": "=0.9.0",
+        "versionRange": "=0.9.1",
         "additionalData": {
-          "soLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.0/libsocket_lib.so",
-          "debugSoLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.0/debug_libsocket_lib.so",
+          "soLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.1/libsocket_lib.so",
+          "debugSoLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.1/debug_libsocket_lib.so",
           "overrideSoName": "libsocket_lib.so",
-          "modLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.0/socket_lib.qmod",
-          "branchName": "version/v0_9_0",
+          "modLink": "https://github.com/Fernthedev/SocketLibLinux/releases/download/v0.9.1/socket_lib.qmod",
+          "branchName": "version/v0_9_1",
           "cmake": true
         }
       },
-      "version": "0.9.0"
+      "version": "0.9.1"
     },
     {
       "dependency": {

@@ -4,6 +4,7 @@
   "id": "${mod_id}",
   "author": "Fernthedev",
   "version": "${version}",
+  "modloader": "QuestLoader",
   "description": "Streams your Quest movements to PC",
   "dependencies": [],
   "modFiles": [],

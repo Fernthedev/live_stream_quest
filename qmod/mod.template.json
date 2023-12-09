@@ -7,7 +7,9 @@
   "modloader": "QuestLoader",
   "description": "Streams your Quest movements to PC",
   "dependencies": [],
-  "modFiles": [],
+  "modFiles": [
+    "liblive_stream_quest.so"
+  ],
   "libraryFiles": [],
   "fileCopies": [],
   "copyExtensions": []

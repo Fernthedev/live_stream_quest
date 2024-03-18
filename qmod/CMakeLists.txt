@@ -11,26 +11,28 @@ set(MOD_ID "live_stream_quest")
 # - Fern
 # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 
 # vcpkg config. Must be before project
 message("VCPKG $ENV{VCPKG_ROOT}")
 set(VCPKG_TARGET_TRIPLET arm64-android)
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake)
 set(VCPKG_MANIFEST_DIR ${CMAKE_SOURCE_DIR}/..)
+set(VCPKG_INSTALLED_DIR ${CMAKE_SOURCE_DIR}/../vcpkg_installed)
 string(REPLACE "\\" "/" VCPKG_ROOT_WINDOWS_FIX $ENV{VCPKG_ROOT})
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT_WINDOWS_FIX}/scripts/buildsystems/vcpkg.cmake)
+
+# Breaks build on MacOS
+set(CMAKE_CXX_SCAN_FOR_MODULES 0)
 
 # c++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 
-project(${COMPILE_ID})
-
 # export compile commands for significantly better intellisense
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
+project(${COMPILE_ID})
 
 
 

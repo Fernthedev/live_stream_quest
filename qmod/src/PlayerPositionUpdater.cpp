@@ -129,6 +129,8 @@ void LiveStreamQuest::PlayerPositionUpdater::OnScoreChange(
                      .value_or(nullptr)) {
     scoreUpdate.set_score(goodScore->get_cutScore());
   }
+
+  Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 void LiveStreamQuest::PlayerPositionUpdater::Awake() {
   this->playerTransforms = GetComponent<GlobalNamespace::PlayerTransforms *>();

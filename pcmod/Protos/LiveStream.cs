@@ -34,22 +34,22 @@ namespace LiveStreamQuest.Protos {
             "c2Zvcm1IAYgBARInCg5yaWdodFRyYW5zZm9ybRgDIAEoCzIKLlRyYW5zZm9y",
             "bUgCiAEBEigKBHRpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
             "YW1wEhAKCHNvbmdUaW1lGAUgASgCQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9s",
-            "ZWZ0VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJ4CgtTY29yZVVwZGF0",
-            "ZRINCgVzY29yZRgBIAEoAhINCgVjb21ibxgCIAEoAhIRCgluZXdTY29yZXMY",
-            "AyADKAISDgoGbWlzc2VzGAQgASgCEigKBHRpbWUYBSABKAsyGi5nb29nbGUu",
-            "cHJvdG9idWYuVGltZXN0YW1wIksKDFN0YXJ0QmVhdG1hcBIPCgdsZXZlbElk",
-            "GAEgASgJEhYKDmNoYXJhY3RlcmlzdGljGAIgASgJEhIKCmRpZmZpY3VsdHkY",
-            "AyABKAUiJAoTU3RhcnRCZWF0bWFwRmFpbHVyZRINCgVlcnJvchgBIAEoCSIJ",
-            "CgdSZWFkeVVwIhwKCFN0YXJ0TWFwEhAKCHNvbmdUaW1lGAEgASgCIgkKB0V4",
-            "aXRNYXAiCgoIUGF1c2VNYXAi1AIKDVBhY2tldFdyYXBwZXISFQoNcXVlcnlS",
-            "ZXN1bHRJZBgBIAEoBBIpCg51cGRhdGVQb3NpdGlvbhgCIAEoCzIPLlVwZGF0",
-            "ZVBvc2l0aW9uSAASJQoMc3RhcnRCZWF0bWFwGAMgASgLMg0uU3RhcnRCZWF0",
-            "bWFwSAASMwoTc3RhcnRCZWF0bWFwRmFpbHVyZRgEIAEoCzIULlN0YXJ0QmVh",
-            "dG1hcEZhaWx1cmVIABIbCgdyZWFkeVVwGAUgASgLMgguUmVhZHlVcEgAEh0K",
-            "CHN0YXJ0TWFwGAYgASgLMgkuU3RhcnRNYXBIABIbCgdleGl0TWFwGAcgASgL",
-            "MgguRXhpdE1hcEgAEh0KCHBhdXNlTWFwGAggASgLMgkuUGF1c2VNYXBIABIj",
-            "CgtzY29yZVVwZGF0ZRgJIAEoCzIMLlNjb3JlVXBkYXRlSABCCAoGUGFja2V0",
-            "QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJvdG9zYgZwcm90bzM="));
+            "ZWZ0VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJ5CgtTY29yZVVwZGF0",
+            "ZRISCgp0b3RhbFNjb3JlGAEgASgCEg0KBWNvbWJvGAIgASgCEg0KBXNjb3Jl",
+            "GAMgASgCEg4KBmlzTWlzcxgEIAEoCBIoCgR0aW1lGAUgASgLMhouZ29vZ2xl",
+            "LnByb3RvYnVmLlRpbWVzdGFtcCJLCgxTdGFydEJlYXRtYXASDwoHbGV2ZWxJ",
+            "ZBgBIAEoCRIWCg5jaGFyYWN0ZXJpc3RpYxgCIAEoCRISCgpkaWZmaWN1bHR5",
+            "GAMgASgFIiQKE1N0YXJ0QmVhdG1hcEZhaWx1cmUSDQoFZXJyb3IYASABKAki",
+            "CQoHUmVhZHlVcCIcCghTdGFydE1hcBIQCghzb25nVGltZRgBIAEoAiIJCgdF",
+            "eGl0TWFwIgoKCFBhdXNlTWFwItQCCg1QYWNrZXRXcmFwcGVyEhUKDXF1ZXJ5",
+            "UmVzdWx0SWQYASABKAQSKQoOdXBkYXRlUG9zaXRpb24YAiABKAsyDy5VcGRh",
+            "dGVQb3NpdGlvbkgAEiUKDHN0YXJ0QmVhdG1hcBgDIAEoCzINLlN0YXJ0QmVh",
+            "dG1hcEgAEjMKE3N0YXJ0QmVhdG1hcEZhaWx1cmUYBCABKAsyFC5TdGFydEJl",
+            "YXRtYXBGYWlsdXJlSAASGwoHcmVhZHlVcBgFIAEoCzIILlJlYWR5VXBIABId",
+            "CghzdGFydE1hcBgGIAEoCzIJLlN0YXJ0TWFwSAASGwoHZXhpdE1hcBgHIAEo",
+            "CzIILkV4aXRNYXBIABIdCghwYXVzZU1hcBgIIAEoCzIJLlBhdXNlTWFwSAAS",
+            "IwoLc2NvcmVVcGRhdGUYCSABKAsyDC5TY29yZVVwZGF0ZUgAQggKBlBhY2tl",
+            "dEIZqgIWTGl2ZVN0cmVhbVF1ZXN0LlByb3Rvc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -57,7 +57,7 @@ namespace LiveStreamQuest.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Quaternion), global::LiveStreamQuest.Protos.Quaternion.Parser, new[]{ "X", "Y", "Z", "W" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Transform), global::LiveStreamQuest.Protos.Transform.Parser, new[]{ "Position", "Rotation" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform", "Time", "SongTime" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ScoreUpdate), global::LiveStreamQuest.Protos.ScoreUpdate.Parser, new[]{ "Score", "Combo", "NewScores", "Misses", "Time" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ScoreUpdate), global::LiveStreamQuest.Protos.ScoreUpdate.Parser, new[]{ "TotalScore", "Combo", "Score", "IsMiss", "Time" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmap), global::LiveStreamQuest.Protos.StartBeatmap.Parser, new[]{ "LevelId", "Characteristic", "Difficulty" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmapFailure), global::LiveStreamQuest.Protos.StartBeatmapFailure.Parser, new[]{ "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ReadyUp), global::LiveStreamQuest.Protos.ReadyUp.Parser, null, null, null, null, null),
@@ -1288,10 +1288,10 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ScoreUpdate(ScoreUpdate other) : this() {
-      score_ = other.score_;
+      totalScore_ = other.totalScore_;
       combo_ = other.combo_;
-      newScores_ = other.newScores_.Clone();
-      misses_ = other.misses_;
+      score_ = other.score_;
+      isMiss_ = other.isMiss_;
       time_ = other.time_ != null ? other.time_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1302,15 +1302,15 @@ namespace LiveStreamQuest.Protos {
       return new ScoreUpdate(this);
     }
 
-    /// <summary>Field number for the "score" field.</summary>
-    public const int ScoreFieldNumber = 1;
-    private float score_;
+    /// <summary>Field number for the "totalScore" field.</summary>
+    public const int TotalScoreFieldNumber = 1;
+    private float totalScore_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Score {
-      get { return score_; }
+    public float TotalScore {
+      get { return totalScore_; }
       set {
-        score_ = value;
+        totalScore_ = value;
       }
     }
 
@@ -1326,29 +1326,30 @@ namespace LiveStreamQuest.Protos {
       }
     }
 
-    /// <summary>Field number for the "newScores" field.</summary>
-    public const int NewScoresFieldNumber = 3;
-    private static readonly pb::FieldCodec<float> _repeated_newScores_codec
-        = pb::FieldCodec.ForFloat(26);
-    private readonly pbc::RepeatedField<float> newScores_ = new pbc::RepeatedField<float>();
+    /// <summary>Field number for the "score" field.</summary>
+    public const int ScoreFieldNumber = 3;
+    private float score_;
     /// <summary>
     /// The scores the game just added
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<float> NewScores {
-      get { return newScores_; }
+    public float Score {
+      get { return score_; }
+      set {
+        score_ = value;
+      }
     }
 
-    /// <summary>Field number for the "misses" field.</summary>
-    public const int MissesFieldNumber = 4;
-    private float misses_;
+    /// <summary>Field number for the "isMiss" field.</summary>
+    public const int IsMissFieldNumber = 4;
+    private bool isMiss_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Misses {
-      get { return misses_; }
+    public bool IsMiss {
+      get { return isMiss_; }
       set {
-        misses_ = value;
+        isMiss_ = value;
       }
     }
 
@@ -1382,10 +1383,10 @@ namespace LiveStreamQuest.Protos {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Score, other.Score)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalScore, other.TotalScore)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Combo, other.Combo)) return false;
-      if(!newScores_.Equals(other.newScores_)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Misses, other.Misses)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Score, other.Score)) return false;
+      if (IsMiss != other.IsMiss) return false;
       if (!object.Equals(Time, other.Time)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1394,10 +1395,10 @@ namespace LiveStreamQuest.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Score != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Score);
+      if (TotalScore != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalScore);
       if (Combo != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Combo);
-      hash ^= newScores_.GetHashCode();
-      if (Misses != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Misses);
+      if (Score != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Score);
+      if (IsMiss != false) hash ^= IsMiss.GetHashCode();
       if (time_ != null) hash ^= Time.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1417,18 +1418,21 @@ namespace LiveStreamQuest.Protos {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Score != 0F) {
+      if (TotalScore != 0F) {
         output.WriteRawTag(13);
-        output.WriteFloat(Score);
+        output.WriteFloat(TotalScore);
       }
       if (Combo != 0F) {
         output.WriteRawTag(21);
         output.WriteFloat(Combo);
       }
-      newScores_.WriteTo(output, _repeated_newScores_codec);
-      if (Misses != 0F) {
-        output.WriteRawTag(37);
-        output.WriteFloat(Misses);
+      if (Score != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Score);
+      }
+      if (IsMiss != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(IsMiss);
       }
       if (time_ != null) {
         output.WriteRawTag(42);
@@ -1444,18 +1448,21 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Score != 0F) {
+      if (TotalScore != 0F) {
         output.WriteRawTag(13);
-        output.WriteFloat(Score);
+        output.WriteFloat(TotalScore);
       }
       if (Combo != 0F) {
         output.WriteRawTag(21);
         output.WriteFloat(Combo);
       }
-      newScores_.WriteTo(ref output, _repeated_newScores_codec);
-      if (Misses != 0F) {
-        output.WriteRawTag(37);
-        output.WriteFloat(Misses);
+      if (Score != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Score);
+      }
+      if (IsMiss != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(IsMiss);
       }
       if (time_ != null) {
         output.WriteRawTag(42);
@@ -1471,15 +1478,17 @@ namespace LiveStreamQuest.Protos {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Score != 0F) {
+      if (TotalScore != 0F) {
         size += 1 + 4;
       }
       if (Combo != 0F) {
         size += 1 + 4;
       }
-      size += newScores_.CalculateSize(_repeated_newScores_codec);
-      if (Misses != 0F) {
+      if (Score != 0F) {
         size += 1 + 4;
+      }
+      if (IsMiss != false) {
+        size += 1 + 1;
       }
       if (time_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Time);
@@ -1496,15 +1505,17 @@ namespace LiveStreamQuest.Protos {
       if (other == null) {
         return;
       }
-      if (other.Score != 0F) {
-        Score = other.Score;
+      if (other.TotalScore != 0F) {
+        TotalScore = other.TotalScore;
       }
       if (other.Combo != 0F) {
         Combo = other.Combo;
       }
-      newScores_.Add(other.newScores_);
-      if (other.Misses != 0F) {
-        Misses = other.Misses;
+      if (other.Score != 0F) {
+        Score = other.Score;
+      }
+      if (other.IsMiss != false) {
+        IsMiss = other.IsMiss;
       }
       if (other.time_ != null) {
         if (time_ == null) {
@@ -1528,20 +1539,19 @@ namespace LiveStreamQuest.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 13: {
-            Score = input.ReadFloat();
+            TotalScore = input.ReadFloat();
             break;
           }
           case 21: {
             Combo = input.ReadFloat();
             break;
           }
-          case 26:
           case 29: {
-            newScores_.AddEntriesFrom(input, _repeated_newScores_codec);
+            Score = input.ReadFloat();
             break;
           }
-          case 37: {
-            Misses = input.ReadFloat();
+          case 32: {
+            IsMiss = input.ReadBool();
             break;
           }
           case 42: {
@@ -1567,20 +1577,19 @@ namespace LiveStreamQuest.Protos {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 13: {
-            Score = input.ReadFloat();
+            TotalScore = input.ReadFloat();
             break;
           }
           case 21: {
             Combo = input.ReadFloat();
             break;
           }
-          case 26:
           case 29: {
-            newScores_.AddEntriesFrom(ref input, _repeated_newScores_codec);
+            Score = input.ReadFloat();
             break;
           }
-          case 37: {
-            Misses = input.ReadFloat();
+          case 32: {
+            IsMiss = input.ReadBool();
             break;
           }
           case 42: {

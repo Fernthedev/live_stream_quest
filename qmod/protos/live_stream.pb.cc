@@ -85,11 +85,11 @@ struct UpdatePositionDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdatePositionDefaultTypeInternal _UpdatePosition_default_instance_;
 PROTOBUF_CONSTEXPR ScoreUpdate::ScoreUpdate(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.newscores_)*/{}
-  , /*decltype(_impl_.time_)*/nullptr
-  , /*decltype(_impl_.score_)*/0
+    /*decltype(_impl_.time_)*/nullptr
+  , /*decltype(_impl_.totalscore_)*/0
   , /*decltype(_impl_.combo_)*/0
-  , /*decltype(_impl_.misses_)*/0
+  , /*decltype(_impl_.score_)*/0
+  , /*decltype(_impl_.ismiss_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ScoreUpdateDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ScoreUpdateDefaultTypeInternal()
@@ -243,10 +243,10 @@ const uint32_t TableStruct_live_5fstream_2eproto::offsets[] PROTOBUF_SECTION_VAR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.score_),
+  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.totalscore_),
   PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.combo_),
-  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.newscores_),
-  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.misses_),
+  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.score_),
+  PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.ismiss_),
   PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.time_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::StartBeatmap, _internal_metadata_),
@@ -349,30 +349,31 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] PROTOBUF_SECTION_VA
   "mH\002\210\001\001\022(\n\004time\030\004 \001(\0132\032.google.protobuf.T"
   "imestamp\022\020\n\010songTime\030\005 \001(\002B\020\n\016_headTrans"
   "formB\020\n\016_leftTransformB\021\n\017_rightTransfor"
-  "m\"x\n\013ScoreUpdate\022\r\n\005score\030\001 \001(\002\022\r\n\005combo"
-  "\030\002 \001(\002\022\021\n\tnewScores\030\003 \003(\002\022\016\n\006misses\030\004 \001("
-  "\002\022(\n\004time\030\005 \001(\0132\032.google.protobuf.Timest"
-  "amp\"K\n\014StartBeatmap\022\017\n\007levelId\030\001 \001(\t\022\026\n\016"
-  "characteristic\030\002 \001(\t\022\022\n\ndifficulty\030\003 \001(\005"
-  "\"$\n\023StartBeatmapFailure\022\r\n\005error\030\001 \001(\t\"\t"
-  "\n\007ReadyUp\"\034\n\010StartMap\022\020\n\010songTime\030\001 \001(\002\""
-  "\t\n\007ExitMap\"\n\n\010PauseMap\"\324\002\n\rPacketWrapper"
-  "\022\025\n\rqueryResultId\030\001 \001(\004\022)\n\016updatePositio"
-  "n\030\002 \001(\0132\017.UpdatePositionH\000\022%\n\014startBeatm"
-  "ap\030\003 \001(\0132\r.StartBeatmapH\000\0223\n\023startBeatma"
-  "pFailure\030\004 \001(\0132\024.StartBeatmapFailureH\000\022\033"
-  "\n\007readyUp\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030"
-  "\006 \001(\0132\t.StartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.Ex"
-  "itMapH\000\022\035\n\010pauseMap\030\010 \001(\0132\t.PauseMapH\000\022#"
-  "\n\013scoreUpdate\030\t \001(\0132\014.ScoreUpdateH\000B\010\n\006P"
-  "acketB\031\252\002\026LiveStreamQuest.Protosb\006proto3"
+  "m\"y\n\013ScoreUpdate\022\022\n\ntotalScore\030\001 \001(\002\022\r\n\005"
+  "combo\030\002 \001(\002\022\r\n\005score\030\003 \001(\002\022\016\n\006isMiss\030\004 \001"
+  "(\010\022(\n\004time\030\005 \001(\0132\032.google.protobuf.Times"
+  "tamp\"K\n\014StartBeatmap\022\017\n\007levelId\030\001 \001(\t\022\026\n"
+  "\016characteristic\030\002 \001(\t\022\022\n\ndifficulty\030\003 \001("
+  "\005\"$\n\023StartBeatmapFailure\022\r\n\005error\030\001 \001(\t\""
+  "\t\n\007ReadyUp\"\034\n\010StartMap\022\020\n\010songTime\030\001 \001(\002"
+  "\"\t\n\007ExitMap\"\n\n\010PauseMap\"\324\002\n\rPacketWrappe"
+  "r\022\025\n\rqueryResultId\030\001 \001(\004\022)\n\016updatePositi"
+  "on\030\002 \001(\0132\017.UpdatePositionH\000\022%\n\014startBeat"
+  "map\030\003 \001(\0132\r.StartBeatmapH\000\0223\n\023startBeatm"
+  "apFailure\030\004 \001(\0132\024.StartBeatmapFailureH\000\022"
+  "\033\n\007readyUp\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap"
+  "\030\006 \001(\0132\t.StartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.E"
+  "xitMapH\000\022\035\n\010pauseMap\030\010 \001(\0132\t.PauseMapH\000\022"
+  "#\n\013scoreUpdate\030\t \001(\0132\014.ScoreUpdateH\000B\010\n\006"
+  "PacketB\031\252\002\026LiveStreamQuest.Protosb\006proto"
+  "3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_live_5fstream_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_live_5fstream_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_live_5fstream_2eproto = {
-    false, false, 1160, descriptor_table_protodef_live_5fstream_2eproto,
+    false, false, 1161, descriptor_table_protodef_live_5fstream_2eproto,
     "live_stream.proto",
     &descriptor_table_live_5fstream_2eproto_once, descriptor_table_live_5fstream_2eproto_deps, 1, 12,
     schemas, file_default_instances, TableStruct_live_5fstream_2eproto::offsets,
@@ -1620,20 +1621,20 @@ ScoreUpdate::ScoreUpdate(const ScoreUpdate& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ScoreUpdate* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.newscores_){from._impl_.newscores_}
-    , decltype(_impl_.time_){nullptr}
-    , decltype(_impl_.score_){}
+      decltype(_impl_.time_){nullptr}
+    , decltype(_impl_.totalscore_){}
     , decltype(_impl_.combo_){}
-    , decltype(_impl_.misses_){}
+    , decltype(_impl_.score_){}
+    , decltype(_impl_.ismiss_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_time()) {
     _this->_impl_.time_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from._impl_.time_);
   }
-  ::memcpy(&_impl_.score_, &from._impl_.score_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.misses_) -
-    reinterpret_cast<char*>(&_impl_.score_)) + sizeof(_impl_.misses_));
+  ::memcpy(&_impl_.totalscore_, &from._impl_.totalscore_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.ismiss_) -
+    reinterpret_cast<char*>(&_impl_.totalscore_)) + sizeof(_impl_.ismiss_));
   // @@protoc_insertion_point(copy_constructor:ScoreUpdate)
 }
 
@@ -1642,11 +1643,11 @@ inline void ScoreUpdate::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.newscores_){arena}
-    , decltype(_impl_.time_){nullptr}
-    , decltype(_impl_.score_){0}
+      decltype(_impl_.time_){nullptr}
+    , decltype(_impl_.totalscore_){0}
     , decltype(_impl_.combo_){0}
-    , decltype(_impl_.misses_){0}
+    , decltype(_impl_.score_){0}
+    , decltype(_impl_.ismiss_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1662,7 +1663,6 @@ ScoreUpdate::~ScoreUpdate() {
 
 inline void ScoreUpdate::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.newscores_.~RepeatedField();
   if (this != internal_default_instance()) delete _impl_.time_;
 }
 
@@ -1676,14 +1676,13 @@ void ScoreUpdate::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.newscores_.Clear();
   if (GetArenaForAllocation() == nullptr && _impl_.time_ != nullptr) {
     delete _impl_.time_;
   }
   _impl_.time_ = nullptr;
-  ::memset(&_impl_.score_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.misses_) -
-      reinterpret_cast<char*>(&_impl_.score_)) + sizeof(_impl_.misses_));
+  ::memset(&_impl_.totalscore_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.ismiss_) -
+      reinterpret_cast<char*>(&_impl_.totalscore_)) + sizeof(_impl_.ismiss_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1693,10 +1692,10 @@ const char* ScoreUpdate::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // float score = 1;
+      // float totalScore = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 13)) {
-          _impl_.score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          _impl_.totalscore_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -1709,22 +1708,19 @@ const char* ScoreUpdate::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // repeated float newScores = 3;
+      // float score = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_newscores(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 29) {
-          _internal_add_newscores(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
+          _impl_.score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float misses = 4;
+      // bool isMiss = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
-          _impl_.misses_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.ismiss_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -1765,14 +1761,14 @@ uint8_t* ScoreUpdate::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // float score = 1;
+  // float totalScore = 1;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_score = this->_internal_score();
-  uint32_t raw_score;
-  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
-  if (raw_score != 0) {
+  float tmp_totalscore = this->_internal_totalscore();
+  uint32_t raw_totalscore;
+  memcpy(&raw_totalscore, &tmp_totalscore, sizeof(tmp_totalscore));
+  if (raw_totalscore != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(1, this->_internal_score(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(1, this->_internal_totalscore(), target);
   }
 
   // float combo = 2;
@@ -1785,19 +1781,20 @@ uint8_t* ScoreUpdate::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(2, this->_internal_combo(), target);
   }
 
-  // repeated float newScores = 3;
-  if (this->_internal_newscores_size() > 0) {
-    target = stream->WriteFixedPacked(3, _internal_newscores(), target);
+  // float score = 3;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_score = this->_internal_score();
+  uint32_t raw_score;
+  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
+  if (raw_score != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_score(), target);
   }
 
-  // float misses = 4;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_misses = this->_internal_misses();
-  uint32_t raw_misses;
-  memcpy(&raw_misses, &tmp_misses, sizeof(tmp_misses));
-  if (raw_misses != 0) {
+  // bool isMiss = 4;
+  if (this->_internal_ismiss() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_misses(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(4, this->_internal_ismiss(), target);
   }
 
   // .google.protobuf.Timestamp time = 5;
@@ -1823,17 +1820,6 @@ size_t ScoreUpdate::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated float newScores = 3;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_newscores_size());
-    size_t data_size = 4UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
-    }
-    total_size += data_size;
-  }
-
   // .google.protobuf.Timestamp time = 5;
   if (this->_internal_has_time()) {
     total_size += 1 +
@@ -1841,12 +1827,12 @@ size_t ScoreUpdate::ByteSizeLong() const {
         *_impl_.time_);
   }
 
-  // float score = 1;
+  // float totalScore = 1;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_score = this->_internal_score();
-  uint32_t raw_score;
-  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
-  if (raw_score != 0) {
+  float tmp_totalscore = this->_internal_totalscore();
+  uint32_t raw_totalscore;
+  memcpy(&raw_totalscore, &tmp_totalscore, sizeof(tmp_totalscore));
+  if (raw_totalscore != 0) {
     total_size += 1 + 4;
   }
 
@@ -1859,13 +1845,18 @@ size_t ScoreUpdate::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float misses = 4;
+  // float score = 3;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_misses = this->_internal_misses();
-  uint32_t raw_misses;
-  memcpy(&raw_misses, &tmp_misses, sizeof(tmp_misses));
-  if (raw_misses != 0) {
+  float tmp_score = this->_internal_score();
+  uint32_t raw_score;
+  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
+  if (raw_score != 0) {
     total_size += 1 + 4;
+  }
+
+  // bool isMiss = 4;
+  if (this->_internal_ismiss() != 0) {
+    total_size += 1 + 1;
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1886,17 +1877,16 @@ void ScoreUpdate::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.newscores_.MergeFrom(from._impl_.newscores_);
   if (from._internal_has_time()) {
     _this->_internal_mutable_time()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(
         from._internal_time());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_score = from._internal_score();
-  uint32_t raw_score;
-  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
-  if (raw_score != 0) {
-    _this->_internal_set_score(from._internal_score());
+  float tmp_totalscore = from._internal_totalscore();
+  uint32_t raw_totalscore;
+  memcpy(&raw_totalscore, &tmp_totalscore, sizeof(tmp_totalscore));
+  if (raw_totalscore != 0) {
+    _this->_internal_set_totalscore(from._internal_totalscore());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_combo = from._internal_combo();
@@ -1906,11 +1896,14 @@ void ScoreUpdate::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
     _this->_internal_set_combo(from._internal_combo());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_misses = from._internal_misses();
-  uint32_t raw_misses;
-  memcpy(&raw_misses, &tmp_misses, sizeof(tmp_misses));
-  if (raw_misses != 0) {
-    _this->_internal_set_misses(from._internal_misses());
+  float tmp_score = from._internal_score();
+  uint32_t raw_score;
+  memcpy(&raw_score, &tmp_score, sizeof(tmp_score));
+  if (raw_score != 0) {
+    _this->_internal_set_score(from._internal_score());
+  }
+  if (from._internal_ismiss() != 0) {
+    _this->_internal_set_ismiss(from._internal_ismiss());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1929,10 +1922,9 @@ bool ScoreUpdate::IsInitialized() const {
 void ScoreUpdate::InternalSwap(ScoreUpdate* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.newscores_.InternalSwap(&other->_impl_.newscores_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.misses_)
-      + sizeof(ScoreUpdate::_impl_.misses_)
+      PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.ismiss_)
+      + sizeof(ScoreUpdate::_impl_.ismiss_)
       - PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.time_)>(
           reinterpret_cast<char*>(&_impl_.time_),
           reinterpret_cast<char*>(&other->_impl_.time_));

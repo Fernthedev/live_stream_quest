@@ -36,11 +36,11 @@ message UpdatePosition {
 }
 
 message ScoreUpdate {
-  float score = 1;
+  float totalScore = 1;
   float combo = 2;
   // The scores the game just added
-  repeated float newScores = 3;
-  float misses = 4;
+  float score = 3;
+  bool isMiss = 4;
   // Store the time so we can use the newest score's total and combo
   google.protobuf.Timestamp time = 5;
 }

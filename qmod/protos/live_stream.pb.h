@@ -977,34 +977,12 @@ class ScoreUpdate final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNewScoresFieldNumber = 3,
     kTimeFieldNumber = 5,
-    kScoreFieldNumber = 1,
+    kTotalScoreFieldNumber = 1,
     kComboFieldNumber = 2,
-    kMissesFieldNumber = 4,
+    kScoreFieldNumber = 3,
+    kIsMissFieldNumber = 4,
   };
-  // repeated float newScores = 3;
-  int newscores_size() const;
-  private:
-  int _internal_newscores_size() const;
-  public:
-  void clear_newscores();
-  private:
-  float _internal_newscores(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_newscores() const;
-  void _internal_add_newscores(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_newscores();
-  public:
-  float newscores(int index) const;
-  void set_newscores(int index, float value);
-  void add_newscores(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      newscores() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_newscores();
-
   // .google.protobuf.Timestamp time = 5;
   bool has_time() const;
   private:
@@ -1023,13 +1001,13 @@ class ScoreUpdate final :
       ::PROTOBUF_NAMESPACE_ID::Timestamp* time);
   ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_time();
 
-  // float score = 1;
-  void clear_score();
-  float score() const;
-  void set_score(float value);
+  // float totalScore = 1;
+  void clear_totalscore();
+  float totalscore() const;
+  void set_totalscore(float value);
   private:
-  float _internal_score() const;
-  void _internal_set_score(float value);
+  float _internal_totalscore() const;
+  void _internal_set_totalscore(float value);
   public:
 
   // float combo = 2;
@@ -1041,13 +1019,22 @@ class ScoreUpdate final :
   void _internal_set_combo(float value);
   public:
 
-  // float misses = 4;
-  void clear_misses();
-  float misses() const;
-  void set_misses(float value);
+  // float score = 3;
+  void clear_score();
+  float score() const;
+  void set_score(float value);
   private:
-  float _internal_misses() const;
-  void _internal_set_misses(float value);
+  float _internal_score() const;
+  void _internal_set_score(float value);
+  public:
+
+  // bool isMiss = 4;
+  void clear_ismiss();
+  bool ismiss() const;
+  void set_ismiss(bool value);
+  private:
+  bool _internal_ismiss() const;
+  void _internal_set_ismiss(bool value);
   public:
 
   // @@protoc_insertion_point(class_scope:ScoreUpdate)
@@ -1058,11 +1045,11 @@ class ScoreUpdate final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > newscores_;
     ::PROTOBUF_NAMESPACE_ID::Timestamp* time_;
-    float score_;
+    float totalscore_;
     float combo_;
-    float misses_;
+    float score_;
+    bool ismiss_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2964,24 +2951,24 @@ inline void UpdatePosition::set_songtime(float value) {
 
 // ScoreUpdate
 
-// float score = 1;
-inline void ScoreUpdate::clear_score() {
-  _impl_.score_ = 0;
+// float totalScore = 1;
+inline void ScoreUpdate::clear_totalscore() {
+  _impl_.totalscore_ = 0;
 }
-inline float ScoreUpdate::_internal_score() const {
-  return _impl_.score_;
+inline float ScoreUpdate::_internal_totalscore() const {
+  return _impl_.totalscore_;
 }
-inline float ScoreUpdate::score() const {
-  // @@protoc_insertion_point(field_get:ScoreUpdate.score)
-  return _internal_score();
+inline float ScoreUpdate::totalscore() const {
+  // @@protoc_insertion_point(field_get:ScoreUpdate.totalScore)
+  return _internal_totalscore();
 }
-inline void ScoreUpdate::_internal_set_score(float value) {
+inline void ScoreUpdate::_internal_set_totalscore(float value) {
   
-  _impl_.score_ = value;
+  _impl_.totalscore_ = value;
 }
-inline void ScoreUpdate::set_score(float value) {
-  _internal_set_score(value);
-  // @@protoc_insertion_point(field_set:ScoreUpdate.score)
+inline void ScoreUpdate::set_totalscore(float value) {
+  _internal_set_totalscore(value);
+  // @@protoc_insertion_point(field_set:ScoreUpdate.totalScore)
 }
 
 // float combo = 2;
@@ -3004,71 +2991,44 @@ inline void ScoreUpdate::set_combo(float value) {
   // @@protoc_insertion_point(field_set:ScoreUpdate.combo)
 }
 
-// repeated float newScores = 3;
-inline int ScoreUpdate::_internal_newscores_size() const {
-  return _impl_.newscores_.size();
+// float score = 3;
+inline void ScoreUpdate::clear_score() {
+  _impl_.score_ = 0;
 }
-inline int ScoreUpdate::newscores_size() const {
-  return _internal_newscores_size();
+inline float ScoreUpdate::_internal_score() const {
+  return _impl_.score_;
 }
-inline void ScoreUpdate::clear_newscores() {
-  _impl_.newscores_.Clear();
+inline float ScoreUpdate::score() const {
+  // @@protoc_insertion_point(field_get:ScoreUpdate.score)
+  return _internal_score();
 }
-inline float ScoreUpdate::_internal_newscores(int index) const {
-  return _impl_.newscores_.Get(index);
+inline void ScoreUpdate::_internal_set_score(float value) {
+  
+  _impl_.score_ = value;
 }
-inline float ScoreUpdate::newscores(int index) const {
-  // @@protoc_insertion_point(field_get:ScoreUpdate.newScores)
-  return _internal_newscores(index);
-}
-inline void ScoreUpdate::set_newscores(int index, float value) {
-  _impl_.newscores_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ScoreUpdate.newScores)
-}
-inline void ScoreUpdate::_internal_add_newscores(float value) {
-  _impl_.newscores_.Add(value);
-}
-inline void ScoreUpdate::add_newscores(float value) {
-  _internal_add_newscores(value);
-  // @@protoc_insertion_point(field_add:ScoreUpdate.newScores)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-ScoreUpdate::_internal_newscores() const {
-  return _impl_.newscores_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-ScoreUpdate::newscores() const {
-  // @@protoc_insertion_point(field_list:ScoreUpdate.newScores)
-  return _internal_newscores();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-ScoreUpdate::_internal_mutable_newscores() {
-  return &_impl_.newscores_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-ScoreUpdate::mutable_newscores() {
-  // @@protoc_insertion_point(field_mutable_list:ScoreUpdate.newScores)
-  return _internal_mutable_newscores();
+inline void ScoreUpdate::set_score(float value) {
+  _internal_set_score(value);
+  // @@protoc_insertion_point(field_set:ScoreUpdate.score)
 }
 
-// float misses = 4;
-inline void ScoreUpdate::clear_misses() {
-  _impl_.misses_ = 0;
+// bool isMiss = 4;
+inline void ScoreUpdate::clear_ismiss() {
+  _impl_.ismiss_ = false;
 }
-inline float ScoreUpdate::_internal_misses() const {
-  return _impl_.misses_;
+inline bool ScoreUpdate::_internal_ismiss() const {
+  return _impl_.ismiss_;
 }
-inline float ScoreUpdate::misses() const {
-  // @@protoc_insertion_point(field_get:ScoreUpdate.misses)
-  return _internal_misses();
+inline bool ScoreUpdate::ismiss() const {
+  // @@protoc_insertion_point(field_get:ScoreUpdate.isMiss)
+  return _internal_ismiss();
 }
-inline void ScoreUpdate::_internal_set_misses(float value) {
+inline void ScoreUpdate::_internal_set_ismiss(bool value) {
   
-  _impl_.misses_ = value;
+  _impl_.ismiss_ = value;
 }
-inline void ScoreUpdate::set_misses(float value) {
-  _internal_set_misses(value);
-  // @@protoc_insertion_point(field_set:ScoreUpdate.misses)
+inline void ScoreUpdate::set_ismiss(bool value) {
+  _internal_set_ismiss(value);
+  // @@protoc_insertion_point(field_set:ScoreUpdate.isMiss)
 }
 
 // .google.protobuf.Timestamp time = 5;

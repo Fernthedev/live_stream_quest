@@ -978,9 +978,10 @@ class ScoreUpdate final :
 
   enum : int {
     kNewScoresFieldNumber = 3,
-    kTimeFieldNumber = 4,
+    kTimeFieldNumber = 5,
     kScoreFieldNumber = 1,
     kComboFieldNumber = 2,
+    kMissesFieldNumber = 4,
   };
   // repeated float newScores = 3;
   int newscores_size() const;
@@ -1004,7 +1005,7 @@ class ScoreUpdate final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_newscores();
 
-  // .google.protobuf.Timestamp time = 4;
+  // .google.protobuf.Timestamp time = 5;
   bool has_time() const;
   private:
   bool _internal_has_time() const;
@@ -1040,6 +1041,15 @@ class ScoreUpdate final :
   void _internal_set_combo(float value);
   public:
 
+  // float misses = 4;
+  void clear_misses();
+  float misses() const;
+  void set_misses(float value);
+  private:
+  float _internal_misses() const;
+  void _internal_set_misses(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:ScoreUpdate)
  private:
   class _Internal;
@@ -1052,6 +1062,7 @@ class ScoreUpdate final :
     ::PROTOBUF_NAMESPACE_ID::Timestamp* time_;
     float score_;
     float combo_;
+    float misses_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3040,7 +3051,27 @@ ScoreUpdate::mutable_newscores() {
   return _internal_mutable_newscores();
 }
 
-// .google.protobuf.Timestamp time = 4;
+// float misses = 4;
+inline void ScoreUpdate::clear_misses() {
+  _impl_.misses_ = 0;
+}
+inline float ScoreUpdate::_internal_misses() const {
+  return _impl_.misses_;
+}
+inline float ScoreUpdate::misses() const {
+  // @@protoc_insertion_point(field_get:ScoreUpdate.misses)
+  return _internal_misses();
+}
+inline void ScoreUpdate::_internal_set_misses(float value) {
+  
+  _impl_.misses_ = value;
+}
+inline void ScoreUpdate::set_misses(float value) {
+  _internal_set_misses(value);
+  // @@protoc_insertion_point(field_set:ScoreUpdate.misses)
+}
+
+// .google.protobuf.Timestamp time = 5;
 inline bool ScoreUpdate::_internal_has_time() const {
   return this != internal_default_instance() && _impl_.time_ != nullptr;
 }

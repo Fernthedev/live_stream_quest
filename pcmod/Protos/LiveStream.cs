@@ -34,22 +34,22 @@ namespace LiveStreamQuest.Protos {
             "c2Zvcm1IAYgBARInCg5yaWdodFRyYW5zZm9ybRgDIAEoCzIKLlRyYW5zZm9y",
             "bUgCiAEBEigKBHRpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
             "YW1wEhAKCHNvbmdUaW1lGAUgASgCQhAKDl9oZWFkVHJhbnNmb3JtQhAKDl9s",
-            "ZWZ0VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJoCgtTY29yZVVwZGF0",
+            "ZWZ0VHJhbnNmb3JtQhEKD19yaWdodFRyYW5zZm9ybSJ4CgtTY29yZVVwZGF0",
             "ZRINCgVzY29yZRgBIAEoAhINCgVjb21ibxgCIAEoAhIRCgluZXdTY29yZXMY",
-            "AyADKAISKAoEdGltZRgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3Rh",
-            "bXAiSwoMU3RhcnRCZWF0bWFwEg8KB2xldmVsSWQYASABKAkSFgoOY2hhcmFj",
-            "dGVyaXN0aWMYAiABKAkSEgoKZGlmZmljdWx0eRgDIAEoBSIkChNTdGFydEJl",
-            "YXRtYXBGYWlsdXJlEg0KBWVycm9yGAEgASgJIgkKB1JlYWR5VXAiHAoIU3Rh",
-            "cnRNYXASEAoIc29uZ1RpbWUYASABKAIiCQoHRXhpdE1hcCIKCghQYXVzZU1h",
-            "cCLUAgoNUGFja2V0V3JhcHBlchIVCg1xdWVyeVJlc3VsdElkGAEgASgEEikK",
-            "DnVwZGF0ZVBvc2l0aW9uGAIgASgLMg8uVXBkYXRlUG9zaXRpb25IABIlCgxz",
-            "dGFydEJlYXRtYXAYAyABKAsyDS5TdGFydEJlYXRtYXBIABIzChNzdGFydEJl",
-            "YXRtYXBGYWlsdXJlGAQgASgLMhQuU3RhcnRCZWF0bWFwRmFpbHVyZUgAEhsK",
-            "B3JlYWR5VXAYBSABKAsyCC5SZWFkeVVwSAASHQoIc3RhcnRNYXAYBiABKAsy",
-            "CS5TdGFydE1hcEgAEhsKB2V4aXRNYXAYByABKAsyCC5FeGl0TWFwSAASHQoI",
-            "cGF1c2VNYXAYCCABKAsyCS5QYXVzZU1hcEgAEiMKC3Njb3JlVXBkYXRlGAkg",
-            "ASgLMgwuU2NvcmVVcGRhdGVIAEIICgZQYWNrZXRCGaoCFkxpdmVTdHJlYW1R",
-            "dWVzdC5Qcm90b3NiBnByb3RvMw=="));
+            "AyADKAISDgoGbWlzc2VzGAQgASgCEigKBHRpbWUYBSABKAsyGi5nb29nbGUu",
+            "cHJvdG9idWYuVGltZXN0YW1wIksKDFN0YXJ0QmVhdG1hcBIPCgdsZXZlbElk",
+            "GAEgASgJEhYKDmNoYXJhY3RlcmlzdGljGAIgASgJEhIKCmRpZmZpY3VsdHkY",
+            "AyABKAUiJAoTU3RhcnRCZWF0bWFwRmFpbHVyZRINCgVlcnJvchgBIAEoCSIJ",
+            "CgdSZWFkeVVwIhwKCFN0YXJ0TWFwEhAKCHNvbmdUaW1lGAEgASgCIgkKB0V4",
+            "aXRNYXAiCgoIUGF1c2VNYXAi1AIKDVBhY2tldFdyYXBwZXISFQoNcXVlcnlS",
+            "ZXN1bHRJZBgBIAEoBBIpCg51cGRhdGVQb3NpdGlvbhgCIAEoCzIPLlVwZGF0",
+            "ZVBvc2l0aW9uSAASJQoMc3RhcnRCZWF0bWFwGAMgASgLMg0uU3RhcnRCZWF0",
+            "bWFwSAASMwoTc3RhcnRCZWF0bWFwRmFpbHVyZRgEIAEoCzIULlN0YXJ0QmVh",
+            "dG1hcEZhaWx1cmVIABIbCgdyZWFkeVVwGAUgASgLMgguUmVhZHlVcEgAEh0K",
+            "CHN0YXJ0TWFwGAYgASgLMgkuU3RhcnRNYXBIABIbCgdleGl0TWFwGAcgASgL",
+            "MgguRXhpdE1hcEgAEh0KCHBhdXNlTWFwGAggASgLMgkuUGF1c2VNYXBIABIj",
+            "CgtzY29yZVVwZGF0ZRgJIAEoCzIMLlNjb3JlVXBkYXRlSABCCAoGUGFja2V0",
+            "QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -57,7 +57,7 @@ namespace LiveStreamQuest.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Quaternion), global::LiveStreamQuest.Protos.Quaternion.Parser, new[]{ "X", "Y", "Z", "W" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Transform), global::LiveStreamQuest.Protos.Transform.Parser, new[]{ "Position", "Rotation" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.UpdatePosition), global::LiveStreamQuest.Protos.UpdatePosition.Parser, new[]{ "HeadTransform", "LeftTransform", "RightTransform", "Time", "SongTime" }, new[]{ "HeadTransform", "LeftTransform", "RightTransform" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ScoreUpdate), global::LiveStreamQuest.Protos.ScoreUpdate.Parser, new[]{ "Score", "Combo", "NewScores", "Time" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ScoreUpdate), global::LiveStreamQuest.Protos.ScoreUpdate.Parser, new[]{ "Score", "Combo", "NewScores", "Misses", "Time" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmap), global::LiveStreamQuest.Protos.StartBeatmap.Parser, new[]{ "LevelId", "Characteristic", "Difficulty" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartBeatmapFailure), global::LiveStreamQuest.Protos.StartBeatmapFailure.Parser, new[]{ "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ReadyUp), global::LiveStreamQuest.Protos.ReadyUp.Parser, null, null, null, null, null),
@@ -1291,6 +1291,7 @@ namespace LiveStreamQuest.Protos {
       score_ = other.score_;
       combo_ = other.combo_;
       newScores_ = other.newScores_.Clone();
+      misses_ = other.misses_;
       time_ = other.time_ != null ? other.time_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1339,8 +1340,20 @@ namespace LiveStreamQuest.Protos {
       get { return newScores_; }
     }
 
+    /// <summary>Field number for the "misses" field.</summary>
+    public const int MissesFieldNumber = 4;
+    private float misses_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Misses {
+      get { return misses_; }
+      set {
+        misses_ = value;
+      }
+    }
+
     /// <summary>Field number for the "time" field.</summary>
-    public const int TimeFieldNumber = 4;
+    public const int TimeFieldNumber = 5;
     private global::Google.Protobuf.WellKnownTypes.Timestamp time_;
     /// <summary>
     /// Store the time so we can use the newest score's total and combo
@@ -1372,6 +1385,7 @@ namespace LiveStreamQuest.Protos {
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Score, other.Score)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Combo, other.Combo)) return false;
       if(!newScores_.Equals(other.newScores_)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Misses, other.Misses)) return false;
       if (!object.Equals(Time, other.Time)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1383,6 +1397,7 @@ namespace LiveStreamQuest.Protos {
       if (Score != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Score);
       if (Combo != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Combo);
       hash ^= newScores_.GetHashCode();
+      if (Misses != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Misses);
       if (time_ != null) hash ^= Time.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1411,8 +1426,12 @@ namespace LiveStreamQuest.Protos {
         output.WriteFloat(Combo);
       }
       newScores_.WriteTo(output, _repeated_newScores_codec);
+      if (Misses != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Misses);
+      }
       if (time_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(42);
         output.WriteMessage(Time);
       }
       if (_unknownFields != null) {
@@ -1434,8 +1453,12 @@ namespace LiveStreamQuest.Protos {
         output.WriteFloat(Combo);
       }
       newScores_.WriteTo(ref output, _repeated_newScores_codec);
+      if (Misses != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Misses);
+      }
       if (time_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(42);
         output.WriteMessage(Time);
       }
       if (_unknownFields != null) {
@@ -1455,6 +1478,9 @@ namespace LiveStreamQuest.Protos {
         size += 1 + 4;
       }
       size += newScores_.CalculateSize(_repeated_newScores_codec);
+      if (Misses != 0F) {
+        size += 1 + 4;
+      }
       if (time_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Time);
       }
@@ -1477,6 +1503,9 @@ namespace LiveStreamQuest.Protos {
         Combo = other.Combo;
       }
       newScores_.Add(other.newScores_);
+      if (other.Misses != 0F) {
+        Misses = other.Misses;
+      }
       if (other.time_ != null) {
         if (time_ == null) {
           Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
@@ -1511,7 +1540,11 @@ namespace LiveStreamQuest.Protos {
             newScores_.AddEntriesFrom(input, _repeated_newScores_codec);
             break;
           }
-          case 34: {
+          case 37: {
+            Misses = input.ReadFloat();
+            break;
+          }
+          case 42: {
             if (time_ == null) {
               Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
@@ -1546,7 +1579,11 @@ namespace LiveStreamQuest.Protos {
             newScores_.AddEntriesFrom(ref input, _repeated_newScores_codec);
             break;
           }
-          case 34: {
+          case 37: {
+            Misses = input.ReadFloat();
+            break;
+          }
+          case 42: {
             if (time_ == null) {
               Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }

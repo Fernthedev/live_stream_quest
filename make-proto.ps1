@@ -7,7 +7,7 @@
 # Use VCPKG protobuf for consistency
 
 # TODO: Make this work cross platform
-& "$ENV:VCPKG_ROOT\installed\arm64-android\tools\protobuf\protoc.exe" --proto_path=./protos `
+& ".\vcpkg_installed\installed\arm64-android\tools\protobuf\protoc.exe" --proto_path=./protos `
     --cpp_out=./qmod/protos/ `
     --csharp_out=./pcmod/Protos/ `
     ./protos/live_stream.proto

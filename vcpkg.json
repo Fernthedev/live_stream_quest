@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    {
+      "name": "protobuf",
+      "platform": "android & arm64"
+    },
+    {
+      "name": "websocketpp",
+      "platform": "android & arm64"
+    }
+  ]
+}

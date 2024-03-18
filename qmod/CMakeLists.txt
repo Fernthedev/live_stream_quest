@@ -13,10 +13,11 @@ set(MOD_ID "live_stream_quest")
 
 cmake_minimum_required(VERSION 3.21)
 
-# vcpkg config
+# vcpkg config. Must be before project
 message("VCPKG $ENV{VCPKG_ROOT}")
 set(VCPKG_TARGET_TRIPLET arm64-android)
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake)
+set(VCPKG_MANIFEST_DIR ${CMAKE_SOURCE_DIR}/..)
 string(REPLACE "\\" "/" VCPKG_ROOT_WINDOWS_FIX $ENV{VCPKG_ROOT})
 set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT_WINDOWS_FIX}/scripts/buildsystems/vcpkg.cmake)
 
@@ -61,7 +62,7 @@ add_library(
 )
 
 # vcpkg stuff
-find_package(Protobuf CONFIG REQUIRED)
+find_package(protobuf CONFIG REQUIRED)
 target_link_libraries(${COMPILE_ID} PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 find_package(websocketpp CONFIG REQUIRED)
 target_link_libraries(${COMPILE_ID} PRIVATE websocketpp::websocketpp)

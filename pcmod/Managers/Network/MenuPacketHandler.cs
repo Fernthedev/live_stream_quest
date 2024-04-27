@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
+using BGLib.Polyglot;
 using LiveStreamQuest.Protos;
-using Polyglot;
 using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
@@ -31,6 +31,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     [Inject] private readonly PlayerDataModel _playerDataModel;
     [Inject] private readonly GameplaySetupViewController _gameplaySetupViewController;
+    [Inject] private readonly EnvironmentsListModel _environmentsListModel;
 
 
     [Inject] private readonly NetworkManager _networkManager;
@@ -107,8 +108,8 @@ public class MenuPacketHandler : IDisposable, IInitializable
                     .ConfigureAwait(true);
             }
         }
-
-        var levelPreview = _beatmapLevelsModel.GetLevelPreviewForLevelId(id);
+#if BS_1_29
+          var levelPreview = _beatmapLevelsModel.GetLevelPreviewForLevelId(id);
 
         if (levelPreview == null)
         {
@@ -169,8 +170,6 @@ public class MenuPacketHandler : IDisposable, IInitializable
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
 
-
-#if BS_1_29
         _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
             _playerDataModel.playerData.overrideEnvironmentSettings, null,
             _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
@@ -178,13 +177,42 @@ public class MenuPacketHandler : IDisposable, IInitializable
             true,
             null, null, null);
 #else
-        _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
+
+        var beatmapResult = _beatmapLevelsModel.GetBeatmapLevel(id);
+
+        if (beatmapResult == null)
+        {
+            SendBeatmapStartError("beatmap level is null");
+            // TODO: User error dialog
+            return;
+        }
+
+        var beatmapCharacteristicSo =
+            _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(packetWrapper.StartBeatmap
+                .Characteristic);
+
+        var beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
+        var beatmapKey = new BeatmapKey(id, beatmapCharacteristicSo,
+                beatmapDifficulty);
+
+        // TODO: Figure out why this null refs if single player hasn't been opened
+
+        // multiplayerLevelSelectionFlowCoordinator.Setup(x);
+        // _soloFreePlayFlowCoordinator.Setup(state);
+
+        _playerDataModel.playerDataFileModel.Load();
+        _gameplaySetupViewController.Init();
+        _playerSettingsPanelController.SetIsDirty();
+        _playerSettingsPanelController.Refresh();
+
+        _menuTransitionsHelper.StartStandardLevel("Solo", beatmapKey, beatmapResult,
             _playerDataModel.playerData.overrideEnvironmentSettings,
-            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), null,
+            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
             _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
-            _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false,
+            _playerSettingsPanelController.playerSpecificSettings, null, _environmentsListModel, Localization.Get("BUTTON_MENU"), 
+            false,
             true,
-            null, null, null);
+            null, null, null, null);
 #endif
     }
 
@@ -200,6 +228,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             }
         };
 
+        _siraLog.Error($"Sending error packet");
         _networkManager.SendPacket(packetWrapper);
     }
 }

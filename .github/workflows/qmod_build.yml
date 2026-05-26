@@ -1,0 +1,108 @@
+name: NDK build
+
+env:
+  module_id: livestream_quest
+  qmodName: LiveStreamQuest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+        with:
+          submodules: true
+          lfs: true
+
+      - uses: seanmiddleditch/gha-setup-ninja@v3
+      # Setup vcpkg: ensures vcpkg is downloaded and built.
+      # Since vcpkg.json is being used later on to install the packages
+      # when `run-cmake` runs, no packages are installed at this time
+      # (and vcpkg does not run).
+      - name: Setup anew (or from cache) vcpkg (and does not build any package)
+        uses: lukka/run-vcpkg@v11 # Always specify the specific _version_ of the
+                                  # action you need, `v11` in this case to stay up
+                                  # to date with fixes on the v11 branch.
+        #with:
+          # This is the default location of the directory containing vcpkg sources.
+          # Change it to the right location if needed.
+          # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+
+          # If not using a Git submodule for vcpkg sources, this input
+          # specifies which commit id to checkout from a Git repo.
+          # Notes: 
+          # - it must _not_ be set if using a Git submodule for vcpkg.
+          # - if not provided, the `vcpkgConfigurationJsonGlob` or `vcpkgJsonGlob`
+          #   are being used to locate either a vcpkg-configuration.json or vcpkg.json
+          #   in order to use the builtin-baseline or the default-registry's
+          #   builtin baseline.
+          # vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
+
+          # This is only needed if the command `vcpkg install` must run at this step.
+          # Instead it is highly suggested to let `run-cmake` to run vcpkg later on
+          # using the vcpkg.cmake toolchain. The default is `false`.
+          # runVcpkgInstall: true
+
+          # This is only needed if `runVpkgInstall` is `true`.
+          # This glob expression used to locate the vcpkg.json and  use
+          # its directory location as `working directory` when running `vcpkg install`.
+          # Change it to match a single manifest file you want to use.
+          # Note: do not use `${{ github.context }}` to compose the value as it
+          # contains backslashes that would be misinterpreted. Instead
+          # compose a value relative to the root of the repository using
+          # `**/path/from/root/of/repo/to/vcpkg.json` to match the desired `vcpkg.json`.
+          # vcpkgJsonGlob: '**/vcpkg.json'
+          
+      # - name: Create ndkpath.txt
+      #   run: |
+      #     echo "$ANDROID_NDK_LATEST_HOME" > ${GITHUB_WORKSPACE}/ndkpath.txt
+      #     cat ${GITHUB_WORKSPACE}/ndkpath.txt
+
+      - name: QPM Rust Action
+        uses: Fernthedev/qpm-rust-action@v1
+        with:
+          #required 
+          package_path: ${GITHUB_WORKSPACE}/qmod
+          workflow_token: ${{secrets.GITHUB_TOKEN}}
+          resolve_ndk: true
+          restore: true # will run restore on download
+          cache: true #will cache dependencies
+          
+
+          # Name of qmod in release asset. Assumes exists, same as prior
+          qpm_qmod: ${{env.qmodName}}.qmod
+          
+      - name: Build
+        run: |
+          cd ${GITHUB_WORKSPACE}/qmod
+          qpm-rust s build
+          qpm-rust qmod zip
+
+      - name: Get Library Name
+        id: libname
+        run: |
+          cd ${GITHUB_WORKSPACE}/qmod/build/
+          pattern="lib${module_id}*.so"
+          files=( $pattern )
+          echo ::set-output name=NAME::"${files[0]}"
+          
+      - name: Upload non-debug artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.libname.outputs.NAME }}
+          path: ./qmod/build/${{ steps.libname.outputs.NAME }}
+          if-no-files-found: error
+
+      - name: Upload qmod artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.qmodName}}.qmod
+          path: ./qmod/${{ env.qmodName }}.qmod
+          if-no-files-found: error

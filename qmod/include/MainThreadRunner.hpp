@@ -7,9 +7,7 @@
 
 #include "beatsaber-hook/shared/utils/typedefs-list.hpp"
 
-DECLARE_CLASS_CODEGEN(LiveStreamQuest, MainThreadRunner, UnityEngine::MonoBehaviour,
+DECLARE_CLASS_CODEGEN(LiveStreamQuest, MainThreadRunner, UnityEngine::MonoBehaviour) {
     DECLARE_INSTANCE_METHOD(void, Update);
-
-
-)
+};
 void scheduleFunction(std::function<void()>&& func);

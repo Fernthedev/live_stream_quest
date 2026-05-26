@@ -1,4 +1,6 @@
 {
+  "$schema": "https://raw.githubusercontent.com/QuestPackageManager/QPM.Package/refs/heads/main/qpm.schema.json",
+  "version": "0.4.0",
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
@@ -11,22 +13,53 @@
       "cmake": true
     }
   },
+  "workspace": {
+    "scripts": {
+      "build": [
+        "pwsh ./scripts/build.ps1"
+      ],
+      "copy": [
+        "pwsh ./scripts/copy.ps1"
+      ],
+      "logcat": [
+        "pwsh ./scripts/start-logging.ps1"
+      ],
+      "qmod": [
+        "pwsh ./scripts/build.ps1",
+        "pwsh ./scripts/createqmod.ps1"
+      ],
+      "restart": [
+        "pwsh ./scripts/restart-game.ps1"
+      ],
+      "stack": [
+        "pwsh ./scripts/pull-tombstone.ps1 -Analyze"
+      ],
+      "tomb": [
+        "pwsh ./scripts/pull-tombstone.ps1"
+      ]
+    },
+    "ndk": "^27.3.13750724",
+    "qmodIncludeDirs": [
+      "./build",
+      "./extern/libs"
+    ],
+    "qmodIncludeFiles": [],
+    "qmodOutput": "LiveStreamQuest.qmod"
+  },
   "dependencies": [
     {
       "id": "beatsaber-hook",
-      "versionRange": "^3.8.0",
-      "additionalData": {
-        "extraFiles": ["src/inline-hook"]
-      }
-    },
-    {
-      "id": "modloader",
-      "versionRange": "=1.2.3",
+      "versionRange": "^6.0.0",
       "additionalData": {}
     },
     {
-      "id": "codegen",
-      "versionRange": "^0.33.0",
+      "id": "scotland2",
+      "versionRange": "^0.1.0",
+      "additionalData": {}
+    },
+    {
+      "id": "bs-cordl",
+      "versionRange": "^4008.0.0",
       "additionalData": {}
     },
     {
@@ -36,34 +69,18 @@
     },
     {
       "id": "socket_lib",
-      "versionRange": "^0.9.0",
+      "versionRange": "^0.12.1",
       "additionalData": {}
     },
     {
-      "id": "paper",
-      "versionRange": "<1.3.0",
-      "additionalData": {}
-    },
-    {
-      "id": "custom-types",
-      "versionRange": "^0.15.24",
+      "id": "paper2_scotland2",
+      "versionRange": "^4.7.0",
       "additionalData": {}
     },
     {
       "id": "custom-types",
-      "versionRange": "^0.15.24",
+      "versionRange": "^0.18.1",
       "additionalData": {}
     }
-  ],
-  "workspace": {
-    "scripts": {
-      "stack": ["pwsh ./scripts/pull-tombstone.ps1 -Analyze"],
-      "copy": ["pwsh ./scripts/copy.ps1"],
-      "restart": ["pwsh ./scripts/restart-game.ps1"],
-      "build": ["pwsh ./scripts/build.ps1"],
-      "qmod": ["pwsh ./scripts/build.ps1", "pwsh ./scripts/createqmod.ps1"],
-      "tomb": ["pwsh ./scripts/pull-tombstone.ps1"],
-      "logcat": ["pwsh ./scripts/start-logging.ps1"]
-    }
-  }
+  ]
 }

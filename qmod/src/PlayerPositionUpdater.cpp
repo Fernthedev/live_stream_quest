@@ -11,6 +11,9 @@
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/WaitForSecondsRealtime.hpp"
 
+#include "GlobalNamespace/BadCutScoringElement.hpp"
+#include "GlobalNamespace/MissScoringElement.hpp"
+
 #include <chrono>
 #include <functional>
 
@@ -91,7 +94,7 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
     Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 
     co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(1.0f / 60.0f)
-        ->i_IEnumerator();
+        ->i___System__Collections__IEnumerator();
   }
 
   // Better safe than sorry
@@ -108,15 +111,15 @@ void LiveStreamQuest::PlayerPositionUpdater::OnScoreChange(
 
   auto &scoreUpdate = *packetWrapper.mutable_scoreupdate();
   scoreUpdate.set_totalscore(scoreController->modifiedScore);
-  scoreUpdate.set_combo(scoreController->scoreMultiplierCounter->multiplier);
+  scoreUpdate.set_combo(scoreController->_scoreMultiplierCounter->multiplier);
 
   auto current_time = std::chrono::system_clock::now(); //.time_since_epoch()
   *scoreUpdate.mutable_time() = ConvertToProtobufTimestamp(current_time);
 
   auto isBad =
-      il2cpp_utils::AssignableFrom<GlobalNamespace::BadCutScoringElement>(
+      il2cpp_utils::AssignableFrom<GlobalNamespace::BadCutScoringElement*>(
           element->klass) ||
-      il2cpp_utils::AssignableFrom<GlobalNamespace::MissScoringElement>(
+      il2cpp_utils::AssignableFrom<GlobalNamespace::MissScoringElement*>(
           element->klass);
   
   // bad score
@@ -136,11 +139,11 @@ void LiveStreamQuest::PlayerPositionUpdater::Awake() {
   this->playerTransforms = GetComponent<GlobalNamespace::PlayerTransforms *>();
   this->scoreController = UnityEngine::Resources::FindObjectsOfTypeAll<
                               GlobalNamespace::ScoreController *>()
-                              .FirstOrDefault();
+                              ->FirstOrDefault();
   this->audioTimeSyncController =
       UnityEngine::Resources::FindObjectsOfTypeAll<
           GlobalNamespace::AudioTimeSyncController *>()
-          .FirstOrDefault();
+          ->FirstOrDefault();
   CRASH_UNLESS(this->playerTransforms);
 
   // on score event

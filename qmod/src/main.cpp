@@ -18,70 +18,62 @@
 #include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "GlobalNamespace/GameSongController.hpp"
-#include "GlobalNamespace/IBeatmapLevel.hpp"
-#include "GlobalNamespace/IDifficultyBeatmap.hpp"
-#include "GlobalNamespace/IDifficultyBeatmapSet.hpp"
-#include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
+#include "GlobalNamespace/IBeatmapLevelData.hpp"
 #include "GlobalNamespace/MenuTransitionsHelper.hpp"
+#include "GlobalNamespace/zzzz__MenuTransitionsHelper_def.hpp"
+#include "GlobalNamespace/zzzz__MenuTransitionsHelper_impl.hpp"
 #include "GlobalNamespace/PauseController.hpp"
-#include "GlobalNamespace/PauseController_InitData.hpp"
 #include "GlobalNamespace/PlayerTransforms.hpp"
 
 
 #include "MainThreadRunner.hpp"
 #include "PlayerPositionUpdater.hpp"
 
+#include "scotland2/shared/loader.hpp"
+
 using namespace GlobalNamespace;
 using namespace UnityEngine;
 
-static ModInfo modInfo; // Stores the ID and version of our mod, and is sent to
-                        // the modloader upon startup
+static modloader::ModInfo modInfo{"LiveStreamQuest", VERSION, 1}; 
 
-// Returns a logger, useful for printing debug messages
-Logger &getLoggerOld() {
-  static Logger *logger = new Logger(modInfo);
-  return *logger;
-}
 
 MAKE_HOOK_MATCH(
     MenuTransitionsHelper_StartStandardLevel,
-    static_cast<void (MenuTransitionsHelper::*)(
-        StringW, IDifficultyBeatmap *, IPreviewBeatmapLevel *,
-        OverrideEnvironmentSettings *, ColorScheme *, GameplayModifiers *,
-        PlayerSpecificSettings *, PracticeSettings *, StringW, bool, bool,
-        System::Action *, System::Action_1<Zenject::DiContainer *> *,
-        System::Action_2<StandardLevelScenesTransitionSetupDataSO *,
-                         LevelCompletionResults *> *,
-        System::Action_2<LevelScenesTransitionSetupDataSO *,
-                         LevelCompletionResults *> *)>(
-        &MenuTransitionsHelper::StartStandardLevel),
-    void, MenuTransitionsHelper *self, StringW f1, IDifficultyBeatmap *f2,
-    IPreviewBeatmapLevel *f3, OverrideEnvironmentSettings *f4, ColorScheme *f5,
-    GameplayModifiers *f6, PlayerSpecificSettings *f7, PracticeSettings *f8,
-    StringW f9, bool f10, bool f11, System::Action *f12,
-    System::Action_1<Zenject::DiContainer *> *f13,
-    System::Action_2<StandardLevelScenesTransitionSetupDataSO *,
-                     LevelCompletionResults *> *f14,
-    System::Action_2<LevelScenesTransitionSetupDataSO *,
-                     LevelCompletionResults *> *f15) {
+    static_cast<void (::GlobalNamespace::MenuTransitionsHelper::*)(
+        ::StringW, ::ByRef<::GlobalNamespace::BeatmapKey>, ::GlobalNamespace::BeatmapLevel*, ::GlobalNamespace::IBeatmapLevelData*, ::GlobalNamespace::OverrideEnvironmentSettings*,
+        ::GlobalNamespace::ColorScheme*, bool, ::GlobalNamespace::ColorScheme*, ::GlobalNamespace::GameplayModifiers*, ::GlobalNamespace::PlayerSpecificSettings*, ::GlobalNamespace::PracticeSettings*,
+        ::GlobalNamespace::EnvironmentsListModel*, ::StringW, bool, bool, ::System::Action*, ::System::Action_1<::Zenject::DiContainer*>*,
+        ::System::Action_2<::UnityW<::GlobalNamespace::StandardLevelScenesTransitionSetupDataSO>, ::GlobalNamespace::LevelCompletionResults*>*,
+        ::System::Action_2<::UnityW<::GlobalNamespace::LevelScenesTransitionSetupDataSO>, ::GlobalNamespace::LevelCompletionResults*>*,
+        ::System::Nullable_1<::GlobalNamespace::RecordingToolManager_SetupData>)>(&::GlobalNamespace::MenuTransitionsHelper::StartStandardLevel),
+    void, MenuTransitionsHelper *self, ::StringW gameMode, ::ByRef<::GlobalNamespace::BeatmapKey> beatmapKey, ::GlobalNamespace::BeatmapLevel* beatmapLevel,
+                                   ::GlobalNamespace::IBeatmapLevelData* beatmapLevelData, ::GlobalNamespace::OverrideEnvironmentSettings* overrideEnvironmentSettings,
+                                   ::GlobalNamespace::ColorScheme* playerOverrideColorScheme, bool playerOverrideLightshowColors, ::GlobalNamespace::ColorScheme* beatmapOverrideColorScheme,
+                                   ::GlobalNamespace::GameplayModifiers* gameplayModifiers, ::GlobalNamespace::PlayerSpecificSettings* playerSpecificSettings,
+                                   ::GlobalNamespace::PracticeSettings* practiceSettings, ::GlobalNamespace::EnvironmentsListModel* environmentsListModel, ::StringW backButtonText,
+                                   bool useTestNoteCutSoundEffects, bool startPaused, ::System::Action* beforeSceneSwitchCallback, ::System::Action_1<::Zenject::DiContainer*>* afterSceneSwitchCallback,
+                                   ::System::Action_2<::UnityW<::GlobalNamespace::StandardLevelScenesTransitionSetupDataSO>, ::GlobalNamespace::LevelCompletionResults*>* levelFinishedCallback,
+                                   ::System::Action_2<::UnityW<::GlobalNamespace::LevelScenesTransitionSetupDataSO>, ::GlobalNamespace::LevelCompletionResults*>* levelRestartedCallback,
+                                   ::System::Nullable_1<::GlobalNamespace::RecordingToolManager_SetupData> recordingToolData) {
   // TODO: Handle practice settings
   Manager::GetInstance()->StartWait(0);
-  MenuTransitionsHelper_StartStandardLevel(self, f1, f2, f3, f4, f5, f6, f7, f8,
-                                           f9, f10, f11, f12, f13, f14, f15);
-
+  MenuTransitionsHelper_StartStandardLevel(self, gameMode, beatmapKey, beatmapLevel, beatmapLevelData, overrideEnvironmentSettings, playerOverrideColorScheme,
+                                         playerOverrideLightshowColors, beatmapOverrideColorScheme, gameplayModifiers, playerSpecificSettings,
+                                         practiceSettings, environmentsListModel, backButtonText, useTestNoteCutSoundEffects, startPaused,
+                                         beforeSceneSwitchCallback, afterSceneSwitchCallback, levelFinishedCallback, levelRestartedCallback,
+                                         recordingToolData);
+  
   // Start level on PC
   auto levelId =
-      std::string(f2->get_level()->i_IPreviewBeatmapLevel()->get_levelID());
+      std::string(beatmapKey->levelId);
 
-  std::string characteristicsName(f2->get_parentDifficultyBeatmapSet()
-                                      ->get_beatmapCharacteristic()
-                                      ->get_serializedName());
+  std::string characteristicsName(beatmapKey->beatmapCharacteristic->serializedName);
 
   LOG_INFO("Sending level start {}", levelId);
   PacketWrapper packetWrapper;
   packetWrapper.mutable_startbeatmap()->set_levelid(std::move(levelId));
   packetWrapper.mutable_startbeatmap()->set_characteristic(characteristicsName);
-  packetWrapper.mutable_startbeatmap()->set_difficulty(f2->get_difficulty());
+  packetWrapper.mutable_startbeatmap()->set_difficulty(beatmapKey->difficulty.value__);
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
@@ -179,7 +171,7 @@ updatePauseState(SafePtrUnity<PauseController> self) {
   }
 
   // Resume
-  if (self->paused || self->wantsToPause) {
+  if (self->_paused == PauseController::PauseState::Paused || self->wantsToPause) {
     self->HandlePauseMenuManagerDidPressContinueButton();
   }
 }
@@ -188,7 +180,7 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
   Manager::GetInstance()->ReadyQuestUp();
   if (shouldBePaused()) {
-    self->initData->startPaused = true;
+    self->_initData->startPaused = true;
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
         updatePauseState, SafePtrUnity(self)));
   }
@@ -229,13 +221,11 @@ MAKE_HOOK_MATCH(
 }
 
 // Called at the early stages of game loading
-extern "C" void setup(ModInfo &info) {
+extern "C" void setup(CModInfo *info) {
   Paper::Logger::RegisterFileContextId("LiveStreamQuest");
   Paper::Logger::RegisterFileContextId("SocketLib");
 
-  info.id = MOD_ID;
-  info.version = VERSION;
-  modInfo = info;
+  *info = modInfo.to_c();
 
   LOG_INFO("Completed setup!");
 }
@@ -249,19 +239,19 @@ extern "C" void load() {
   Manager::GetInstance()->Init();
 
   LOG_INFO("Installing hooks...");
-  INSTALL_HOOK(getLoggerOld(), PlayerTransforms_Awake)
-  INSTALL_HOOK(getLoggerOld(), PauseController_Start)
-  // INSTALL_HOOK(getLoggerOld(),
+  INSTALL_HOOK(LSQLogger, PlayerTransforms_Awake)
+  INSTALL_HOOK(LSQLogger, PauseController_Start)
+  // INSTALL_HOOK(LSQLogger,
   //              PauseController_HandlePauseMenuManagerDidPressContinueButton)
-  INSTALL_HOOK(getLoggerOld(), MenuTransitionsHelper_StartStandardLevel)
-  INSTALL_HOOK(getLoggerOld(),
+  INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_StartStandardLevel)
+  INSTALL_HOOK(LSQLogger,
                MenuTransitionsHelper_HandleMainGameSceneDidFinish)
-  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_StartSong)
-  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_ResumeSong)
-  INSTALL_HOOK(getLoggerOld(), AudioTimeSyncController_PauseSong)
-  // INSTALL_HOOK(getLoggerOld(), GameSongController_StopSong)
-  // INSTALL_HOOK(getLoggerOld(), GameSongController_FailStopSong)
-  //   INSTALL_HOOK(getLoggerOld(), Scene_Internal_SceneLoaded)
+  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_StartSong)
+  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_ResumeSong)
+  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_PauseSong)
+  // INSTALL_HOOK(LSQLogger, GameSongController_StopSong)
+  // INSTALL_HOOK(LSQLogger, GameSongController_FailStopSong)
+  //   INSTALL_HOOK(LSQLogger, Scene_Internal_SceneLoaded)
   LOG_INFO("Installed all hooks!");
 
   std::function<void(SceneManagement::Scene scene,

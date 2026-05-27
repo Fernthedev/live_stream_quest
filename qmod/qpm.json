@@ -55,7 +55,9 @@
     {
       "id": "scotland2",
       "versionRange": "^0.1.0",
-      "additionalData": {}
+      "additionalData": {
+        "includeQmod": false 
+      }
     },
     {
       "id": "bs-cordl",

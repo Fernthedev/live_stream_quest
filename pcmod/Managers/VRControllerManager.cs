@@ -11,6 +11,13 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace LiveStreamQuest.Managers;
 
+// TODO: Investigate the following:
+// Snapshot Interpolation with Dynamic Timeline Buffering (Glenn Fiedler / Mirror)
+// Exponential Moving Average (EMA) / Exponential Weighted Moving Average (EWMA)
+// Linear Phase-Locked Loop (PLL)
+
+// TODO: make time desync fix manager do the syncing math and here only do lerp math.
+
 public class VRControllerManager : IInitializable, ITickable
 {
     [Inject] private readonly PlayerVRControllersManager _playerVRControllersManager;

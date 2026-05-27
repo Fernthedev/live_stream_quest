@@ -91,7 +91,7 @@ public class TimeDesyncFixManager : ITickable
     /// The running history variable accumulating the filtered time offset state.
     /// Represents the true, jitter-stripped difference between where the server is and where the client is.
     /// </summary>
-    private double _smoothedOffset = 0;
+    private double _smoothedTimeDriftOffset = 0;
 
 
 
@@ -133,18 +133,19 @@ public class TimeDesyncFixManager : ITickable
 
         // 2. Measure actual desync against Beat Saber's current local song time
         float currentLocalTime = _syncController.songTime;
-        float rawOffset = estimatedServerSongTime - currentLocalTime;
+        float timeDriftOffset = estimatedServerSongTime - currentLocalTime;
 
         // 3. Smooth the noise using Exponential Moving Average
-        _smoothedOffset = (EmaAlpha * rawOffset) + ((1.0f - EmaAlpha) * _smoothedOffset);
-        double absoluteOffset = Math.Abs(_smoothedOffset);
+        // https://en.wikipedia.org/wiki/Exponential_smoothing#Comparison_with_moving_average
+        _smoothedTimeDriftOffset = (EmaAlpha * timeDriftOffset) + ((1.0f - EmaAlpha) * _smoothedTimeDriftOffset);
+        double absoluteOffset = Math.Abs(_smoothedTimeDriftOffset);
 
         // Case A: Massive Lag Spike / Desync -> Hard Snap using Native Method
         if (absoluteOffset > HardSnapThreshold)
         {
             _siraLog.Warn($"[Desync] Massive drift ({absoluteOffset:F3}s). Executing Hard Seek.");
             _syncController.SeekTo(estimatedServerSongTime);
-            _smoothedOffset = 0;
+            _smoothedTimeDriftOffset = 0;
             return;
         }
 
@@ -152,7 +153,7 @@ public class TimeDesyncFixManager : ITickable
         if (absoluteOffset > MaxAcceptableDrift)
         {
             // Calculate how much adjustment we need this frame
-            float adjustmentThisFrame = (float)(_smoothedOffset * SlewingStrength * Time.deltaTime);
+            float adjustmentThisFrame = (float)(_smoothedTimeDriftOffset * SlewingStrength * Time.deltaTime);
 
             // Gaining insight from the decompiled code:
             // num2 (the expected song timeline) relies entirely on timeSinceStart - _audioStartTimeOffsetSinceStart.

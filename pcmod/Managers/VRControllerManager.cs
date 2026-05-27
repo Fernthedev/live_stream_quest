@@ -12,7 +12,8 @@ using Vector3 = UnityEngine.Vector3;
 namespace LiveStreamQuest.Managers;
 
 // TODO: Investigate the following:
-// Snapshot Interpolation with Dynamic Timeline Buffering (Glenn Fiedler / Mirror)
+// Snapshot Interpolation with Dynamic Timeline Buffering (Glenn Fiedler / Mirror) 
+// https://gafferongames.com/post/snapshot_interpolation/
 // Exponential Moving Average (EMA) / Exponential Weighted Moving Average (EWMA)
 // Linear Phase-Locked Loop (PLL)
 

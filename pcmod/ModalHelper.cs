@@ -8,7 +8,7 @@ namespace LiveStreamQuest
     {
         public static void Parse(Transform parent, string resource, object host)
         {
-            BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), resource), parent.gameObject, host);
+            BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), resource), parent.gameObject, host);
         }
     }
 }

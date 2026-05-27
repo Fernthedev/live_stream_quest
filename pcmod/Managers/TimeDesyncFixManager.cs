@@ -4,6 +4,17 @@ using Zenject;
 
 namespace LiveStreamQuest.Managers;
 
+// TODO: Investigate the following:
+// Linear Phase-Locked Loop (PLL)
+// Kalman Filter
+// Exponential Weighted Moving Average (EWMA)
+// Exponential Moving Average (EMA) Filters
+// RTT-based protocols (NTP-style): if we can timestamp packets at both ends, we could estimate one-way latency more directly. However, this may not be feasible in our environment and can be less robust to asymmetric delays.
+// Time-Stamp Interp / Extrapolation (Dead Reckoning for Timelines)
+// Snapshot Interpolation with Dynamic Timeline Buffering (specifically looking into the works of Glenn Fiedler / Gaffer on Games and implementations like Mirror Networking's standalone SnapshotInterpolation library).
+// TODO: https://arxiv.org/pdf/2512.11492
+// TODO: https://ieeexplore.ieee.org/document/11139073
+// TODO: https://dl.acm.org/doi/10.1145/3519023
 public class TimeDesyncFixManager : ITickable
 {
     [Inject] private readonly AudioTimeSyncController _syncController;
@@ -23,23 +34,23 @@ public class TimeDesyncFixManager : ITickable
         if (!_syncController.isAudioLoaded) return;
         if (!_syncController.isReady) return;
         if (_syncController.state != AudioTimeSyncController.State.Playing) return;
-        
+
         if (_lastPacketTime == null) return;
         var deltaPacketTime = _deltaPacketTime;
 
         // reset to 0
         _deltaPacketTime = new TimeSpan(0);
-        
+
         // Adjust for network latency
         // TODO: Actually be smart and statistical about this
         var deltaSongTime = Math.Abs(_questSongTimeSeconds - _songTimeAtPacket);
-        
+
         // if distance is greater than 0.25s
         // if song time delta is greater than 75% of the packet time
         // we need to adjust
         if (deltaSongTime <= 0.25 || deltaSongTime <= deltaPacketTime.TotalSeconds * 0.50) return;
         var adjustedQuestSongTime = _questSongTimeSeconds + deltaPacketTime.TotalSeconds * 0.50;
-            
+
         _siraLog.Info($"Adjusting song time from {_syncController.songTime} to {adjustedQuestSongTime} to account for latency ({deltaSongTime}");
         _syncController.SeekTo((float)adjustedQuestSongTime);
     }

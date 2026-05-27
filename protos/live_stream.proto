@@ -31,6 +31,7 @@ message UpdatePosition {
   optional Transform leftTransform = 2;
   optional Transform rightTransform = 3;
 
+  // for synchronizationin
   google.protobuf.Timestamp time = 4;
   float songTime = 5;
 }

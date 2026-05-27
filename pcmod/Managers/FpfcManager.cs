@@ -21,7 +21,7 @@ public class FpfcManager : IInitializable, IDisposable
         _pauseController.didResumeEvent += PauseControllerOndidResumeEvent;
 
         _siraLog.Info("Setting FPFC mode");
-        _siraFpfc.Enabled = _pauseController._paused || _pauseController._wantsToPause;
+        _siraFpfc.Enabled = _pauseController._paused == PauseController.PauseState.Paused || _pauseController._wantsToPause;
     }
     
     private void PauseControllerOndidPauseEvent()

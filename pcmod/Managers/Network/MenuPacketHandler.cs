@@ -200,14 +200,14 @@ public class MenuPacketHandler : IDisposable, IInitializable
         // multiplayerLevelSelectionFlowCoordinator.Setup(x);
         // _soloFreePlayFlowCoordinator.Setup(state);
 
-        _playerDataModel.playerDataFileModel.Load();
+        await _playerDataModel.playerDataFileModel.LoadAsync().ConfigureAwait(true);
         _gameplaySetupViewController.Init();
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
 
-        _menuTransitionsHelper.StartStandardLevel("Solo", beatmapKey, beatmapResult,
+        _menuTransitionsHelper.StartStandardLevel("Solo", in beatmapKey, beatmapResult,
             _playerDataModel.playerData.overrideEnvironmentSettings,
-            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
+            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), _gameplaySetupViewController.colorSchemesSettings.ShouldOverrideLightshowColors(), beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
             _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
             _playerSettingsPanelController.playerSpecificSettings, null, _environmentsListModel, Localization.Get("BUTTON_MENU"), 
             false,

@@ -14,7 +14,6 @@ using LiveStreamQuest.Managers.Network;
 using SiraUtil.Logging;
 using UnityEngine.UI;
 using Zenject;
-using PropertyChangedEventArgs = BeatSaberMarkupLanguage.Notify.PropertyChangedEventArgs;
 
 namespace LiveStreamQuest.UI
 {
@@ -169,7 +168,7 @@ namespace LiveStreamQuest.UI
             }
 
             _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
-            MenuButtons.instance.RegisterButton(_menuButton);
+            MenuButtons.Instance.RegisterButton(_menuButton);
         }
 
         private void OnConnectStateChanged()
@@ -260,7 +259,7 @@ namespace LiveStreamQuest.UI
         public void Dispose()
         {
             _networkManager.ConnectStateChanged -= OnConnectStateChanged;
-            MenuButtons.instance.UnregisterButton(_menuButton);
+            MenuButtons.Instance.UnregisterButton(_menuButton);
             _mainModal.Hide(true);
             _mainMenuFlowCoordinator.DismissViewController(this, AnimationDirection.Vertical);
         }

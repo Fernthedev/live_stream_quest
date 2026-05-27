@@ -101,7 +101,7 @@ public class VRControllerManager : IInitializable, ITickable
 
 
         // only move if not paused
-        if (!_pauseController._paused)
+        if (_pauseController._paused != PauseController.PauseState.Paused)
         {
             LerpProper(_properCameraTransform, _transformedHeadPosition, _transformedHeadRotation, percentDeltaTime);
             LerpProper(_playerTransforms._headTransform, _transformedHeadPosition, _transformedHeadRotation,
@@ -133,6 +133,12 @@ public class VRControllerManager : IInitializable, ITickable
     }
 
 
+    /// <summary>
+    /// Converts the protobuf Transform to Unity's Vector3 and Quaternion, applying the necessary transformations based on the current settings.
+    /// </summary> 
+    /// <param name="transform">The protobuf Transform to convert. This will be set to null after conversion.</param> 
+    /// <param name="vec3">The resulting Vector3 position after conversion.</param> 
+    /// <param name="quat">The resulting Quaternion rotation after conversion.</param> 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ConvertProto(ref Protos.Transform? transform, ref Vector3 vec3, ref Quaternion quat)
     {
@@ -144,6 +150,9 @@ public class VRControllerManager : IInitializable, ITickable
         transform = null;
     }
 
+    /// <summary>
+    /// Lerps the given transform to the target position and rotation based on the current settings.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void LerpProper(Transform transform, in Vector3 pos, in Quaternion rot, float t)
     {
@@ -157,6 +166,12 @@ public class VRControllerManager : IInitializable, ITickable
         }
     }
 
+
+    /// <summary>
+    /// Transforms the given protobuf Vector3 to Unity's Vector3, applying the necessary transformations based on the current settings.
+    /// </summary>
+    /// <param name="protoVec">The protobuf Vector3 to transform.</param>
+    /// <returns>The resulting Vector3 after transformation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Vector3 TransformPointProper(Protos.Vector3? protoVec)
     {
@@ -170,6 +185,11 @@ public class VRControllerManager : IInitializable, ITickable
             : vec;
     }
 
+    /// <summary>
+    /// Transforms the given protobuf Quaternion to Unity's Quaternion, applying the necessary transformations based on the current settings.
+    /// </summary>
+    /// <param name="protoQuat">The protobuf Quaternion to transform.</param>
+    /// <returns>The resulting Quaternion after transformation.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Quaternion TransformRotationProper(Protos.Quaternion? protoQuat)
     {

@@ -32,6 +32,7 @@ message UpdatePosition {
   optional Transform rightTransform = 3;
 
   // for synchronizationin
+  // TODO: Is Quest time necessary here or expensive?
   google.protobuf.Timestamp time = 4;
   float songTime = 5;
 }

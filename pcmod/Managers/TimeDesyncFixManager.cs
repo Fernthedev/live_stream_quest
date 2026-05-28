@@ -123,6 +123,8 @@ public class TimeDesyncFixManager : ITickable
     
     public void Tick()
     {
+        // TODO: Handle rewinds and timescale
+        
         if (!_syncController.isAudioLoaded || !_syncController.isReady) return;
         if (_syncController.state != AudioTimeSyncController.State.Playing) return;
         if (!_hasReceivedPacket) return;
@@ -164,6 +166,7 @@ public class TimeDesyncFixManager : ITickable
             _syncController._fixingAudioSyncError = true;
         }
     }
+    
 
     /// <summary>
     /// Feed the incoming server song timestamps into this manager.

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace LiveStreamQuest.Extensions;
 
@@ -10,6 +11,7 @@ public static class TransformExtensions
         return originalRotation;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static (Vector3, Quaternion) LerpToWorldSpace(this Transform trans, in Vector3 vec3, in Quaternion quaternion, float delta) {
         var resultPos = Vector3.Lerp(trans.position, vec3, delta);
         var resultRot = Quaternion.Slerp(trans.rotation, quaternion, delta);
@@ -18,6 +20,8 @@ public static class TransformExtensions
 
         return (resultPos, resultRot);
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static (Vector3, Quaternion) LerpToRelativeSpace(this Transform trans, in Vector3 vec3, in Quaternion quaternion, float delta) {
         var resultPos = Vector3.Lerp(trans.localPosition, vec3, delta);
         var resultRot = Quaternion.Slerp(trans.localRotation, quaternion, delta);

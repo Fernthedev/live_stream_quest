@@ -182,10 +182,10 @@ public class VRControllerManager : IInitializable, ITickable
             LerpProper(_playerTransforms._rightHandTransform, snapshotA.RightHandPosition, snapshotB.RightHandPosition, snapshotA.RightHandRotation, snapshotB.RightHandRotation, interpolationFactor);
             LerpProper(_playerTransforms._leftHandTransform, snapshotA.LeftHandPosition, snapshotB.LeftHandPosition, snapshotA.LeftHandRotation, snapshotB.LeftHandRotation, interpolationFactor);
         }
-        else if (renderingTimelineTime > _snapshots[^1].ServerTimeSeconds)
+        else if (renderingTimelineTime > _snapshots[_snapshots.Count - 1].ServerTimeSeconds)
         {
             // Extrapolation Fallback: If network starves, hold positions at latest frame boundary
-            var newest = _snapshots[^1];
+            var newest = _snapshots[_snapshots.Count - 1];
             
             if (_pauseController._paused != PauseController.PauseState.Paused)
             {
@@ -230,7 +230,7 @@ public class VRControllerManager : IInitializable, ITickable
         
         if (_snapshots.Count > 0)
         {
-            var latest = _snapshots[^1];
+            var latest = _snapshots[_snapshots.Count - 1];
             deltaPacketTime = now - latest.PacketMoment;
             timeElapsedServer = serverTime - latest.ServerTime;
         }

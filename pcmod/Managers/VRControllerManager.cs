@@ -120,39 +120,33 @@ public class VRControllerManager : IInitializable, ITickable
         _properCameraTransform = _mainCamera != null ? _mainCamera.transform : _playerTransforms._headTransform;
     }
 
-    public void Tick()
+  public void Tick()
     {
-        // 1. Calculate our target timeline rendering position in history
-        // Convert your local system DateTime/songTime scale into seconds for straightforward math
+        // 1. Compute target historical position using our synchronized audio timeline reference
         double renderingTimelineTime = _timeSyncManager.songTime - InterpolationDelay;
         
-        // TODO: Handle rewind
-        // TODO: Handle timescale
-        
-        // 2. Clear out tracking caches if song time rewinds or skips backwards via practice slider
-        if (Math.Abs(_lastRenderingTimelineTime - double.MinValue) > 0.001 && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
+        // 2. Timeline Discontinuity Filter (Handles Practice Mode Skips and Song Rewinds)
+        if (_lastRenderingTimelineTime != double.MinValue && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
         {
-            _siraLog.Info("[VRControllerManager] Timeline rewind detected! Clearing snapshot buffers.");
+            _siraLog.Info("[VRControllerManager] Timeline discontinuity/rewind detected! Purging history buffers.");
             _snapshots.Clear();
             _lastRenderingTimelineTime = renderingTimelineTime;
             return;
         }
-        
         _lastRenderingTimelineTime = renderingTimelineTime;
 
-        // Guard baseline condition
+        // Ensure we have an interpolation window bounded by at least two frames
         if (_snapshots.Count < 2)
         {
             return;
         }
-        
-        int targetIndex = -1;
 
-        // Look for snapshots that are in the song time 
+        // 3. Locate Bounding Timeline Window
+        int targetIndex = -1;
         for (int i = 0; i < _snapshots.Count - 1; i++)
         {
-            double timeA = _snapshots[i].ServerTimeSeconds;
-            double timeB = _snapshots[i + 1].ServerTimeSeconds;
+            double timeA = _snapshots[i].SongTime;
+            double timeB = _snapshots[i + 1].SongTime;
 
             if (renderingTimelineTime >= timeA && renderingTimelineTime <= timeB)
             {
@@ -161,30 +155,31 @@ public class VRControllerManager : IInitializable, ITickable
             }
         }
         
-        // 4. Run interpolation loops based on timeline tracking availability
+        // 4. Evaluate Spatial Frames
         if (targetIndex != -1)
         {
             var snapshotA = _snapshots[targetIndex];
             var snapshotB = _snapshots[targetIndex + 1];
 
-            // Evaluate percentage factor strictly using internal timestamps
-            float interpolationFactor = (float)((renderingTimelineTime - snapshotA.ServerTimeSeconds) / 
-                                                (snapshotB.ServerTimeSeconds - snapshotA.ServerTimeSeconds));
+            // Compute normalized progress factor 't' via linear timeline projection
+            float t = (float)((renderingTimelineTime - snapshotA.SongTime) / 
+                             (snapshotB.SongTime - snapshotA.SongTime));
             
-            interpolationFactor = Mathf.Clamp01(interpolationFactor);
+            t = Mathf.Clamp01(t);
 
             if (_pauseController._paused != PauseController.PauseState.Paused)
             {
-                LerpProper(_properCameraTransform, snapshotA.HeadPosition, snapshotB.HeadPosition, snapshotA.HeadRotation, snapshotB.HeadRotation, interpolationFactor);
-                LerpProper(_playerTransforms._headTransform, snapshotA.HeadPosition, snapshotB.HeadPosition, snapshotA.HeadRotation, snapshotB.HeadRotation, interpolationFactor);
+                LerpProper(_properCameraTransform, snapshotA.HeadPosition, snapshotB.HeadPosition, snapshotA.HeadRotation, snapshotB.HeadRotation, t);
+                LerpProper(_playerTransforms._headTransform, snapshotA.HeadPosition, snapshotB.HeadPosition, snapshotA.HeadRotation, snapshotB.HeadRotation, t);
             }
 
-            LerpProper(_playerTransforms._rightHandTransform, snapshotA.RightHandPosition, snapshotB.RightHandPosition, snapshotA.RightHandRotation, snapshotB.RightHandRotation, interpolationFactor);
-            LerpProper(_playerTransforms._leftHandTransform, snapshotA.LeftHandPosition, snapshotB.LeftHandPosition, snapshotA.LeftHandRotation, snapshotB.LeftHandRotation, interpolationFactor);
+            LerpProper(_playerTransforms._rightHandTransform, snapshotA.RightHandPosition, snapshotB.RightHandPosition, snapshotA.RightHandRotation, snapshotB.RightHandRotation, t);
+            LerpProper(_playerTransforms._leftHandTransform, snapshotA.LeftHandPosition, snapshotB.LeftHandPosition, snapshotA.LeftHandRotation, snapshotB.LeftHandRotation, t);
         }
-        else if (renderingTimelineTime > _snapshots[_snapshots.Count - 1].ServerTimeSeconds)
+        else if (renderingTimelineTime > _snapshots[_snapshots.Count - 1].SongTime)
         {
-            // Extrapolation Fallback: If network starves, hold positions at latest frame boundary
+            // Extrapolation Fallback (Network Starvation / High Packet Loss)
+            // Snap avatars to the newest available coordinate frame until fresh data arrives
             var newest = _snapshots[_snapshots.Count - 1];
             
             if (_pauseController._paused != PauseController.PauseState.Paused)
@@ -196,7 +191,8 @@ public class VRControllerManager : IInitializable, ITickable
             SetTransformDirectly(_playerTransforms._leftHandTransform, newest.LeftHandPosition, newest.LeftHandRotation);
         }
         
-        // 5. Run standard buffer housecleaning routines
+        // 5. Memory Pruning
+        // Discard data points older than 1 second behind our current timeline player head
         PruneOldSnapshots(renderingTimelineTime - 1.0);
     }
 
@@ -216,7 +212,7 @@ public class VRControllerManager : IInitializable, ITickable
     }
 
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
-        Protos.Transform leftTransform, Timestamp serverTimestamp)
+        Protos.Transform leftTransform, Timestamp serverTimestamp, double songTime)
     {
         var now = Time.realtimeSinceStartupAsDouble; // time.ToDateTime();
         var serverTime = serverTimestamp.ToDateTime(); // time.ToDateTime();
@@ -237,7 +233,7 @@ public class VRControllerManager : IInitializable, ITickable
 
         
         var newSnapshot = BuildVRSnapshot(headTransform, leftTransform, rightTransform,
-            
+            songTime: songTime,
             lastPacketMoment: now,
             deltaPacketTime: deltaPacketTime,
             serverTime: serverTime,
@@ -304,13 +300,14 @@ public class VRControllerManager : IInitializable, ITickable
     }
 
     VRSnapshot BuildVRSnapshot(Protos.Transform headTransform, Protos.Transform leftHandTransform,
-        Protos.Transform rightHandTransform, double lastPacketMoment, double deltaPacketTime, DateTime serverTime, TimeSpan timeElapsedServer)
+        Protos.Transform rightHandTransform, double lastPacketMoment, double deltaPacketTime, DateTime serverTime, TimeSpan timeElapsedServer, double songTime)
     {
         return new VRSnapshot(
             PacketMoment: lastPacketMoment,
             DeltaPacketTime: deltaPacketTime,
             ServerTime: serverTime,
             TimeElapsedServer: timeElapsedServer,
+            SongTime: songTime,
             
             HeadPosition: TransformPointProper(headTransform.Position),
             HeadRotation: TransformRotationProper(headTransform.Rotation),
@@ -333,6 +330,8 @@ public readonly record struct VRSnapshot(
     /// Time difference between p_1 and p_0
     /// </summary>
     double DeltaPacketTime,
+    
+    double SongTime,
 
 // e.g song time elapsed between sending packetA and packetB
 // reported by the server

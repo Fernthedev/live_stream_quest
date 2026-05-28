@@ -12,7 +12,7 @@
         <AssemblyTitle>LiveStreamQuest</AssemblyTitle>
         <Product>LiveStreamQuest</Product>
         <Copyright>Copyright © Fernthedev</Copyright>
-        <LangVersion>default</LangVersion>
+        <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">

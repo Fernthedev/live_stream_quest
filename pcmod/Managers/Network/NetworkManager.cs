@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
+using System.Threading.Channels;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
@@ -22,7 +22,9 @@ public class NetworkManager : IDisposable, IInitializable
     public event Action? ConnectStateChanged;
 
     private Socket? _socket;
-    
+    private NetworkStream? _networkStream;
+    private Channel<ArraySegment<byte>>? _sendChannel;
+
     public bool Connecting { get; private set; }
     public bool Connected => _socket is { Connected: true };
 
@@ -60,6 +62,14 @@ public class NetworkManager : IDisposable, IInitializable
         if (socket == null) return;
         // Set to null to mark an intentional disconnect
         _socket = null;
+
+        // Dispose the shared network stream if present
+        _networkStream?.Dispose();
+        _networkStream = null;
+
+        // Complete/cleanup sender
+        _sendChannel?.Writer.TryComplete();
+        _sendChannel = null;
 
         if (socket.Connected)
         {
@@ -124,7 +134,14 @@ public class NetworkManager : IDisposable, IInitializable
 
             _siraLog.Info("Connected successfully");
 
-            _ = Task.Run(OnReceiveLoop);
+            // Create a shared NetworkStream for both read and write. Do not take ownership
+            // of the socket so disconnect logic can dispose the socket explicitly.
+            _networkStream = new NetworkStream(_socket, false);
+
+            // Create per-connection channel and start single-writer sender
+            _sendChannel = Channel.CreateUnbounded<ArraySegment<byte>>(new UnboundedChannelOptions { SingleReader = true });
+            _ = Task.Run(() => SendLoop(_cancellationTokenSource.Token), token);
+            _ = Task.Run(() => OnReceiveLoop(_cancellationTokenSource.Token), token);
         }
         catch (Exception e)
         {
@@ -137,7 +154,7 @@ public class NetworkManager : IDisposable, IInitializable
         }
     }
 
-    private async ValueTask OnReceiveLoop()
+    private async ValueTask OnReceiveLoop(CancellationToken token)
     {
         if (_socket == null) throw new InvalidOperationException("Socket is null");
 
@@ -146,13 +163,13 @@ public class NetworkManager : IDisposable, IInitializable
         _siraLog.Info("Receiving");
         try
         {
-            // What if I was crazy and decided to use some unsafe code here? :smirk:
-            using var networkStream = new NetworkStream(socket, false);
+            // Use the shared network stream created at connect time.
+            var networkStream = _networkStream;
+
+            if (networkStream == null) throw new InvalidOperationException("NetworkStream is null");
 
             // Reuse byte array and overwrite
             var bytePool = new byte[int.MaxValue];
-
-            var token = _cancellationTokenSource.Token;
 
             while (_socket == socket && socket.Connected)
             {
@@ -269,34 +286,79 @@ public class NetworkManager : IDisposable, IInitializable
 
     public void SendPacket(PacketWrapper packetWrapper)
     {
-        var token = _cancellationTokenSource.Token;
-        var socket = _socket;
         if (packetWrapper.PacketCase == PacketWrapper.PacketOneofCase.None)
         {
             throw new InvalidOperationException("Cannot send empty packet");
         }
 
-        Task.Run(async () =>
+        if (!packetWrapper.IsInitialized()) 
         {
-            try
+            throw new InvalidOperationException("Cannot send uninitialized packet: " + packetWrapper);
+        }
+
+        var token = _cancellationTokenSource.Token;
+
+        // Build framed message (8-byte length prefix in network order + payload)
+        var payload = packetWrapper.ToByteArray();
+        var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((long)payload.Length));
+        var framed = new byte[8 + payload.Length];
+        Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
+        Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
+
+        var seg = new ArraySegment<byte>(framed, 0, framed.Length);
+
+        var channel = _sendChannel;
+        if (channel == null)
+        {
+            // disconnected
+            throw new InvalidOperationException("Not connected");
+        }
+
+        // Enqueue framed buffer
+        _ = channel.Writer.WriteAsync(seg, token).AsTask();
+    }
+
+    private async Task SendLoop(CancellationToken token)
+    {
+        var ch = _sendChannel;
+        if (ch == null) return;
+        
+        var ns = _networkStream;
+        if (ns == null) return;
+
+        var reader = ch.Reader;
+        try
+        {
+            // channel loop
+            while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
             {
-                var byteArray = packetWrapper.ToByteArray();
-                long len = byteArray.Length;
-
-                var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(len));
-
-                return await socket.SendAsync(new List<ArraySegment<byte>>
+                // keep taking out items
+                while (reader.TryRead(out var seg))
+                {
+                    if (!ns.CanWrite) break;
+                    
+                    try
                     {
-                        new(lenBytes),
-                        new(byteArray)
-                    }, SocketFlags.None)
-                    .ConfigureAwait(false);
+                        await ns.WriteAsync(seg.Array, seg.Offset, seg.Count, token).ConfigureAwait(false);
+                        await ns.FlushAsync(token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // shutdown
+                    }
+                    catch (Exception e)
+                    {
+                        _siraLog.Error(e);
+                        // on write failure, attempt to cancel connection
+                        CancelAll();
+                    }
+                }
             }
-            catch (Exception e)
-            {
-                _siraLog.Error(e);
-                throw;
-            }
-        }, token);
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception e)
+        {
+            _siraLog.Error(e);
+        }
     }
 }

@@ -11,6 +11,7 @@
 #include "UnityEngine/Resources.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/WaitForSecondsRealtime.hpp"
+#include "UnityEngine/WaitForEndOfFrame.hpp"
 
 #include "GlobalNamespace/BadCutScoringElement.hpp"
 #include "GlobalNamespace/MissScoringElement.hpp"
@@ -94,8 +95,12 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
 
     Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 
-    co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(1.0f / getLiveStreamQuestConfig().frequency.GetValue())
+    co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(
+        1.0f / getLiveStreamQuestConfig().frequency.GetValue())
         ->i___System__Collections__IEnumerator();
+    // we have to cast to allow co_yield to accept the WaitForEndOfFrame, which doesn't implement IEnumerator but is still yieldable. This is safe because the coroutine will only call MoveNext and not try to access any properties specific to IEnumerator.
+    // we wait for end of frame to allow the player transforms to update before we read them, which ensures we get the most up-to-date avatar position and reduces jitter in the stream. This is especially important at higher frequencies where even small delays can cause noticeable jitter.
+    co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForEndOfFrame::New_ctor());
   }
 
   // Better safe than sorry

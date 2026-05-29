@@ -98,7 +98,6 @@ public class GamePacketHandler : IInitializable, IDisposable
 #endif
                 break;
         }
-        PauseController.Start()
     }
 
 

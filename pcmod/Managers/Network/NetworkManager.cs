@@ -15,17 +15,25 @@ namespace LiveStreamQuest.Managers.Network;
 
 public class NetworkManager : IDisposable, IInitializable
 {
-    private Socket? _socket;
+    private readonly PluginConfig _pluginConfig;
+    private readonly SiraLog _siraLog;
 
-    [Inject] private readonly PluginConfig _pluginConfig;
     public event Action<PacketWrapper>? PacketReceivedEvent;
     public event Action? ConnectStateChanged;
 
-    [Inject] private readonly SiraLog _siraLog;
+    private Socket? _socket;
+    
     public bool Connecting { get; private set; }
     public bool Connected => _socket is { Connected: true };
 
     private CancellationTokenSource _cancellationTokenSource = new();
+
+    [Inject]
+    public NetworkManager(SiraLog siraLog, PluginConfig pluginConfig)
+    {
+        _siraLog = siraLog;
+        _pluginConfig = pluginConfig;
+    }
 
     public void Initialize()
     {
@@ -220,6 +228,12 @@ public class NetworkManager : IDisposable, IInitializable
         token.ThrowIfCancellationRequested();
 
         var packetWrapper = PacketWrapper.Parser.ParseFrom(bytePool, 0, len);
+        
+        if (packetWrapper.PacketCase == PacketWrapper.PacketOneofCase.None)
+        {
+            _siraLog.Warn("Received empty packet, ignoring");
+            return;
+        }
 
         // Fire and forget
         _ = Task.Run(() => HandlePacket(packetWrapper), token).ConfigureAwait(false);
@@ -257,6 +271,11 @@ public class NetworkManager : IDisposable, IInitializable
     {
         var token = _cancellationTokenSource.Token;
         var socket = _socket;
+        if (packetWrapper.PacketCase == PacketWrapper.PacketOneofCase.None)
+        {
+            throw new InvalidOperationException("Cannot send empty packet");
+        }
+
         Task.Run(async () =>
         {
             try

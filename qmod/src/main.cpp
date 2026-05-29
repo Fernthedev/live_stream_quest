@@ -244,16 +244,6 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_StopSong,
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
-// MAKE_HOOK_MATCH(GameSongController_FailStopSong,
-//                 &GameSongController::FailStopSong, void,
-//                 GameSongController *self) {
-//   GameSongController_FailStopSong(self);
-
-//   // Exit map
-//   PacketWrapper packetWrapper;
-//   packetWrapper.mutable_exitmap();
-//   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
-// }
 
 MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void,
                 PlayerTransforms *self) {
@@ -272,8 +262,10 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
   // Enforce a paused state on Quest map load while the handshake is still
   // pending, even if `startPaused` was not enough to keep the song paused.
+  Manager::GetInstance()->ReadyQuestUp();
+  
   if (shouldBePaused()) {
-    //  force the paused state and start the coroutine to watch for PC readiness and
+    //  force the paused state and start the coroutine to watch for PC readiness
     self->_initData->startPaused = true;
     self->_wantsToPause = true;
 
@@ -324,13 +316,23 @@ extern "C" void load() {
   Manager::GetInstance()->Init();
 
   LOG_INFO("Installing hooks...");
-  INSTALL_HOOK(LSQLogger, PlayerTransforms_Awake)
-  INSTALL_HOOK(LSQLogger, PauseController_Start)
+  // Install hooks in protocol order to make logs and flow easier to follow:
+  // 1) Level start
   INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_StartStandardLevel)
-  INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_HandleMainGameSceneDidFinish)
+  // 2) PauseController enforcement (on scene start)
+  INSTALL_HOOK(LSQLogger, PauseController_Start)
+  // 2.1) Player transforms (avatar updates)
+  INSTALL_HOOK(LSQLogger, PlayerTransforms_Awake)
+  // 3) Audio pause -> enter waiting
+  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_PauseSong)
+  // 4) Song start (quest ready) and resume (quest ready)
   INSTALL_HOOK(LSQLogger, AudioTimeSyncController_StartSong)
   INSTALL_HOOK(LSQLogger, AudioTimeSyncController_ResumeSong)
-  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_PauseSong)
+  // 5) Song stop / exit
+  INSTALL_HOOK(LSQLogger, AudioTimeSyncController_StopSong)
+  // 6) Gameplay finished (cleanup)
+  INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_HandleMainGameSceneDidFinish)
+
   // INSTALL_HOOK(LSQLogger, GameSongController_FailStopSong)
   //   INSTALL_HOOK(LSQLogger, Scene_Internal_SceneLoaded)
   LOG_INFO("Installed all hooks!");

@@ -76,6 +76,7 @@ updatePauseState(SafePtrUnity<PauseController> self) {
       self->wantsToPause) {
     self->HandlePauseMenuManagerDidPressContinueButton();
   }
+  co_return;
 }
 
 MAKE_HOOK_MATCH(
@@ -130,13 +131,16 @@ MAKE_HOOK_MATCH(
   // optionally starts paused, and then tells the PC to load the same map.
   LSQLogger.info("1. MenuTransitionsHelper_StartStandardLevel");
 
+  // If `startPaused` is already true, we can skip starting paused here because
+  auto shouldStartPaused = Manager::GetInstance()->GetHandler().hasConnection();
+
   Manager::GetInstance()->StartWait(0, false);
   MenuTransitionsHelper_StartStandardLevel(
       self, gameMode, beatmapKey, beatmapLevel, overrideEnvironmentSettings,
       playerOverrideColorScheme, playerOverrideLightshowColors,
       beatmapOverrideColorScheme, gameplayModifiers, playerSpecificSettings,
       practiceSettings, environmentsListModel, backButtonText,
-      useTestNoteCutSoundEffects, startPaused,
+      useTestNoteCutSoundEffects, shouldStartPaused,
       beforeSceneSwitchToGameplayCallback, afterSceneSwitchToGameplayCallback,
       levelFinishedCallback, levelRestartedCallback, recordingToolData);
 
@@ -262,8 +266,9 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
   // Enforce a paused state on Quest map load while the handshake is still
   // pending, even if `startPaused` was not enough to keep the song paused.
+  LSQLogger.info("4. PauseController_Start");
   Manager::GetInstance()->ReadyQuestUp();
-  
+
   if (shouldBePaused()) {
     //  force the paused state and start the coroutine to watch for PC readiness
     self->_initData->startPaused = true;

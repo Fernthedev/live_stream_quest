@@ -96,7 +96,7 @@ void Manager::processMessage(const PacketWrapper &packet) {
     //                setLoggerListener(packet.requestlogger(), id);
     //                break;
   default:
-    LOG_INFO("Invalid packet type!");
+    LOG_INFO("Invalid packet type {0}!", (int)packet.Packet_case());
   }
 }
 

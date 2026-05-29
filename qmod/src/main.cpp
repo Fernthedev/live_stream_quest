@@ -299,8 +299,10 @@ void onSceneLoad(SceneManagement::Scene scene, SceneManagement::LoadSceneMode) {
 
 // Called at the early stages of game loading
 extern "C" void setup(CModInfo *info) {
-  Paper::Logger::RegisterFileContextId("LiveStreamQuest");
+  Paper::Logger::RegisterFileContextId(LSQLogger.tag);
   Paper::Logger::RegisterFileContextId("SocketLib");
+
+  getLiveStreamQuestConfig().Init(modInfo);
 
   *info = modInfo.to_c();
 

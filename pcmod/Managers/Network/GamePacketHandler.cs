@@ -41,12 +41,17 @@ public class GamePacketHandler : IInitializable, IDisposable
             case PacketWrapper.PacketOneofCase.StartMap:
                 _siraLog.Info("Resuming the map");
                 _ready = true;
-                ResumeMap();
+                // Anchor the local audio clock to the authoritative song time as soon as
+                // the resume packet arrives. This prevents controller snapshots from
+                // starting one packet late relative to the audio timeline.
+                _timeDesyncFixManager.UpdateTime(packetWrapper.StartMap.SongTime);
 
                 if (_audioTimeSyncController is { isReady: true, isAudioLoaded: true, _canStartSong: true })
                 {
                     _audioTimeSyncController.SeekTo(packetWrapper.StartMap.SongTime);
                 }
+
+                ResumeMap();
 
                 break;
             case PacketWrapper.PacketOneofCase.ExitMap:
@@ -67,6 +72,20 @@ public class GamePacketHandler : IInitializable, IDisposable
         }
     }
 
+    public void Initialize()
+    {
+        _networkManager.PacketReceivedEvent -= HandlePacket;
+        _networkManager.PacketReceivedEvent += HandlePacket;
+        _submission.DisableScoreSubmission(Plugin.ID);
+        if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
+        {
+            AudioTimeSyncControllerOnstateChangedEvent();
+        }
+
+        _audioTimeSyncController.stateChangedEvent -= AudioTimeSyncControllerOnstateChangedEvent;
+        _audioTimeSyncController.stateChangedEvent += AudioTimeSyncControllerOnstateChangedEvent;
+    }
+
     private void ResumeMap()
     {
         _pauseController.HandlePauseMenuManagerDidPressContinueButton();
@@ -83,20 +102,6 @@ public class GamePacketHandler : IInitializable, IDisposable
             ReadyUp = new ReadyUp()
         };
         _networkManager.SendPacket(pausePacketWrapper);
-    }
-
-    public void Initialize()
-    {
-        _networkManager.PacketReceivedEvent -= HandlePacket;
-        _networkManager.PacketReceivedEvent += HandlePacket;
-        _submission.DisableScoreSubmission(Plugin.ID);
-        if (!_ready && _audioTimeSyncController.state == AudioTimeSyncController.State.Playing)
-        {
-            AudioTimeSyncControllerOnstateChangedEvent();
-        }
-
-        _audioTimeSyncController.stateChangedEvent -= AudioTimeSyncControllerOnstateChangedEvent;
-        _audioTimeSyncController.stateChangedEvent += AudioTimeSyncControllerOnstateChangedEvent;
     }
 
     // Pause until ready

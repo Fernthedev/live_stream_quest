@@ -179,7 +179,7 @@ public class VRControllerManager : IInitializable, ITickable
             SetTransformDirectly(_playerTransforms._leftHandTransform, newest.LeftHandPosition, newest.LeftHandRotation);
         }
         
-        // CRITICAL FIX: Memory cleanup uses track time boundaries
+        // Memory cleanup must use song-time boundaries, not wall-clock server time.
         PruneOldSnapshots(renderingTimelineTime - 1.0);
     }
 
@@ -279,9 +279,9 @@ public class VRControllerManager : IInitializable, ITickable
             : quat;
     }
     
-    private void PruneOldSnapshots(double thresholdTimeSeconds)
+    private void PruneOldSnapshots(double thresholdSongTimeSeconds)
     {
-        _snapshots.RemoveAll(snap => snap.ServerTimeSeconds < thresholdTimeSeconds);
+        _snapshots.RemoveAll(snap => snap.SongTime < thresholdSongTimeSeconds);
     }
 
     VRSnapshot BuildVRSnapshot(Protos.Transform headTransform, Protos.Transform leftHandTransform,

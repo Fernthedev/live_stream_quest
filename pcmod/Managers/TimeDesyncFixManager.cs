@@ -1,4 +1,5 @@
 ﻿using System;
+using LiveStreamQuest.Configuration;
 using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
@@ -62,6 +63,7 @@ public class TimeDesyncFixManager : ITickable
 {
     private readonly AudioTimeSyncController _syncController;
     private readonly SiraLog _siraLog;
+    private readonly PluginConfig _config;
 
     /// <summary>
     /// The most recent authoritative song timestamp received from the streaming server.
@@ -93,8 +95,7 @@ public class TimeDesyncFixManager : ITickable
     /// </summary>
     private double _smoothedTimeDriftOffset = 0;
 
-
-
+    
     // Configuration Thresholds (in seconds)
     /// <summary>
     /// The dead-zone cushion threshold (in seconds). Micro-drifts under this limit (e.g., 15 milliseconds) 
@@ -115,10 +116,11 @@ public class TimeDesyncFixManager : ITickable
     private const float SlewingStrength = 1.5f;      // Speed multiplier for catching up.
 
     [Inject]
-    public TimeDesyncFixManager(SiraLog siraLog, AudioTimeSyncController syncController)
+    public TimeDesyncFixManager(SiraLog siraLog, AudioTimeSyncController syncController, PluginConfig config)
     {
         _siraLog = siraLog;
         _syncController = syncController;
+        _config = config;
     }
     
     /// <summary>
@@ -138,6 +140,7 @@ public class TimeDesyncFixManager : ITickable
     public void Tick()
     {
         // TODO: Handle rewinds and timescale
+        if (!_config.SyncTime) return;
         if (!_syncController.isAudioLoaded || !_syncController.isReady) return;
         if (_syncController.state != AudioTimeSyncController.State.Playing) return;
         if (!_hasReceivedPacket) return;

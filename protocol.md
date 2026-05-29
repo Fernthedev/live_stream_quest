@@ -19,7 +19,7 @@
 - `StartMap` (Quest -> PC)
   - Sent by Quest when both PC and Quest have reported readiness; includes precise start time.
   - Fields: `songTime` (float / timestamp offset).
-  - Handled by: [GamePacketHandler.HandlePacket](pcmod/Managers/Network/GamePacketHandler.cs#L1) — causes the PC to resume/seek and start playback.
+  - Handled by: [GamePacketHandler.HandlePacket](pcmod/Managers/Network/GamePacketHandler.cs#L1) — causes the PC to anchor its local audio clock, resume/seek, and start playback.
   - Produced by: Attempt to start in Quest's `Manager::tryStartGame()` ([qmod/src/manager.cpp](qmod/src/manager.cpp#L1)).
 
 - `PauseMap` (Quest -> PC)
@@ -37,6 +37,7 @@
 - `UpdatePosition` (Quest -> PC)
   - Sent by Quest with tracked transforms for `Head`, `Left`, `Right`, plus `Time` and `SongTime`.
   - Produced by Quest's `PlayerPositionUpdater` coroutine (see `qmod/src/PlayerPositionUpdater.cpp`) and handled on PC by `GamePacketHandler` → `VRControllerManager.UpdateTransforms` to update remote player representation.
+  - PC-side rendering uses `SongTime` as the primary ordering key and prunes/interpolates snapshots against the current synced song clock, so controller poses stay aligned with audio.
 
 - `StartBeatmapFailure` (PC -> Quest)
   - Sent by PC when the requested beatmap cannot be started (e.g., missing resources or other errors).
@@ -71,7 +72,9 @@ sequenceDiagram
 - Readiness handshake: PC explicitly pauses and sends `ReadyUp` before the Quest will send `StartMap`. Quest tracks `pcReady` and `questReady` booleans in `Manager`.
 - Pausing behavior: When Quest pauses, Quest sends `PauseMap` and expects PC to pause and reply with `ReadyUp`. Quest suspends starting until both sides are ready.
 - Quest readiness comes from the audio path: `AudioTimeSyncController_ResumeSong` and `AudioTimeSyncController_StartSong` are the triggers that mark Quest ready, not a continue-button hook.
+- `StartMap` also seeds the PC-side time sync manager with the authoritative `songTime`, so controller playback begins on the same clock domain as audio instead of waiting for the first movement snapshot.
 - Position updates: `UpdatePosition` is a frequent packet (low-latency) sent from Quest to PC delivering transforms and timing to keep the remote representation in sync.
+- Position updates are applied relative to song time, not packet arrival time. This is important because the PC render loop should only advance controller poses as the current audio clock approaches each snapshot's `SongTime`.
 - Error handling: `StartBeatmapFailure` is used for recoverable errors on PC; Quest currently logs the error and contains a TODO for user notification.
 
 **Development notes / TODOs**

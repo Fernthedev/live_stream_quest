@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "config.hpp"
+
 #include "beatsaber-hook/shared/utils/logging.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
 #include "beatsaber-hook/shared/utils/typedefs.h"
@@ -12,7 +14,6 @@
 
 
 static constexpr auto LSQLogger = Paper::ConstLoggerContext("LiveStreamQuest");
-
 
 
 #define LOG_INFO(...) LSQLogger.fmtLog<Paper::LogLevel::INF>(__VA_ARGS__)

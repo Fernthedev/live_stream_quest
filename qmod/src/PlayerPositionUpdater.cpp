@@ -1,5 +1,6 @@
 #include "PlayerPositionUpdater.hpp"
 
+#include "main.hpp"
 #include "manager.hpp"
 
 #include "custom-types/shared/coroutine.hpp"
@@ -93,7 +94,7 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
 
     Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 
-    co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(1.0f / 60.0f)
+    co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(1.0f / getLiveStreamQuestConfig().frequency.GetValue())
         ->i___System__Collections__IEnumerator();
   }
 
@@ -105,6 +106,11 @@ void LiveStreamQuest::PlayerPositionUpdater::OnScoreChange(
     GlobalNamespace::ScoringElement *element) {
   if (!element)
     return;
+
+  // we don't send scores if the config option is disabled, to save bandwidth and reduce noise in the logs
+  if (!getLiveStreamQuestConfig().sendScores.GetValue()) {
+    return;
+  }
 
   PacketWrapper packetWrapper;
   packetWrapper.set_queryresultid(-1);

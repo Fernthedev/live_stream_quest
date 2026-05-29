@@ -56,7 +56,9 @@
       {
         "id": "scotland2",
         "versionRange": "^0.1.0",
-        "additionalData": {}
+        "additionalData": {
+          "includeQmod": false
+        }
       },
       {
         "id": "bs-cordl",
@@ -81,6 +83,11 @@
       {
         "id": "custom-types",
         "versionRange": "^0.18.1",
+        "additionalData": {}
+      },
+      {
+        "id": "config-utils",
+        "versionRange": "^2.0.0",
         "additionalData": {}
       }
     ]
@@ -108,16 +115,15 @@
     },
     {
       "dependency": {
-        "id": "scotland2",
-        "versionRange": "=0.1.7",
+        "id": "rapidjson-macros",
+        "versionRange": "=2.1.0",
         "additionalData": {
-          "soLink": "https://github.com/sc2ad/scotland2/releases/download/v0.1.7/libsl2.so",
-          "debugSoLink": "https://github.com/sc2ad/scotland2/releases/download/v0.1.7/debug_libsl2.so",
-          "overrideSoName": "libsl2.so",
-          "branchName": "version/v0_1_7"
+          "headersOnly": true,
+          "branchName": "version/v2_1_0",
+          "cmake": false
         }
       },
-      "version": "0.1.7"
+      "version": "2.1.0"
     },
     {
       "dependency": {
@@ -164,6 +170,19 @@
     },
     {
       "dependency": {
+        "id": "scotland2",
+        "versionRange": "=0.1.7",
+        "additionalData": {
+          "soLink": "https://github.com/sc2ad/scotland2/releases/download/v0.1.7/libsl2.so",
+          "debugSoLink": "https://github.com/sc2ad/scotland2/releases/download/v0.1.7/debug_libsl2.so",
+          "overrideSoName": "libsl2.so",
+          "branchName": "version/v0_1_7"
+        }
+      },
+      "version": "0.1.7"
+    },
+    {
+      "dependency": {
         "id": "sombrero",
         "versionRange": "=0.1.43",
         "additionalData": {
@@ -172,6 +191,20 @@
         }
       },
       "version": "0.1.43"
+    },
+    {
+      "dependency": {
+        "id": "config-utils",
+        "versionRange": "=2.0.3",
+        "additionalData": {
+          "headersOnly": true,
+          "soLink": "https://github.com/darknight1050/config-utils/releases/download/v2.0.3/libconfig-utils_test.so",
+          "overrideSoName": "libconfig-utils_test.so",
+          "branchName": "version/v2_0_3",
+          "cmake": true
+        }
+      },
+      "version": "2.0.3"
     },
     {
       "dependency": {

@@ -3,7 +3,7 @@
 #include "packethandler.hpp"
 
 #include "packethandlers/socketlib_handler.hpp"
-#include "packethandlers/websocket_handler.hpp"
+// #include "packethandlers/websocket_handler.hpp"
 
 #include <atomic>
 #include <sstream>

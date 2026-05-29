@@ -4,7 +4,7 @@
 
 #include "main.hpp"
 #include "packethandlers/socketlib_handler.hpp"
-#include "packethandlers/websocket_handler.hpp"
+// #include "packethandlers/websocket_handler.hpp"
 
 #define MESSAGE_LOGGING
 

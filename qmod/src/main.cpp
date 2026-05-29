@@ -31,7 +31,51 @@
 using namespace GlobalNamespace;
 using namespace UnityEngine;
 
+// Mod info
 static modloader::ModInfo modInfo{"LiveStreamQuest", VERSION, 1};
+
+/**
+ * High-level flow summary:
+ * - When a level is started on Quest we enter `StartWait` and notify PC
+ *   to load the same level (`StartBeatmap`). Quest remains paused until
+ *   the PC replies with `ReadyUp` and local audio/scene are ready.
+ * - The three boolean flags tracked by `Manager` are `waiting`, `pcReady`,
+ *   and `questReady`. `tryStartGame()` sends `StartMap` when all are set.
+ */
+
+/**
+ * Determine whether the Quest should remain paused. Returns true when the
+ * Manager is in `waiting` state AND either side is not ready.
+ */
+bool shouldBePaused() {
+  auto manager = Manager::GetInstance();
+  bool ready = manager->isPcReady() && manager->isQuestReady();
+
+  return manager->isWaiting() && !ready;
+}
+
+/**
+ * Coroutine that runs while the PauseController is active to poll the
+ * readiness handshake. It yields until `shouldBePaused()` becomes false,
+ * then exits. Resume is handled by the audio path (`ResumeSong`).
+ */
+custom_types::Helpers::Coroutine
+updatePauseState(SafePtrUnity<PauseController> self) {
+  while (true) {
+    if (!self)
+      co_return;
+    if (!shouldBePaused())
+      break;
+
+    co_yield nullptr;
+  }
+
+  // Resume
+  if (self->_paused == PauseController::PauseState::Paused ||
+      self->wantsToPause) {
+    self->HandlePauseMenuManagerDidPressContinueButton();
+  }
+}
 
 MAKE_HOOK_MATCH(
     MenuTransitionsHelper_StartStandardLevel,
@@ -80,8 +124,10 @@ MAKE_HOOK_MATCH(
         ::GlobalNamespace::LevelCompletionResults *> *levelRestartedCallback,
     ::System::Nullable_1<::GlobalNamespace::RecordingToolManager_SetupData>
         recordingToolData) {
-  // TODO: Handle practice settings
-  Manager::GetInstance()->StartWait(0);
+  // When starting a standard level, put the Manager into waiting mode.
+  // `questReady=false` here because the audio/StartSong hook will later
+  // set quest readiness when the `AudioTimeSyncController` is ready.
+  Manager::GetInstance()->StartWait(0, false);
   MenuTransitionsHelper_StartStandardLevel(
       self, gameMode, beatmapKey, beatmapLevel, overrideEnvironmentSettings,
       playerOverrideColorScheme, playerOverrideLightshowColors,
@@ -99,10 +145,10 @@ MAKE_HOOK_MATCH(
 
   LOG_INFO("Sending level start {}", levelId);
   PacketWrapper packetWrapper;
-  packetWrapper.mutable_startbeatmap()->set_levelid(std::move(levelId));
-  packetWrapper.mutable_startbeatmap()->set_characteristic(characteristicsName);
-  packetWrapper.mutable_startbeatmap()->set_difficulty(
-      beatmapKey->difficulty.value__);
+  auto startBeatmap = packetWrapper.mutable_startbeatmap();
+  startBeatmap->set_levelid(std::move(levelId));
+  startBeatmap->set_characteristic(characteristicsName);
+  startBeatmap->set_difficulty(beatmapKey->difficulty.value__);
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
@@ -128,10 +174,21 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
                 AudioTimeSyncController *self) {
   AudioTimeSyncController_PauseSong(self);
 
-  Manager::GetInstance()->StartWait(self->songTime);
-  Manager::GetInstance()->ReadyQuestUp();
+  if (Manager::GetInstance()->isWaiting()) {
+    return;
+  }
 
-  // Exit map
+  // We entered a pause while playing; start waiting and poll for PC.
+  // `questReady=false` because we are paused and will need to resume only
+  // when the PC also reports ready.
+  Manager::GetInstance()->StartWait(self->songTime, false);
+  // Start the coroutine to watch for PC readiness and resume when done.
+  auto pauseController =
+      UnityEngine::Object::FindObjectOfType<PauseController *>();
+  self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
+      updatePauseState, SafePtrUnity(pauseController)));
+
+  // Notify PC that Quest paused.
   PacketWrapper packetWrapper;
   packetWrapper.mutable_pausemap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
@@ -140,13 +197,22 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
 MAKE_HOOK_MATCH(AudioTimeSyncController_ResumeSong,
                 &AudioTimeSyncController::Resume, void,
                 AudioTimeSyncController *self) {
-  AudioTimeSyncController_ResumeSong(self);
+  // ResumeSong is the readiness trigger for Quest-side audio.
+  // Mark Quest ready first so the Manager can complete the handshake as
+  // soon as the PC is also ready.
   Manager::GetInstance()->ReadyQuestUp();
+  if (shouldBePaused()) {
+    return;
+  }
+
+  AudioTimeSyncController_ResumeSong(self);
 }
 
 MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong,
                 &AudioTimeSyncController::StartSong, void,
                 AudioTimeSyncController *self, float songTimeOffset) {
+  // When the song starts normally, consider Quest audio ready and attempt
+  // to complete the handshake.
   AudioTimeSyncController_StartSong(self, songTimeOffset);
   Manager::GetInstance()->ReadyQuestUp();
 }
@@ -161,16 +227,16 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_StopSong,
   packetWrapper.mutable_exitmap();
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
-MAKE_HOOK_MATCH(GameSongController_FailStopSong,
-                &GameSongController::FailStopSong, void,
-                GameSongController *self) {
-  GameSongController_FailStopSong(self);
+// MAKE_HOOK_MATCH(GameSongController_FailStopSong,
+//                 &GameSongController::FailStopSong, void,
+//                 GameSongController *self) {
+//   GameSongController_FailStopSong(self);
 
-  // Exit map
-  PacketWrapper packetWrapper;
-  packetWrapper.mutable_exitmap();
-  Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
-}
+//   // Exit map
+//   PacketWrapper packetWrapper;
+//   packetWrapper.mutable_exitmap();
+//   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
+// }
 
 MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void,
                 PlayerTransforms *self) {
@@ -180,34 +246,8 @@ MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void,
       ->AddComponent<LiveStreamQuest::PlayerPositionUpdater *>();
 }
 
-bool shouldBePaused() {
-  auto manager = Manager::GetInstance();
-  bool ready = manager->isPcReady() && manager->isQuestReady();
-
-  return manager->isWaiting() && !ready;
-}
-
-custom_types::Helpers::Coroutine
-updatePauseState(SafePtrUnity<PauseController> self) {
-  while (true) {
-    if (!self)
-      co_return;
-    if (!shouldBePaused())
-      break;
-
-    co_yield nullptr;
-  }
-
-  // Resume
-  if (self->_paused == PauseController::PauseState::Paused ||
-      self->wantsToPause) {
-    self->HandlePauseMenuManagerDidPressContinueButton();
-  }
-}
-
 MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
-  Manager::GetInstance()->ReadyQuestUp();
   if (shouldBePaused()) {
     self->_initData->startPaused = true;
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
@@ -215,17 +255,6 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
   }
 
   PauseController_Start(self);
-}
-
-MAKE_HOOK_MATCH(PauseController_HandlePauseMenuManagerDidPressContinueButton,
-                &PauseController::HandlePauseMenuManagerDidPressContinueButton,
-                void, PauseController *self) {
-  // Do not resume
-  if (shouldBePaused()) {
-    return;
-  }
-
-  PauseController_HandlePauseMenuManagerDidPressContinueButton(self);
 }
 
 void onSceneLoad(SceneManagement::Scene scene, SceneManagement::LoadSceneMode) {
@@ -240,14 +269,14 @@ void onSceneLoad(SceneManagement::Scene scene, SceneManagement::LoadSceneMode) {
                        go->AddComponent<LiveStreamQuest::MainThreadRunner *>();)
 }
 
-MAKE_HOOK_MATCH(
-    Scene_Internal_SceneLoaded,
-    &UnityEngine::SceneManagement::SceneManager::Internal_SceneLoaded, void,
-    ::UnityEngine::SceneManagement::Scene scene,
-    ::UnityEngine::SceneManagement::LoadSceneMode mode) {
-  Scene_Internal_SceneLoaded(scene, mode);
-  onSceneLoad(scene, mode);
-}
+// MAKE_HOOK_MATCH(
+//     Scene_Internal_SceneLoaded,
+//     &UnityEngine::SceneManagement::SceneManager::Internal_SceneLoaded, void,
+//     ::UnityEngine::SceneManagement::Scene scene,
+//     ::UnityEngine::SceneManagement::LoadSceneMode mode) {
+//   Scene_Internal_SceneLoaded(scene, mode);
+//   onSceneLoad(scene, mode);
+// }
 
 // Called at the early stages of game loading
 extern "C" void setup(CModInfo *info) {
@@ -270,14 +299,11 @@ extern "C" void load() {
   LOG_INFO("Installing hooks...");
   INSTALL_HOOK(LSQLogger, PlayerTransforms_Awake)
   INSTALL_HOOK(LSQLogger, PauseController_Start)
-  // INSTALL_HOOK(LSQLogger,
-  //              PauseController_HandlePauseMenuManagerDidPressContinueButton)
   INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_StartStandardLevel)
   INSTALL_HOOK(LSQLogger, MenuTransitionsHelper_HandleMainGameSceneDidFinish)
   INSTALL_HOOK(LSQLogger, AudioTimeSyncController_StartSong)
   INSTALL_HOOK(LSQLogger, AudioTimeSyncController_ResumeSong)
   INSTALL_HOOK(LSQLogger, AudioTimeSyncController_PauseSong)
-  // INSTALL_HOOK(LSQLogger, GameSongController_StopSong)
   // INSTALL_HOOK(LSQLogger, GameSongController_FailStopSong)
   //   INSTALL_HOOK(LSQLogger, Scene_Internal_SceneLoaded)
   LOG_INFO("Installed all hooks!");

@@ -256,9 +256,16 @@ public class VRControllerManager : IInitializable, ITickable
 
         var vec = protoVec.ToVector3();
 
-        return _playerTransforms._useOriginParentTransformForPseudoLocalCalculations
-            ? _playerTransforms._originParentTransform.TransformPoint(vec)
-            : vec;
+        if (!_playerTransforms._useOriginParentTransformForPseudoLocalCalculations) return vec;
+        
+        if (_playerTransforms._originParentTransform == null)
+        {
+            _siraLog.Warn("Origin parent transform is null. Returning untransformed vector.");
+            return vec;
+        }
+
+        return _playerTransforms._originParentTransform.TransformPoint(vec);
+
     }
 
     /// <summary>
@@ -273,10 +280,16 @@ public class VRControllerManager : IInitializable, ITickable
 
 
         var quat = protoQuat.ToQuaternion();
+        
+        if (!_playerTransforms._useOriginParentTransformForPseudoLocalCalculations) return quat;
+        
+        if (_playerTransforms._originParentTransform == null)
+        {
+            _siraLog.Warn("Origin parent transform is null. Returning untransformed quat.");
+            return quat;
+        }
 
-        return _playerTransforms._useOriginParentTransformForPseudoLocalCalculations
-            ? _playerTransforms._originParentTransform.TransformRotation(quat)
-            : quat;
+        return _playerTransforms._originParentTransform.TransformRotation(quat);
     }
     
     private void PruneOldSnapshots(double thresholdSongTimeSeconds)

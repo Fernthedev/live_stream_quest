@@ -58,10 +58,10 @@ void SocketLibHandler::listenOnEvents(
 
   auto &pendingPacket = channelIncomingQueue[&client];
   if (!pendingPacket.has_value()) {
-    if (incomingQueue.queueSize() < 8)
+    if (incomingQueue.queueSize() < sizeof(size_t))
       return;
     
-    auto lenBytes = incomingQueue.dequeueAsVec(8);
+    auto lenBytes = incomingQueue.dequeueAsVec(sizeof(size_t));
     auto len = ntohq(*reinterpret_cast<size_t *>(lenBytes.data()));
 
     pendingPacket.emplace(len);
@@ -76,6 +76,12 @@ void SocketLibHandler::listenOnEvents(
 
   PacketWrapper packet;
   packet.ParseFromArray(packetBytes.data(), packetBytes.size());
+
+  if (!packet.IsInitialized()) {
+      LOG_INFO("Received uninitialized packet: {}", packet.DebugString());
+      return;
+  }
+
   scheduleFunction(
       [this, packet = std::move(packet)]() { onReceivePacket(packet); });
 }

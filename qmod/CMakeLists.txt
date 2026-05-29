@@ -70,9 +70,9 @@ add_library(
 
 # vcpkg stuff
 find_package(protobuf CONFIG REQUIRED)
-target_link_libraries(${COMPILE_ID} PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
-find_package(websocketpp CONFIG REQUIRED)
-target_link_libraries(${COMPILE_ID} PRIVATE websocketpp::websocketpp)
+target_link_libraries(${COMPILE_ID} PRIVATE protobuf::libprotobuf protobuf::libprotobuf-lite)
+# find_package(websocketpp CONFIG REQUIRED)
+# target_link_libraries(${COMPILE_ID} PRIVATE websocketpp::websocketpp)
 
 target_include_directories(${COMPILE_ID} PRIVATE .)
 

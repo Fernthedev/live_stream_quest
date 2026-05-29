@@ -37,8 +37,8 @@ static modloader::ModInfo modInfo{"LiveStreamQuest", VERSION, 1};
 /**
  * High-level flow summary:
  * - When a level is started on Quest we enter `StartWait` and notify PC
- *   to load the same level (`StartBeatmap`). Quest remains paused until
- *   the PC replies with `ReadyUp` and local audio/scene are ready.
+ *   to load the same level (`StartBeatmap`). If a PC is connected we start
+ *   the Quest side paused, then both sides wait until the handshake finishes.
  * - The three boolean flags tracked by `Manager` are `waiting`, `pcReady`,
  *   and `questReady`. `tryStartGame()` sends `StartMap` when all are set.
  */
@@ -71,6 +71,7 @@ updatePauseState(SafePtrUnity<PauseController> self) {
   }
 
   // Resume
+  LSQLogger.info("8. Handshake complete, resuming Quest");
   if (self->_paused == PauseController::PauseState::Paused ||
       self->wantsToPause) {
     self->HandlePauseMenuManagerDidPressContinueButton();
@@ -124,9 +125,11 @@ MAKE_HOOK_MATCH(
         ::GlobalNamespace::LevelCompletionResults *> *levelRestartedCallback,
     ::System::Nullable_1<::GlobalNamespace::RecordingToolManager_SetupData>
         recordingToolData) {
-  // When starting a standard level, put the Manager into waiting mode.
-  // `questReady=false` here because the audio/StartSong hook will later
-  // set quest readiness when the `AudioTimeSyncController` is ready.
+  // Called from Beat Saber when Quest starts a standard level.
+  // This is the first handshake event: Quest records the pending start,
+  // optionally starts paused, and then tells the PC to load the same map.
+  LSQLogger.info("1. MenuTransitionsHelper_StartStandardLevel");
+
   Manager::GetInstance()->StartWait(0, false);
   MenuTransitionsHelper_StartStandardLevel(
       self, gameMode, beatmapKey, beatmapLevel, overrideEnvironmentSettings,
@@ -143,7 +146,7 @@ MAKE_HOOK_MATCH(
   std::string characteristicsName(
       beatmapKey->beatmapCharacteristic->serializedName);
 
-  LOG_INFO("Sending level start {}", levelId);
+  LOG_INFO("2. Sending level start {}", levelId);
   PacketWrapper packetWrapper;
   auto startBeatmap = packetWrapper.mutable_startbeatmap();
   startBeatmap->set_levelid(std::move(levelId));
@@ -158,6 +161,8 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
                 StandardLevelScenesTransitionSetupDataSO
                     *standardLevelScenesTransitionSetupData,
                 LevelCompletionResults *levelCompletionResults) {
+  // Called when the gameplay scene finishes. This is the cleanup side of the
+  // lifecycle, so we clear the wait state and tell the PC to exit too.
   MenuTransitionsHelper_HandleMainGameSceneDidFinish(
       self, standardLevelScenesTransitionSetupData, levelCompletionResults);
 
@@ -169,6 +174,9 @@ MAKE_HOOK_MATCH(MenuTransitionsHelper_HandleMainGameSceneDidFinish,
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
+// Called when AudioTimeSyncController::Pause fires because Quest paused during
+// level load or gameplay. We enter the waiting state and ask the PC to pause
+// and respond with ReadyUp.
 MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
                 &AudioTimeSyncController::Pause, void,
                 AudioTimeSyncController *self) {
@@ -178,6 +186,7 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
     return;
   }
 
+  LSQLogger.info("3. Audio paused, entering waiting state");
   // We entered a pause while playing; start waiting and poll for PC.
   // `questReady=false` because we are paused and will need to resume only
   // when the PC also reports ready.
@@ -194,12 +203,15 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_PauseSong,
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 }
 
+// Called when Quest audio resumes. This marks Quest as ready, which lets the
+// manager complete the handshake once the PC is also ready.
 MAKE_HOOK_MATCH(AudioTimeSyncController_ResumeSong,
                 &AudioTimeSyncController::Resume, void,
                 AudioTimeSyncController *self) {
   // ResumeSong is the readiness trigger for Quest-side audio.
   // Mark Quest ready first so the Manager can complete the handshake as
   // soon as the PC is also ready.
+  LSQLogger.info("5. Audio resumed, marking Quest ready");
   Manager::GetInstance()->ReadyQuestUp();
   if (shouldBePaused()) {
     return;
@@ -208,15 +220,20 @@ MAKE_HOOK_MATCH(AudioTimeSyncController_ResumeSong,
   AudioTimeSyncController_ResumeSong(self);
 }
 
+// Called when the song starts normally instead of resuming from a pause.
+// This is the other Quest-ready signal for the handshake.
 MAKE_HOOK_MATCH(AudioTimeSyncController_StartSong,
                 &AudioTimeSyncController::StartSong, void,
                 AudioTimeSyncController *self, float songTimeOffset) {
   // When the song starts normally, consider Quest audio ready and attempt
   // to complete the handshake.
   AudioTimeSyncController_StartSong(self, songTimeOffset);
+  LSQLogger.info("5. Song started, marking Quest ready");
   Manager::GetInstance()->ReadyQuestUp();
 }
 
+// Called when Quest stops the song. This exits the handshake flow and tells
+// the PC to leave the map as well.
 MAKE_HOOK_MATCH(AudioTimeSyncController_StopSong,
                 &AudioTimeSyncController::StopSong, void,
                 AudioTimeSyncController *self) {
@@ -242,14 +259,24 @@ MAKE_HOOK_MATCH(PlayerTransforms_Awake, &PlayerTransforms::Awake, void,
                 PlayerTransforms *self) {
   PlayerTransforms_Awake(self);
 
+  // Called when the player transform object is created in the gameplay scene.
+  // Attach the updater here so remote pose packets can drive the avatar.
   self->get_gameObject()
       ->AddComponent<LiveStreamQuest::PlayerPositionUpdater *>();
 }
 
+// Called when PauseController starts. If the level enters gameplay while the
+// handshake is still incomplete, force the initial paused state and keep
+// polling until both sides are ready.
 MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
                 PauseController *self) {
+  // Enforce a paused state on Quest map load while the handshake is still
+  // pending, even if `startPaused` was not enough to keep the song paused.
   if (shouldBePaused()) {
+    //  force the paused state and start the coroutine to watch for PC readiness and
     self->_initData->startPaused = true;
+    self->_wantsToPause = true;
+
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
         updatePauseState, SafePtrUnity(self)));
   }

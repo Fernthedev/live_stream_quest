@@ -46,6 +46,10 @@ public class MenuPacketHandler : IDisposable, IInitializable
     [Inject(Optional = true)] private PlayerSettingsPanelController _playerSettingsPanelController = null!;
 
 
+    /// <summary>
+    /// Subscribes to Quest protocol events so menu-side start packets can be handled
+    /// as soon as the PC mod is initialized.
+    /// </summary>
     public void Initialize()
     {
         _playerSettingsPanelController ??= Resources.FindObjectsOfTypeAll<PlayerSettingsPanelController>().First();
@@ -61,6 +65,12 @@ public class MenuPacketHandler : IDisposable, IInitializable
     }
 
 
+    /// <summary>
+    /// Routes incoming Quest packets to the menu flow.
+    /// Currently this handles <see cref="PacketWrapper.PacketOneofCase.StartBeatmap"/>,
+    /// which is sent by Quest when a level start has been requested and the PC should
+    /// load the same beatmap before the gameplay handshake begins.
+    /// </summary>
     public void HandlePacket(PacketWrapper packetWrapper)
     {
 #if BS_1_29
@@ -75,6 +85,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         switch (packetWrapper.PacketCase)
         {
             case PacketWrapper.PacketOneofCase.StartBeatmap:
+                _siraLog.Info("2. Start beatmap packet received");
                 try
                 {
                     _globalStateManager.StartingGameFromQuest = true;
@@ -90,6 +101,11 @@ public class MenuPacketHandler : IDisposable, IInitializable
         }
     }
 
+    /// <summary>
+    /// Loads the beatmap requested by Quest.
+    /// Called after a <see cref="PacketWrapper.PacketOneofCase.StartBeatmap"/> packet arrives
+    /// and the handler has been marshalled onto the main thread.
+    /// </summary>
     private async ValueTask StartLevel(PacketWrapper packetWrapper)
     {
         var id = packetWrapper.StartBeatmap.LevelId;
@@ -205,6 +221,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
 
+        _siraLog.Info($"Starting level with key {beatmapKey}");
         _menuTransitionsHelper.StartStandardLevel("Solo", in beatmapKey, beatmapResult,
             _playerDataModel.playerData.overrideEnvironmentSettings,
             _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), _gameplaySetupViewController.colorSchemesSettings.ShouldOverrideLightshowColors(), beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
@@ -216,6 +233,12 @@ public class MenuPacketHandler : IDisposable, IInitializable
 #endif
     }
 
+    /// <summary>
+    /// Reports a beatmap loading or setup failure back to Quest through
+    /// <see cref="PacketWrapper.PacketOneofCase.StartBeatmapFailure"/>.
+    /// Called from the start-level path when the requested beatmap cannot be loaded,
+    /// resolved, or initialized.
+    /// </summary>
     private void SendBeatmapStartError(string message)
     {
         _siraLog.Error($"Suffered beatmap error {message}");

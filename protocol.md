@@ -8,6 +8,7 @@
 - Roles:
   - Quest (`qmod`): initiates level starts, reports quest-side events (pause/exit), coordinates starting time when both sides are ready and transform updates.
   - PC (`pcmod`): loads/starts the level when requested, pauses until told to start, sends readiness.
+- Start flow now begins paused when the PC is connected. Quest loads the level, keeps playback paused, and only sends `StartMap` once both `pcReady` and `questReady` are true.
 
 **Primary packet types & semantics**
 - `StartBeatmap` (Quest -> PC)
@@ -51,9 +52,10 @@ sequenceDiagram
 
     Quest->>PC: StartBeatmap(levelId, characteristic, difficulty)
     PC->>PC: Load level (may download custom level)
-    PC->>PC: Pause local playback and send ReadyUp()
+  Quest->>Quest: Start paused while PC is connected
+  PC->>PC: Load level, then pause local playback and send ReadyUp()
     PC->>Quest: ReadyUp()
-    Quest->>Quest: both ready? (pcReady && questReady)
+  Quest->>Quest: both ready? (pcReady && questReady)
     Quest->>PC: StartMap(songTime)
     PC->>PC: Resume/seek to songTime and start
     Quest->>PC: UpdatePosition(...)  %% continuous updates (transforms)
@@ -69,6 +71,7 @@ sequenceDiagram
 
 **Field-level notes & important behaviors**
 - `songTime` synchronization: Quest drives the authoritative song time. Quest sets `initSongTime` on StartWait and communicates the precise `songTime` in `StartMap` so the PC can seek/align audio.
+- Start-paused logic: `MenuTransitionsHelper_StartStandardLevel` now passes `startPaused` when the PC is connected so the Quest side waits in pause immediately, rather than starting playback and pausing later.
 - Readiness handshake: PC explicitly pauses and sends `ReadyUp` before the Quest will send `StartMap`. Quest tracks `pcReady` and `questReady` booleans in `Manager`.
 - Pausing behavior: When Quest pauses, Quest sends `PauseMap` and expects PC to pause and reply with `ReadyUp`. Quest suspends starting until both sides are ready.
 - Quest readiness comes from the audio path: `AudioTimeSyncController_ResumeSong` and `AudioTimeSyncController_StartSong` are the triggers that mark Quest ready, not a continue-button hook.

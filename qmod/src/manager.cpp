@@ -2,6 +2,7 @@
 
 #include <fmt/ranges.h>
 
+#include "main.hpp"
 #include "packethandlers/socketlib_handler.hpp"
 #include "packethandlers/websocket_handler.hpp"
 
@@ -103,7 +104,9 @@ void Manager::tryStartGame() {
   // Only attempt to start when in waiting mode and both sides report ready.
   if (!waiting)
     return;
-  if (!pcReady || !questReady)
+  LSQLogger.info("6. Attempting to start game: pcReady={}, questReady={}",
+                 pcReady.load(), questReady.load());
+  if (!pcReady.load() || !questReady.load())
     return;
 
   // Clear waiting and send the authoritative StartMap (resume) to PC.
@@ -122,6 +125,9 @@ void Manager::StartWait(float songTime, bool questReady) {
   this->initSongTime = songTime;
   this->questReady = questReady;
 
+  LSQLogger.info("3. Entering waiting state: songTime={}, questReady={}",
+                 songTime, questReady);
+
   if (waiting)
     return;
 
@@ -138,12 +144,14 @@ void Manager::StopWait() {
 void Manager::readyPCUp() {
   // Called when PC sends ReadyUp; set the flag and attempt to complete the
   // handshake (tryStartGame will only proceed if `questReady` is also set).
+  LSQLogger.info("5. Received ReadyUp from PC");
   pcReady = true;
   tryStartGame();
 }
 
 void Manager::ReadyQuestUp() {
   // Called when Quest audio/scene reports it is ready (or player resumes).
+  LSQLogger.info("5. Quest is ready");
   questReady = true;
   tryStartGame();
 }

@@ -86,7 +86,7 @@ public class VRControllerManager : IInitializable, ITickable
     private readonly SiraLog _siraLog;
     private readonly PauseController _pauseController;
     private readonly MainCamera? _mainCamera;
-    private readonly AudioTimeSyncController _timeSyncManager;
+    private readonly TimeDesyncFixManager _timeSyncManager;
 
     // circular buffers
     // TODO: Switch to sorted list
@@ -102,7 +102,7 @@ public class VRControllerManager : IInitializable, ITickable
 
     [Inject]
     public VRControllerManager(PlayerVRControllersManager playerVRControllersManager, PlayerTransforms playerTransforms,
-        SiraLog siraLog, PauseController pauseController, [Inject(Optional = true)] MainCamera? mainCamera, AudioTimeSyncController timeSyncManager)
+        SiraLog siraLog, PauseController pauseController, [Inject(Optional = true)] MainCamera? mainCamera, TimeDesyncFixManager timeSyncManager)
     {
         _playerVRControllersManager = playerVRControllersManager;
         _playerTransforms = playerTransforms;
@@ -122,29 +122,24 @@ public class VRControllerManager : IInitializable, ITickable
 
   public void Tick()
     {
-        // 1. Compute target historical position using our synchronized audio timeline reference
-        double renderingTimelineTime = _timeSyncManager.songTime - InterpolationDelay;
+// Use the stabilized reference time property from our sync manager
+        double renderingTimelineTime = _timeSyncManager.SmoothedSongTime - InterpolationDelay;
         
-        // 2. Timeline Discontinuity Filter (Handles Practice Mode Skips and Song Rewinds)
         if (_lastRenderingTimelineTime != double.MinValue && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
         {
-            _siraLog.Info("[VRControllerManager] Timeline discontinuity/rewind detected! Purging history buffers.");
+            _siraLog.Info("[VRControllerManager] Playback discontinuity detected. Purging snapshot logs.");
             _snapshots.Clear();
             _lastRenderingTimelineTime = renderingTimelineTime;
             return;
         }
         _lastRenderingTimelineTime = renderingTimelineTime;
 
-        // Ensure we have an interpolation window bounded by at least two frames
-        if (_snapshots.Count < 2)
-        {
-            return;
-        }
+        if (_snapshots.Count < 2) return;
 
-        // 3. Locate Bounding Timeline Window
         int targetIndex = -1;
         for (int i = 0; i < _snapshots.Count - 1; i++)
         {
+            // CRITICAL FIX: Linear search evaluates purely along the song timeline axis
             double timeA = _snapshots[i].SongTime;
             double timeB = _snapshots[i + 1].SongTime;
 
@@ -155,16 +150,12 @@ public class VRControllerManager : IInitializable, ITickable
             }
         }
         
-        // 4. Evaluate Spatial Frames
         if (targetIndex != -1)
         {
             var snapshotA = _snapshots[targetIndex];
             var snapshotB = _snapshots[targetIndex + 1];
 
-            // Compute normalized progress factor 't' via linear timeline projection
-            float t = (float)((renderingTimelineTime - snapshotA.SongTime) / 
-                             (snapshotB.SongTime - snapshotA.SongTime));
-            
+            float t = (float)((renderingTimelineTime - snapshotA.SongTime) / (snapshotB.SongTime - snapshotA.SongTime));
             t = Mathf.Clamp01(t);
 
             if (_pauseController._paused != PauseController.PauseState.Paused)
@@ -178,10 +169,7 @@ public class VRControllerManager : IInitializable, ITickable
         }
         else if (renderingTimelineTime > _snapshots[_snapshots.Count - 1].SongTime)
         {
-            // Extrapolation Fallback (Network Starvation / High Packet Loss)
-            // Snap avatars to the newest available coordinate frame until fresh data arrives
             var newest = _snapshots[_snapshots.Count - 1];
-            
             if (_pauseController._paused != PauseController.PauseState.Paused)
             {
                 SetTransformDirectly(_properCameraTransform, newest.HeadPosition, newest.HeadRotation);
@@ -191,8 +179,7 @@ public class VRControllerManager : IInitializable, ITickable
             SetTransformDirectly(_playerTransforms._leftHandTransform, newest.LeftHandPosition, newest.LeftHandRotation);
         }
         
-        // 5. Memory Pruning
-        // Discard data points older than 1 second behind our current timeline player head
+        // CRITICAL FIX: Memory cleanup uses track time boundaries
         PruneOldSnapshots(renderingTimelineTime - 1.0);
     }
 
@@ -214,9 +201,8 @@ public class VRControllerManager : IInitializable, ITickable
     public void UpdateTransforms(Protos.Transform headTransform, Protos.Transform rightTransform,
         Protos.Transform leftTransform, Timestamp serverTimestamp, double songTime)
     {
-        var now = Time.realtimeSinceStartupAsDouble; // time.ToDateTime();
-        var serverTime = serverTimestamp.ToDateTime(); // time.ToDateTime();
-        
+        var now = Time.realtimeSinceStartupAsDouble;
+        var serverTime = serverTimestamp.ToDateTime();
         
         // p1 - p0
         var deltaPacketTime = 0.0;
@@ -230,7 +216,6 @@ public class VRControllerManager : IInitializable, ITickable
             deltaPacketTime = now - latest.PacketMoment;
             timeElapsedServer = serverTime - latest.ServerTime;
         }
-
         
         var newSnapshot = BuildVRSnapshot(headTransform, leftTransform, rightTransform,
             songTime: songTime,
@@ -242,8 +227,8 @@ public class VRControllerManager : IInitializable, ITickable
         
         _snapshots.Add(newSnapshot);
         
-        // Ensure snapshots remain strictly sorted by chronological progression
-        _snapshots.Sort((a, b) => a.ServerTimeSeconds.CompareTo(b.ServerTimeSeconds));
+        // CRITICAL FIX: The historical buffer collection must be sorted strictly by song position
+        _snapshots.Sort((a, b) => a.SongTime.CompareTo(b.SongTime));
     }
 
     /// <summary>

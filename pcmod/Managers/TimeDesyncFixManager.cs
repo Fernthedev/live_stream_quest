@@ -86,7 +86,7 @@ public class TimeDesyncFixManager : ITickable
     /// packet sample weight is combined with 80% of historical offset tracking data.
     /// </summary>
     private const float EmaAlpha = 0.2f;
-    
+
     /// <summary>
     /// The running history variable accumulating the filtered time offset state.
     /// Represents the true, jitter-stripped difference between where the server is and where the client is.
@@ -121,49 +121,62 @@ public class TimeDesyncFixManager : ITickable
         _syncController = syncController;
     }
     
+    /// <summary>
+    /// Evaluates the true, stabilized rendering time signature.
+    /// Deducts the current active filtered drift offset from the raw audio clock 
+    /// to ensure the interpolation engine samples snapshots smoothly.
+    /// </summary>
+    public double SmoothedSongTime
+    {
+        get
+        {
+            if (!_syncController.isAudioLoaded || !_syncController.isReady) return 0;
+            return _syncController.songTime + _smoothedTimeDriftOffset;
+        }
+    }
+    
     public void Tick()
     {
         // TODO: Handle rewinds and timescale
-        
         if (!_syncController.isAudioLoaded || !_syncController.isReady) return;
         if (_syncController.state != AudioTimeSyncController.State.Playing) return;
         if (!_hasReceivedPacket) return;
 
-        // 1. Linearly extrapolate what the server's song time should be right now
-        float timeSinceLastPacket = (float)(Time.realtimeSinceStartupAsDouble - _lastPacketReceivedTime);
-        float estimatedServerSongTime = _latestServerSongTime + timeSinceLastPacket;
+        // 1. Linearly extrapolate where the server's song time should be right now
+        double timeSinceLastPacket = Time.realtimeSinceStartupAsDouble - _lastPacketReceivedTime;
+        double estimatedServerSongTime = _latestServerSongTime + timeSinceLastPacket;
 
-        // 2. Measure actual desync against Beat Saber's current local song time
-        float currentLocalTime = _syncController.songTime;
-        float timeDriftOffset = estimatedServerSongTime - currentLocalTime;
+        // 2. Measure raw delta desync against local audio time
+        double currentLocalTime = _syncController.songTime;
+        double rawTimeDriftOffset = estimatedServerSongTime - currentLocalTime;
 
-        // 3. Smooth the noise using Exponential Moving Average
-        // https://en.wikipedia.org/wiki/Exponential_smoothing#Comparison_with_moving_average
-        _smoothedTimeDriftOffset = (EmaAlpha * timeDriftOffset) + ((1.0f - EmaAlpha) * _smoothedTimeDriftOffset);
-        double absoluteOffset = Math.Abs(_smoothedTimeDriftOffset);
-
-        // Case A: Massive Lag Spike / Desync -> Hard Snap using Native Method
-        if (absoluteOffset > HardSnapThreshold)
+        // 3. Handle structural discontinuities (Practice Mode seeker skips / rewinds)
+        if (Math.Abs(rawTimeDriftOffset) > HardSnapThreshold)
         {
-            _siraLog.Warn($"[Desync] Massive drift ({absoluteOffset:F3}s). Executing Hard Seek.");
-            _syncController.SeekTo(estimatedServerSongTime);
-            _smoothedTimeDriftOffset = 0;
+            _siraLog.Warn($"[TimeSync] Large desync detected ({rawTimeDriftOffset:F3}s). Snapping audio controller.");
+            _syncController.SeekTo((float)estimatedServerSongTime);
+            _smoothedTimeDriftOffset = 0; 
             return;
         }
 
-        // Case B: Small clock drift or frame-rate drop -> Slew the clock smoothly
+        // 4. Smooth out jitter using the EMA filter
+        _smoothedTimeDriftOffset = (EmaAlpha * rawTimeDriftOffset) + ((1.0 - EmaAlpha) * _smoothedTimeDriftOffset);
+        double absoluteOffset = Math.Abs(_smoothedTimeDriftOffset);
+
+        // 5. Slew the internal reference clock smoothly
         if (absoluteOffset > MaxAcceptableDrift)
         {
-            // Calculate how much adjustment we need this frame
             float adjustmentThisFrame = (float)(_smoothedTimeDriftOffset * SlewingStrength * Time.deltaTime);
 
-            // Gaining insight from the decompiled code:
-            // num2 (the expected song timeline) relies entirely on timeSinceStart - _audioStartTimeOffsetSinceStart.
-            // Shifting _audioStartTimeOffsetSinceStart backwards pushes local time FORWARD to catch up to the server.
             _syncController._audioStartTimeOffsetSinceStart -= adjustmentThisFrame;
-            
-            // Flag internal system that we are currently manipulating the sync state
             _syncController._fixingAudioSyncError = true;
+
+            // Keep the EMA filter in sync with the manual clock shift
+            _smoothedTimeDriftOffset -= adjustmentThisFrame;
+        }
+        else
+        {
+            _syncController._fixingAudioSyncError = false;
         }
     }
     
@@ -173,6 +186,12 @@ public class TimeDesyncFixManager : ITickable
     /// </summary>
     public void UpdateTime(float serverSongTime)
     {
+// Flush internal filters if the incoming packet indicates a manual track rewind
+        if (_hasReceivedPacket && serverSongTime < _latestServerSongTime - 0.250f)
+        {
+            _smoothedTimeDriftOffset = 0;
+        }
+
         _latestServerSongTime = serverSongTime;
         _lastPacketReceivedTime = Time.realtimeSinceStartupAsDouble;
         _hasReceivedPacket = true;

@@ -229,7 +229,7 @@ public class NetworkManager : IDisposable, IInitializable
         // must be uint64 to consume 8 bytes
         // bad but oh well, C# uses ints
         var len = (int)IPAddress.NetworkToHostOrder((long)BitConverter.ToUInt64(bytePool, 0));
-
+        
         var readCount = 0;
         while (readCount < len)
         {
@@ -304,16 +304,14 @@ public class NetworkManager : IDisposable, IInitializable
         var payload = packetWrapper.ToByteArray();
         var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((long)payload.Length));
 
-        {
-            var framed = new byte[8 + payload.Length];
-            Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
-            Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
+        var framed = new byte[8 + payload.Length];
+        Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
+        Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
 
-            // log framed base64
-            var base64Frame = Convert.ToBase64String(framed);
-            _siraLog.Info(
-                $"Sending packet: {packetWrapper.PacketCase}, framed length: {framed.Length}, base64: {base64Frame}");
-        }
+        // log framed base64
+        var base64Frame = Convert.ToBase64String(framed);
+        _siraLog.Info(
+            $"Sending packet: {packetWrapper.PacketCase}, framed length: {framed.Length}, base64: {base64Frame}");
         
         var channel = _sendChannel;
         if (channel == null)
@@ -322,9 +320,8 @@ public class NetworkManager : IDisposable, IInitializable
             throw new InvalidOperationException("Not connected");
         }
 
-        // Enqueue framed buffer
-        _ = channel.Writer.WriteAsync(lenBytes, token).AsTask();
-        _ = channel.Writer.WriteAsync(payload, token).AsTask();
+        // Enqueue the complete frame so the length prefix and payload stay atomic.
+        _ = channel.Writer.WriteAsync(framed, token).AsTask();
     }
 
     private async Task SendLoop(CancellationToken token)

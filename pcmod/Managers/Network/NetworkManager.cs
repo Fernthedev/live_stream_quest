@@ -309,9 +309,9 @@ public class NetworkManager : IDisposable, IInitializable
         Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
 
         // log framed base64
-        var base64Frame = Convert.ToBase64String(framed);
-        _siraLog.Info(
-            $"Sending packet: {packetWrapper.PacketCase}, framed length: {framed.Length}, base64: {base64Frame}");
+        // var base64Frame = Convert.ToBase64String(framed);
+        // _siraLog.Info(
+        //     $"Sending packet: {packetWrapper.PacketCase}, framed length: {framed.Length}, base64: {base64Frame}");
         
         var channel = _sendChannel;
         if (channel == null)

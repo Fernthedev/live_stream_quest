@@ -13,33 +13,33 @@ void handleLog(LoggerLevel level, std::string_view const tag,
            log);
 }
 
-std::string base64_encode(const uint8_t* data, size_t length) {
-    static const char lookup_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                       "abcdefghijklmnopqrstuvwxyz"
-                                       "0123456789+/";
-    std::string out;
-    out.reserve(((length + 2) / 3) * 4);
+std::string base64_encode(const uint8_t *data, size_t length) {
+  static const char lookup_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                     "abcdefghijklmnopqrstuvwxyz"
+                                     "0123456789+/";
+  std::string out;
+  out.reserve(((length + 2) / 3) * 4);
 
-    int val = 0;
-    int valb = -6;
-    for (size_t i = 0; i < length; ++i) {
-        val = (val << 8) + data[i];
-        valb += 8;
-        while (valb >= 0) {
-            out.push_back(lookup_table[(val >> valb) & 0x3F]);
-            valb -= 6;
-        }
+  int val = 0;
+  int valb = -6;
+  for (size_t i = 0; i < length; ++i) {
+    val = (val << 8) + data[i];
+    valb += 8;
+    while (valb >= 0) {
+      out.push_back(lookup_table[(val >> valb) & 0x3F]);
+      valb -= 6;
     }
-    
-    // Handle padding
-    if (valb > -6) {
-        out.push_back(lookup_table[((val << 8) >> (valb + 8)) & 0x3F]);
-    }
-    while (out.size() % 4) {
-        out.push_back('=');
-    }
-    
-    return out;
+  }
+
+  // Handle padding
+  if (valb > -6) {
+    out.push_back(lookup_table[((val << 8) >> (valb + 8)) & 0x3F]);
+  }
+  while (out.size() % 4) {
+    out.push_back('=');
+  }
+
+  return out;
 }
 
 void SocketLibHandler::listen(const int port) {
@@ -89,7 +89,7 @@ void SocketLibHandler::listenOnEvents(
   if (!pendingPacket.has_value()) {
     if (incomingQueue.queueSize() < sizeof(size_t))
       return;
-    
+
     auto lenBytes = incomingQueue.dequeueAsVec(sizeof(size_t));
     auto len = ntohq(*reinterpret_cast<size_t *>(lenBytes.data()));
 
@@ -106,15 +106,26 @@ void SocketLibHandler::listenOnEvents(
   lock.unlock();
 
   // log len and bytes as base64 for debugging
-  std::string packetBase64 = base64_encode(packetBytes.data(), packetBytes.size());
-  LOG_DEBUG("Received packet ({} bytes): {}", packetBytes.size(), packetBase64);
+  // {
+  //   std::vector<uint8_t> frame(packetBytes.size() + sizeof(size_t));
+  //   // lets frame the packet bytes with the size header for easier debugging
+  //   auto networkSize = htonq(packetBytes.size());
+  //   *reinterpret_cast<size_t *>(frame.data()) = networkSize;
+  //   std::copy(packetBytes.begin(), packetBytes.end(),
+  //             frame.begin() + sizeof(size_t));
+    
+  //   std::string packetBase64 =
+  //       base64_encode(frame.data(), frame.size());
+  //   LOG_DEBUG("Received packet ({} bytes + len): {}", packetBytes.size(),
+  //             packetBase64);
+  // }
 
   PacketWrapper packet;
   packet.ParseFromArray(packetBytes.data(), packetBytes.size());
 
   if (!packet.IsInitialized()) {
-      LOG_INFO("Received uninitialized packet: {}", packet.DebugString());
-      return;
+    LOG_INFO("Received uninitialized packet: {}", packet.DebugString());
+    return;
   }
 
   scheduleFunction(

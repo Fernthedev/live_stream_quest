@@ -158,6 +158,11 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 // refresh is necessary
                 // https://github.com/Top-Cat/BeatSaverDownloader/blob/fd9ed043924c01f6b20b3ec037bf3fa8e032bdf2/BeatSaverDownloader/UI/ViewControllers/DownloadQueue/QueueManager.cs#L47
                 Loader.Instance.RefreshSongs(false);
+                // now await until FinishLoad is called
+                while(!Loader.AreSongsLoaded)
+                {
+                    await Task.Delay(100).ConfigureAwait(true);
+                }
             }
         }
 #if BS_1_29

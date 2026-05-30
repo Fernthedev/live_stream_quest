@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using BeatSaverDownloader.Misc;
 using BeatSaverSharp;
 using BGLib.Polyglot;
+using JetBrains.Annotations;
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
+using SongCore;
 using UnityEngine;
 using Zenject;
 
@@ -17,33 +19,57 @@ public class MenuPacketHandler : IDisposable, IInitializable
     private const string CustomLevelPrefix = "custom_level_";
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    [Inject] private readonly BeatSaver _beatSaver;
+    private readonly BeatSaver _beatSaver;
 
-    [Inject] private readonly BeatmapLevelsModel _beatmapLevelsModel;
+    private readonly BeatmapLevelsModel _beatmapLevelsModel;
 
-    [Inject] private readonly MenuTransitionsHelper _menuTransitionsHelper;
+    private readonly MenuTransitionsHelper _menuTransitionsHelper;
 
 #if BS_1_29
+    [UsedImplicitly]
     [Inject] private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection;
 #else
+    [UsedImplicitly]
     [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
 #endif
 
-    [Inject] private readonly PlayerDataModel _playerDataModel;
-    [Inject] private readonly GameplaySetupViewController _gameplaySetupViewController;
-    [Inject] private readonly EnvironmentsListModel _environmentsListModel;
+    private readonly PlayerDataModel _playerDataModel;
+    private readonly GameplaySetupViewController _gameplaySetupViewController;
+    private readonly EnvironmentsListModel _environmentsListModel;
 
 
-    [Inject] private readonly NetworkManager _networkManager;
+    private readonly NetworkManager _networkManager;
 
-    [Inject] private readonly SiraLog _siraLog;
+    private readonly SiraLog _siraLog;
 
-    [Inject] private readonly GlobalStateManager _globalStateManager;
-    [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
+    private readonly GlobalStateManager _globalStateManager;
+    private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
-    [Inject(Optional = true)] private PlayerSettingsPanelController _playerSettingsPanelController = null!;
+    
+    // optional since we can try to find it later
+    [Inject(Optional = true)] 
+    private PlayerSettingsPanelController? _playerSettingsPanelController;
+
+    [Inject]
+    public MenuPacketHandler(BeatSaver beatSaver, BeatmapLevelsModel beatmapLevelsModel,
+        MenuTransitionsHelper menuTransitionsHelper, PlayerDataModel playerDataModel,
+        GameplaySetupViewController gameplaySetupViewController, EnvironmentsListModel environmentsListModel,
+        NetworkManager networkManager, SiraLog siraLog, GlobalStateManager globalStateManager,
+        LSQMainThreadDispatcher mainThreadDispatcher)
+    {
+        _beatSaver = beatSaver;
+        _beatmapLevelsModel = beatmapLevelsModel;
+        _menuTransitionsHelper = menuTransitionsHelper;
+        _playerDataModel = playerDataModel;
+        _gameplaySetupViewController = gameplaySetupViewController;
+        _environmentsListModel = environmentsListModel;
+        _networkManager = networkManager;
+        _siraLog = siraLog;
+        _globalStateManager = globalStateManager;
+        _mainThreadDispatcher = mainThreadDispatcher;
+    }
 
 
     /// <summary>
@@ -120,8 +146,18 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 _siraLog.Info($"Song not downloaded {hash}");
                 var beatmap = await _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token).ConfigureAwait(true);
 
+                if (beatmap is null)
+                {
+                    _siraLog.Error($"Beatmap with hash {hash} not found on BeatSaver");
+                    SendBeatmapStartError($"Beatmap with hash {hash} not found on BeatSaver");
+                    return;
+                }
+
                 await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token)
                     .ConfigureAwait(true);
+                // refresh is necessary
+                // https://github.com/Top-Cat/BeatSaverDownloader/blob/fd9ed043924c01f6b20b3ec037bf3fa8e032bdf2/BeatSaverDownloader/UI/ViewControllers/DownloadQueue/QueueManager.cs#L47
+                Loader.Instance.RefreshSongs(false);
             }
         }
 #if BS_1_29
@@ -198,7 +234,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
         if (beatmapResult == null)
         {
-            SendBeatmapStartError("beatmap level is null");
+            SendBeatmapStartError($"beatmap level is null {id}");
             // TODO: User error dialog
             return;
         }
@@ -209,7 +245,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
         var beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
         var beatmapKey = new BeatmapKey(id, beatmapCharacteristicSo,
-                beatmapDifficulty);
+            beatmapDifficulty);
 
         // TODO: Figure out why this null refs if single player hasn't been opened
 
@@ -218,15 +254,25 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
         await _playerDataModel.playerDataFileModel.LoadAsync().ConfigureAwait(true);
         _gameplaySetupViewController.Init();
+        if (_playerSettingsPanelController is null)
+        {
+            _siraLog.Error("PlayerSettingsPanelController is null, cannot refresh player settings");
+            SendBeatmapStartError("PlayerSettingsPanelController is null, cannot refresh player settings");
+            return;
+        }
+        
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
 
         _siraLog.Info($"Starting level with key {beatmapKey}");
         _menuTransitionsHelper.StartStandardLevel("Solo", in beatmapKey, beatmapResult,
             _playerDataModel.playerData.overrideEnvironmentSettings,
-            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(), _gameplaySetupViewController.colorSchemesSettings.ShouldOverrideLightshowColors(), beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
+            _playerDataModel.playerData.colorSchemesSettings.GetOverrideColorScheme(),
+            _gameplaySetupViewController.colorSchemesSettings.ShouldOverrideLightshowColors(),
+            beatmapResult.GetColorScheme(beatmapKey.beatmapCharacteristic, beatmapKey.difficulty),
             _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
-            _playerSettingsPanelController.playerSpecificSettings, null, _environmentsListModel, Localization.Get("BUTTON_MENU"), 
+            _playerSettingsPanelController.playerSpecificSettings, null, _environmentsListModel,
+            Localization.Get("BUTTON_MENU"),
             false,
             true,
             null, null, null, null);

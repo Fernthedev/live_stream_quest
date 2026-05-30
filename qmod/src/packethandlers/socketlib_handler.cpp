@@ -101,6 +101,8 @@ void SocketLibHandler::listenOnEvents(
 
   auto packetBytes =
       std::move(incomingQueue.dequeueAsVec(pendingPacket.value()));
+  // reset for next packet
+  pendingPacket.reset();
   lock.unlock();
 
   // log len and bytes as base64 for debugging

@@ -269,11 +269,11 @@ MAKE_HOOK_MATCH(PauseController_Start, &PauseController::Start, void,
   LSQLogger.info("4. PauseController_Start");
   Manager::GetInstance()->ReadyQuestUp();
 
-  if (shouldBePaused()) {
-    //  force the paused state and start the coroutine to watch for PC readiness
-    self->_initData->startPaused = true;
-    self->_wantsToPause = true;
+  // TODO: Retain pause state if requested in StartStandardLevel, but handshake is already complete by the time we get here. This is a minor edge case since it would only cause the song to start unpaused for a brief moment before pausing, but we can address it in a future update if needed.
+  self->_initData->startPaused = shouldBePaused();
+  self->_wantsToPause = shouldBePaused();
 
+  if (shouldBePaused()) {
     self->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(
         updatePauseState, SafePtrUnity(self)));
   }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using System.Threading.Channels;
+using JetBrains.Annotations;
 using LiveStreamQuest.Configuration;
 using LiveStreamQuest.Protos;
 using SiraUtil.Logging;
@@ -13,6 +14,7 @@ using Zenject;
 
 namespace LiveStreamQuest.Managers.Network;
 
+[UsedImplicitly]
 public class NetworkManager : IDisposable, IInitializable
 {
     private readonly PluginConfig _pluginConfig;
@@ -23,7 +25,7 @@ public class NetworkManager : IDisposable, IInitializable
 
     private Socket? _socket;
     private NetworkStream? _networkStream;
-    private Channel<ArraySegment<byte>>? _sendChannel;
+    private Channel<byte[]>? _sendChannel;
 
     public bool Connecting { get; private set; }
     public bool Connected => _socket is { Connected: true };
@@ -139,7 +141,7 @@ public class NetworkManager : IDisposable, IInitializable
             _networkStream = new NetworkStream(_socket, false);
 
             // Create per-connection channel and start single-writer sender
-            _sendChannel = Channel.CreateUnbounded<ArraySegment<byte>>(new UnboundedChannelOptions { SingleReader = true });
+            _sendChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions { SingleReader = true });
             _ = Task.Run(() => SendLoop(_cancellationTokenSource.Token), token);
             _ = Task.Run(() => OnReceiveLoop(_cancellationTokenSource.Token), token);
         }
@@ -301,12 +303,18 @@ public class NetworkManager : IDisposable, IInitializable
         // Build framed message (8-byte length prefix in network order + payload)
         var payload = packetWrapper.ToByteArray();
         var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((long)payload.Length));
-        var framed = new byte[8 + payload.Length];
-        Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
-        Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
 
-        var seg = new ArraySegment<byte>(framed, 0, framed.Length);
+        {
+            var framed = new byte[8 + payload.Length];
+            Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
+            Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
 
+            // log framed base64
+            var base64Frame = Convert.ToBase64String(framed);
+            _siraLog.Info(
+                $"Sending packet: {packetWrapper.PacketCase}, framed length: {framed.Length}, base64: {base64Frame}");
+        }
+        
         var channel = _sendChannel;
         if (channel == null)
         {
@@ -315,7 +323,8 @@ public class NetworkManager : IDisposable, IInitializable
         }
 
         // Enqueue framed buffer
-        _ = channel.Writer.WriteAsync(seg, token).AsTask();
+        _ = channel.Writer.WriteAsync(lenBytes, token).AsTask();
+        _ = channel.Writer.WriteAsync(payload, token).AsTask();
     }
 
     private async Task SendLoop(CancellationToken token)
@@ -339,7 +348,7 @@ public class NetworkManager : IDisposable, IInitializable
                     
                     try
                     {
-                        await ns.WriteAsync(seg.Array, seg.Offset, seg.Count, token).ConfigureAwait(false);
+                        await ns.WriteAsync(seg, 0, seg.Length, token).ConfigureAwait(false);
                         await ns.FlushAsync(token).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)

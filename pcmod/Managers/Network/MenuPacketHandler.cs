@@ -245,7 +245,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
         _globalStateManager.StartingGameFromQuest = false;
         var packetWrapper = new PacketWrapper
         {
-            StartBeatmapFailure =
+            StartBeatmapFailure = new StartBeatmapFailure
             {
                 Error = message
             }

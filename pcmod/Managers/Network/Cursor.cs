@@ -32,6 +32,8 @@ public class Cursor
     /// </summary>
     public int Position { get; set; }
 
+    public int Capacity => Data.Length;
+
     /// <summary>
     /// Reads up to <paramref name="amount"/> bytes from <paramref name="stream"/> into <see cref="Data"/> at <see cref="Position"/>.
     /// This method may read fewer bytes than requested if the stream has fewer bytes available.

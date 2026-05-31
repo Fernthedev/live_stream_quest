@@ -228,18 +228,7 @@ public class NetworkManager : IDisposable, IInitializable
         var cursor = new Cursor(bytePool);
 
         // Read the 4-byte length prefix (network order)
-        var read = await cursor.ReadFromStream(stream, sizeof(PacketSize), token).ConfigureAwait(false);
-
-        if (read == 0)
-        {
-            throw new IOException("Connection was closed!");
-        }
-
-        if (read < sizeof(PacketSize))
-        {
-            _siraLog.Debug("Did not receive full length prefix");
-            return;
-        }
+        await cursor.ReadAllFromStream(stream, sizeof(PacketSize), token).ConfigureAwait(false);
         
         // TODO: This does not work with UInt32
         var lenNetworkOrder = BitConverter.ToInt32(bytePool, 0);
@@ -251,16 +240,8 @@ public class NetworkManager : IDisposable, IInitializable
             return;
         }
 
-        if (len > bytePool.Length)
-        {
-            _siraLog.Warn($"Packet length {len} exceeds buffer size {bytePool.Length}");
-            throw new IOException("Packet too large");
-        }
-
-        // Reset position to 0 so payload overwrites the prefix (preserves previous behavior)
         cursor.ResetPosition();
-
-        // Read the full payload
+        // Read the payload immediately after the prefix.
         await cursor.ReadAllFromStream(stream, len, token).ConfigureAwait(false);
 
         token.ThrowIfCancellationRequested();

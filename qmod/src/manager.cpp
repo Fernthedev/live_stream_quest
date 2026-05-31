@@ -31,11 +31,11 @@ Manager *Manager::GetInstance() {
 void Manager::Init() {
   initialized = true;
   LOG_INFO("Starting server at port 3306");
-  auto transport = toSocketTransport(
-      getLiveStreamQuestConfig().networkTransport.GetValue());
+  auto transport =
+      toSocketTransport(getLiveStreamQuestConfig().networkTransport.GetValue());
   LOG_INFO("Quest network transport: {}",
            transport == LiveStreamQuestRust::ffi::SocketTransport::UDP ? "UDP"
-                                                                      : "TCP");
+                                                                       : "TCP");
   handler = std::make_unique<PacketHandlerType>(
       (ReceivePacketFunc)[this](auto &&PH1) {
         processMessage(std::forward<decltype(PH1)>(PH1));

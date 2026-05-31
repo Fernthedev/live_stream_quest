@@ -19,6 +19,8 @@
                             hover-hint="Set the IP of your Quest"/>
             <string-setting value="port" id="portField" apply-on-change="true" text="Port"
                             hover-hint="Set the port of your Quest"/>
+            <increment-setting value="transport" apply-on-change="true" min="0" max="1" text="Transport"
+                               hover-hint="0 = TCP, 1 = UDP"/>
             <increment-setting value="timeout" apply-on-change="true" min="0" text="Timeout"
                                hover-hint="Timeout connection tolerance in seconds"/>
             <increment-setting value="reconnectionAttempts" apply-on-change="true" min="0" text="Reconnect attempts"

@@ -2,13 +2,13 @@
 
 #include "packethandler.hpp"
 
-#include "packethandlers/socketlib_handler.hpp"
 #include "packethandlers/rust_socket_handler.hpp"
+#include "packethandlers/socketlib_handler.hpp"
+
 // #include "packethandlers/websocket_handler.hpp"
 
 #include <atomic>
 #include <sstream>
-
 
 /**
  * Manager handles the socket packet flow and the handshake state used to
@@ -22,8 +22,8 @@
  * `StartMap` packet to the PC and clear `waiting` so the Quest will resume.
  */
 class Manager {
-    using PacketHandlerType = RustSocketHandler;
-  
+  using PacketHandlerType = RustSocketHandler;
+
 private:
   void processMessage(const PacketWrapper &packet);
 

@@ -12,7 +12,7 @@ use crate::socket_handler::udp::UdpBackend;
 mod tcp;
 mod udp;
 
-type PacketSize = u32;
+
 type PacketCallback = Arc<dyn Fn(&[u8]) + Send + Sync + 'static>;
 
 // A shared client is an Arc-wrapped Mutex around a TcpStream, allowing for concurrent access across tasks
@@ -56,7 +56,7 @@ impl RustSocketServer {
                 clients: Arc::new(Mutex::new(HashMap::new())),
             }),
             SocketTransport::UDP => TransportBackend::Udp(UdpBackend {
-                socket: UdpSocket::bind(bind_addr).await?,
+                server_socket: UdpSocket::bind(bind_addr).await?,
                 peers: Arc::new(Mutex::new(HashSet::new())),
             }),
         };

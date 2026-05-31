@@ -1,6 +1,7 @@
 pub mod socket_handler;
 
 pub mod bindings;
+pub mod codec;
 
 pub use socket_handler::RustSocketServer;
 

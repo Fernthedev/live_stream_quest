@@ -2,12 +2,13 @@
 
 #include "packethandler.hpp"
 
+#include "packethandlers/rust_socket_handler.hpp"
 #include "packethandlers/socketlib_handler.hpp"
+
 // #include "packethandlers/websocket_handler.hpp"
 
 #include <atomic>
 #include <sstream>
-
 
 /**
  * Manager handles the socket packet flow and the handshake state used to
@@ -21,6 +22,8 @@
  * `StartMap` packet to the PC and clear `waiting` so the Quest will resume.
  */
 class Manager {
+  using PacketHandlerType = RustSocketHandler;
+
 private:
   void processMessage(const PacketWrapper &packet);
 
@@ -30,7 +33,7 @@ private:
   std::atomic_bool waiting;
   float initSongTime = 0;
 
-  std::unique_ptr<SocketLibHandler> handler;
+  std::unique_ptr<RustSocketHandler> handler;
 
   // Called internally
   void readyPCUp();
@@ -50,7 +53,7 @@ public:
 
   void Init();
 
-  PacketHandler &GetHandler() { return *handler; }
+  PacketHandlerType &GetHandler() { return *handler; }
 
   /**
    * Put the Manager into waiting mode and record the initial song time.

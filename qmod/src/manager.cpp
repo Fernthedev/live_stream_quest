@@ -3,12 +3,25 @@
 #include <fmt/ranges.h>
 
 #include "main.hpp"
-#include "packethandlers/socketlib_handler.hpp"
+#include "packethandler.hpp"
+#include "packethandlers/rust_socket_handler.hpp"
 // #include "packethandlers/websocket_handler.hpp"
 
 #define MESSAGE_LOGGING
 
 using namespace UnityEngine;
+
+namespace {
+LiveStreamQuestRust::ffi::SocketTransport toSocketTransport(int value) {
+  switch (value) {
+  case 1:
+    return LiveStreamQuestRust::ffi::SocketTransport::UDP;
+  case 0:
+  default:
+    return LiveStreamQuestRust::ffi::SocketTransport::TCP;
+  }
+}
+} // namespace
 
 Manager *Manager::GetInstance() {
   static Manager Instance = Manager();
@@ -18,8 +31,16 @@ Manager *Manager::GetInstance() {
 void Manager::Init() {
   initialized = true;
   LOG_INFO("Starting server at port 3306");
-  handler = std::make_unique<SocketLibHandler>((ReceivePacketFunc)[this](
-      auto &&PH1) { processMessage(std::forward<decltype(PH1)>(PH1)); });
+  auto transport =
+      toSocketTransport(getLiveStreamQuestConfig().networkTransport.GetValue());
+  LOG_INFO("Quest network transport: {}",
+           transport == LiveStreamQuestRust::ffi::SocketTransport::UDP ? "UDP"
+                                                                       : "TCP");
+  handler = std::make_unique<PacketHandlerType>(
+      (ReceivePacketFunc)[this](auto &&PH1) {
+        processMessage(std::forward<decltype(PH1)>(PH1));
+      },
+      transport);
   handler->listen(9542);
   LOG_INFO("Server fully initialized");
 }

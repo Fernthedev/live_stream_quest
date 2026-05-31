@@ -68,6 +68,17 @@ namespace LiveStreamQuest.UI
             }
         }
 
+        [UIValue("transport")]
+        internal int Transport
+        {
+            get => _config.Transport;
+            set
+            {
+                _config.Transport = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         [UIValue("timeout")]
         internal int Timeout
         {

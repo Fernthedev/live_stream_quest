@@ -41,16 +41,16 @@ namespace LiveStreamQuest.Protos {
             "cnRCZWF0bWFwEg8KB2xldmVsSWQYASABKAkSFgoOY2hhcmFjdGVyaXN0aWMY",
             "AiABKAkSEgoKZGlmZmljdWx0eRgDIAEoBSIkChNTdGFydEJlYXRtYXBGYWls",
             "dXJlEg0KBWVycm9yGAEgASgJIgkKB1JlYWR5VXAiHAoIU3RhcnRNYXASEAoI",
-            "c29uZ1RpbWUYASABKAIiCQoHRXhpdE1hcCIKCghQYXVzZU1hcCLUAgoNUGFj",
-            "a2V0V3JhcHBlchIVCg1xdWVyeVJlc3VsdElkGAEgASgEEikKDnVwZGF0ZVBv",
-            "c2l0aW9uGAIgASgLMg8uVXBkYXRlUG9zaXRpb25IABIlCgxzdGFydEJlYXRt",
-            "YXAYAyABKAsyDS5TdGFydEJlYXRtYXBIABIzChNzdGFydEJlYXRtYXBGYWls",
-            "dXJlGAQgASgLMhQuU3RhcnRCZWF0bWFwRmFpbHVyZUgAEhsKB3JlYWR5VXAY",
-            "BSABKAsyCC5SZWFkeVVwSAASHQoIc3RhcnRNYXAYBiABKAsyCS5TdGFydE1h",
-            "cEgAEhsKB2V4aXRNYXAYByABKAsyCC5FeGl0TWFwSAASHQoIcGF1c2VNYXAY",
-            "CCABKAsyCS5QYXVzZU1hcEgAEiMKC3Njb3JlVXBkYXRlGAkgASgLMgwuU2Nv",
-            "cmVVcGRhdGVIAEIICgZQYWNrZXRCGaoCFkxpdmVTdHJlYW1RdWVzdC5Qcm90",
-            "b3NiBnByb3RvMw=="));
+            "c29uZ1RpbWUYASABKAIiCQoHRXhpdE1hcCIKCghQYXVzZU1hcCIHCgVIZWxs",
+            "byLtAgoNUGFja2V0V3JhcHBlchIVCg1xdWVyeVJlc3VsdElkGAEgASgEEikK",
+            "DnVwZGF0ZVBvc2l0aW9uGAIgASgLMg8uVXBkYXRlUG9zaXRpb25IABIlCgxz",
+            "dGFydEJlYXRtYXAYAyABKAsyDS5TdGFydEJlYXRtYXBIABIzChNzdGFydEJl",
+            "YXRtYXBGYWlsdXJlGAQgASgLMhQuU3RhcnRCZWF0bWFwRmFpbHVyZUgAEhsK",
+            "B3JlYWR5VXAYBSABKAsyCC5SZWFkeVVwSAASHQoIc3RhcnRNYXAYBiABKAsy",
+            "CS5TdGFydE1hcEgAEhsKB2V4aXRNYXAYByABKAsyCC5FeGl0TWFwSAASHQoI",
+            "cGF1c2VNYXAYCCABKAsyCS5QYXVzZU1hcEgAEiMKC3Njb3JlVXBkYXRlGAkg",
+            "ASgLMgwuU2NvcmVVcGRhdGVIABIXCgVoZWxsbxgKIAEoCzIGLkhlbGxvSABC",
+            "CAoGUGFja2V0QhmqAhZMaXZlU3RyZWFtUXVlc3QuUHJvdG9zYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -65,7 +65,8 @@ namespace LiveStreamQuest.Protos {
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.StartMap), global::LiveStreamQuest.Protos.StartMap.Parser, new[]{ "SongTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.ExitMap), global::LiveStreamQuest.Protos.ExitMap.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PauseMap), global::LiveStreamQuest.Protos.PauseMap.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PacketWrapper), global::LiveStreamQuest.Protos.PacketWrapper.Parser, new[]{ "QueryResultId", "UpdatePosition", "StartBeatmap", "StartBeatmapFailure", "ReadyUp", "StartMap", "ExitMap", "PauseMap", "ScoreUpdate" }, new[]{ "Packet" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.Hello), global::LiveStreamQuest.Protos.Hello.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::LiveStreamQuest.Protos.PacketWrapper), global::LiveStreamQuest.Protos.PacketWrapper.Parser, new[]{ "QueryResultId", "UpdatePosition", "StartBeatmap", "StartBeatmapFailure", "ReadyUp", "StartMap", "ExitMap", "PauseMap", "ScoreUpdate", "Hello" }, new[]{ "Packet" }, null, null, null)
           }));
     }
     #endregion
@@ -2852,6 +2853,170 @@ namespace LiveStreamQuest.Protos {
 
   }
 
+  /// <summary>
+  /// For UDP to initialize connection
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class Hello : pb::IMessage<Hello>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<Hello> _parser = new pb::MessageParser<Hello>(() => new Hello());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<Hello> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[11]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Hello() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Hello(Hello other) : this() {
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Hello Clone() {
+      return new Hello(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as Hello);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(Hello other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(Hello other) {
+      if (other == null) {
+        return;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+        }
+      }
+    }
+    #endif
+
+  }
+
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
   public sealed partial class PacketWrapper : pb::IMessage<PacketWrapper>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -2867,7 +3032,7 @@ namespace LiveStreamQuest.Protos {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[11]; }
+      get { return global::LiveStreamQuest.Protos.LiveStreamReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2912,6 +3077,9 @@ namespace LiveStreamQuest.Protos {
           break;
         case PacketOneofCase.ScoreUpdate:
           ScoreUpdate = other.ScoreUpdate.Clone();
+          break;
+        case PacketOneofCase.Hello:
+          Hello = other.Hello.Clone();
           break;
       }
 
@@ -3032,6 +3200,18 @@ namespace LiveStreamQuest.Protos {
       }
     }
 
+    /// <summary>Field number for the "hello" field.</summary>
+    public const int HelloFieldNumber = 10;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::LiveStreamQuest.Protos.Hello Hello {
+      get { return packetCase_ == PacketOneofCase.Hello ? (global::LiveStreamQuest.Protos.Hello) packet_ : null; }
+      set {
+        packet_ = value;
+        packetCase_ = value == null ? PacketOneofCase.None : PacketOneofCase.Hello;
+      }
+    }
+
     private object packet_;
     /// <summary>Enum of possible cases for the "Packet" oneof.</summary>
     public enum PacketOneofCase {
@@ -3044,6 +3224,7 @@ namespace LiveStreamQuest.Protos {
       ExitMap = 7,
       PauseMap = 8,
       ScoreUpdate = 9,
+      Hello = 10,
     }
     private PacketOneofCase packetCase_ = PacketOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3083,6 +3264,7 @@ namespace LiveStreamQuest.Protos {
       if (!object.Equals(ExitMap, other.ExitMap)) return false;
       if (!object.Equals(PauseMap, other.PauseMap)) return false;
       if (!object.Equals(ScoreUpdate, other.ScoreUpdate)) return false;
+      if (!object.Equals(Hello, other.Hello)) return false;
       if (PacketCase != other.PacketCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -3100,6 +3282,7 @@ namespace LiveStreamQuest.Protos {
       if (packetCase_ == PacketOneofCase.ExitMap) hash ^= ExitMap.GetHashCode();
       if (packetCase_ == PacketOneofCase.PauseMap) hash ^= PauseMap.GetHashCode();
       if (packetCase_ == PacketOneofCase.ScoreUpdate) hash ^= ScoreUpdate.GetHashCode();
+      if (packetCase_ == PacketOneofCase.Hello) hash ^= Hello.GetHashCode();
       hash ^= (int) packetCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -3155,6 +3338,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(74);
         output.WriteMessage(ScoreUpdate);
       }
+      if (packetCase_ == PacketOneofCase.Hello) {
+        output.WriteRawTag(82);
+        output.WriteMessage(Hello);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3201,6 +3388,10 @@ namespace LiveStreamQuest.Protos {
         output.WriteRawTag(74);
         output.WriteMessage(ScoreUpdate);
       }
+      if (packetCase_ == PacketOneofCase.Hello) {
+        output.WriteRawTag(82);
+        output.WriteMessage(Hello);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -3237,6 +3428,9 @@ namespace LiveStreamQuest.Protos {
       }
       if (packetCase_ == PacketOneofCase.ScoreUpdate) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ScoreUpdate);
+      }
+      if (packetCase_ == PacketOneofCase.Hello) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Hello);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3301,6 +3495,12 @@ namespace LiveStreamQuest.Protos {
             ScoreUpdate = new global::LiveStreamQuest.Protos.ScoreUpdate();
           }
           ScoreUpdate.MergeFrom(other.ScoreUpdate);
+          break;
+        case PacketOneofCase.Hello:
+          if (Hello == null) {
+            Hello = new global::LiveStreamQuest.Protos.Hello();
+          }
+          Hello.MergeFrom(other.Hello);
           break;
       }
 
@@ -3399,6 +3599,15 @@ namespace LiveStreamQuest.Protos {
             ScoreUpdate = subBuilder;
             break;
           }
+          case 82: {
+            global::LiveStreamQuest.Protos.Hello subBuilder = new global::LiveStreamQuest.Protos.Hello();
+            if (packetCase_ == PacketOneofCase.Hello) {
+              subBuilder.MergeFrom(Hello);
+            }
+            input.ReadMessage(subBuilder);
+            Hello = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -3492,6 +3701,15 @@ namespace LiveStreamQuest.Protos {
             }
             input.ReadMessage(subBuilder);
             ScoreUpdate = subBuilder;
+            break;
+          }
+          case 82: {
+            global::LiveStreamQuest.Protos.Hello subBuilder = new global::LiveStreamQuest.Protos.Hello();
+            if (packetCase_ == PacketOneofCase.Hello) {
+              subBuilder.MergeFrom(Hello);
+            }
+            input.ReadMessage(subBuilder);
+            Hello = subBuilder;
             break;
           }
         }

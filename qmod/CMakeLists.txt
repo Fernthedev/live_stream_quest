@@ -25,6 +25,19 @@ set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT_WINDOWS_FIX}/scripts/buildsystems/vcpkg.cm
 # Breaks build on MacOS
 set(CMAKE_CXX_SCAN_FOR_MODULES 0)
 
+# Enable interprocedural optimization (LTO) only for Release builds
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        message("Using optimized build")
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+        add_compile_options(-O3 -flto)
+
+        set(RUST_LINK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_socket_handler/target/aarch64-linux-android/release/)
+else()
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
+        set(RUST_LINK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_socket_handler/target/aarch64-linux-android/debug/)
+endif()
+
+
 # c++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
@@ -66,6 +79,7 @@ add_library(
         ${proto_file_list}
         ${inline_hook_c}
         ${inline_hook_cpp}
+        ${RUST_LINK_PATH}/liblive_stream_quest_rust.a
 )
 
 # vcpkg stuff
@@ -84,6 +98,10 @@ target_include_directories(${COMPILE_ID} PRIVATE ${INCLUDE_DIR})
 target_include_directories(${COMPILE_ID} PUBLIC ${SHARED_DIR})
 # codegen includes 
 target_include_directories(${COMPILE_ID} PRIVATE ${EXTERN_DIR}/includes/bs-cordl/include)
+
+# add the rust lib as a link dependency
+target_link_directories(${COMPILE_ID} PUBLIC ${RUST_LINK_PATH})
+target_link_libraries(${COMPILE_ID} PUBLIC live_stream_quest_rust)
 
 target_link_libraries(${COMPILE_ID} PRIVATE -llog)
 # add extern stuff like libs and other includes

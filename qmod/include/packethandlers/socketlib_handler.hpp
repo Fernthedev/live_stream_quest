@@ -6,6 +6,8 @@
 #include <mutex>
 
 class SocketLibHandler : public PacketHandler {
+    using PacketSize = uint32_t;
+  
     public:
         SocketLibHandler(ReceivePacketFunc onReceivePacket) : PacketHandler(onReceivePacket) { }
         void listen(const int port) override;
@@ -16,7 +18,8 @@ class SocketLibHandler : public PacketHandler {
         SocketLib::ServerSocket* serverSocket;
 
         std::mutex mutex;
-        std::unordered_map<SocketLib::Channel *, std::optional<std::size_t>> channelIncomingQueue;
+        /// Map of client channels to their pending packet size (if any)
+        std::unordered_map<SocketLib::Channel *, std::optional<PacketSize>> channelIncomingQueue;
         void connectEvent(SocketLib::Channel& channel, bool connected);
         void listenOnEvents(SocketLib::Channel &client,
                             SocketLib::ReadOnlyStreamQueue &incomingQueue);

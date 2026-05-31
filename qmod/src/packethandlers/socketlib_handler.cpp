@@ -87,11 +87,13 @@ void SocketLibHandler::listenOnEvents(
 
   auto &pendingPacket = channelIncomingQueue[&client];
   if (!pendingPacket.has_value()) {
-    if (incomingQueue.queueSize() < sizeof(size_t))
+    if (incomingQueue.queueSize() < sizeof(PacketSize))
       return;
 
-    auto lenBytes = incomingQueue.dequeueAsVec(sizeof(size_t));
-    auto len = ntohq(*reinterpret_cast<size_t *>(lenBytes.data()));
+    auto lenBytes = incomingQueue.dequeueAsVec(sizeof(PacketSize));
+    PacketSize lenNetwork = 0;
+    std::memcpy(&lenNetwork, lenBytes.data(), sizeof(PacketSize));
+    auto len = ntohl(lenNetwork);
 
     pendingPacket.emplace(len);
   }
@@ -107,13 +109,13 @@ void SocketLibHandler::listenOnEvents(
 
   // log len and bytes as base64 for debugging
   // {
-  //   std::vector<uint8_t> frame(packetBytes.size() + sizeof(size_t));
+  //   std::vector<uint8_t> frame(packetBytes.size() + sizeof(PacketSize));
   //   // lets frame the packet bytes with the size header for easier debugging
-  //   auto networkSize = htonq(packetBytes.size());
-  //   *reinterpret_cast<size_t *>(frame.data()) = networkSize;
+  //   PacketSize networkSize = htonq(packetBytes.size());
+  //   *reinterpret_cast<PacketSize *>(frame.data()) = networkSize;
   //   std::copy(packetBytes.begin(), packetBytes.end(),
-  //             frame.begin() + sizeof(size_t));
-    
+  //             frame.begin() + sizeof(PacketSize));
+
   //   std::string packetBase64 =
   //       base64_encode(frame.data(), frame.size());
   //   LOG_DEBUG("Received packet ({} bytes + len): {}", packetBytes.size(),
@@ -134,20 +136,22 @@ void SocketLibHandler::listenOnEvents(
 
 void SocketLibHandler::sendPacket(const PacketWrapper &packet) {
   packet.CheckInitialized();
-  size_t size = packet.ByteSizeLong();
+  auto size = packet.ByteSizeLong();
   // send size header
   // send message with that size
   // construct message size
-  Message message(sizeof(size_t) + size);
-  auto networkSize = htonq(size); // convert to big endian
+  Message message(sizeof(PacketSize) + size);
+  PacketSize networkSize =
+      htonl(static_cast<PacketSize>(size)); // convert to big endian
 
   // set size header
-  *reinterpret_cast<size_t *>(message.data()) = networkSize;
+  std::memcpy(message.data(), &networkSize, sizeof(PacketSize));
 
-  packet.SerializeToArray(message.data() + sizeof(size_t), size); // payload
+  packet.SerializeWithCachedSizesToArray(message.data() +
+                                         sizeof(PacketSize)); // payload
 
   for (auto const &[id, client] : serverSocket->getClients()) {
     client->queueWrite(message);
-    // LOG_INFO("Sending to {} bytes {} {}", id, size, finishedBytes);
+    // LOG_INFO("Sending to {} bytes {}", id, size);
   }
 }

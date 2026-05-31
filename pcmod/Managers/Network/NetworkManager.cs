@@ -14,6 +14,9 @@ using Zenject;
 
 namespace LiveStreamQuest.Managers.Network;
 
+// typealias PacketSize -> int
+using PacketSize = uint;
+
 [UsedImplicitly]
 public class NetworkManager : IDisposable, IInitializable
 {
@@ -221,21 +224,32 @@ public class NetworkManager : IDisposable, IInitializable
 
     private async ValueTask OnReceive(Stream stream, byte[] bytePool, CancellationToken token)
     {
-        var read = await stream.ReadAsync(bytePool, 0, 8, token)
+        var read = await stream.ReadAsync(bytePool, 0, sizeof(PacketSize), token)
             .ConfigureAwait(false);
-        // TODO: Better
-        if (read < 8) return;
 
-        // must be uint64 to consume 8 bytes
-        // bad but oh well, C# uses ints
-        var len = (int)IPAddress.NetworkToHostOrder((long)BitConverter.ToUInt64(bytePool, 0));
+        if (read == 0)
+        {
+            throw new IOException("Connection was closed!");
+        }
+
+        // TODO: Better
+        if (read < sizeof(PacketSize))
+        {
+            _siraLog.Debug("Did not receive full length prefix");
+            return;
+        }
         
+        // TODO: This does not work with UInt32
+        var lenNetworkOrder = BitConverter.ToInt32(bytePool, 0);
+
+        // C# only supports int :I
+        var len = IPAddress.NetworkToHostOrder(lenNetworkOrder);
+
         var readCount = 0;
         while (readCount < len)
         {
-            var tempReadCount =
-                await stream.ReadAsync(bytePool, readCount, len - readCount, token).ConfigureAwait(false);
-
+            var tempReadCount = await stream.ReadAsync(bytePool, readCount, len - readCount, token).ConfigureAwait(false);;
+            
             if (tempReadCount == 0)
             {
                 throw new IOException("Connection was closed unexpectedly!");
@@ -247,6 +261,12 @@ public class NetworkManager : IDisposable, IInitializable
         token.ThrowIfCancellationRequested();
 
         var packetWrapper = PacketWrapper.Parser.ParseFrom(bytePool, 0, len);
+
+        if (!packetWrapper.IsInitialized())
+        {
+            _siraLog.Warn("Received uninitialized packet, ignoring: " + packetWrapper);
+            return;
+        }
         
         if (packetWrapper.PacketCase == PacketWrapper.PacketOneofCase.None)
         {
@@ -301,12 +321,14 @@ public class NetworkManager : IDisposable, IInitializable
         var token = _cancellationTokenSource.Token;
 
         // Build framed message (8-byte length prefix in network order + payload)
-        var payload = packetWrapper.ToByteArray();
-        var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((long)payload.Length));
 
-        var framed = new byte[8 + payload.Length];
-        Buffer.BlockCopy(lenBytes, 0, framed, 0, 8);
-        Buffer.BlockCopy(payload, 0, framed, 8, payload.Length);
+        
+        // ReSharper disable once RedundantCast
+        var packetLen = packetWrapper.CalculateSize();
+        var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(packetLen));
+        var framed = new byte[sizeof(PacketSize) + packetLen];
+        Buffer.BlockCopy(lenBytes, 0, framed, 0, sizeof(PacketSize));
+        packetWrapper.WriteTo(new Span<byte>(framed, sizeof(PacketSize), framed.Length - sizeof(PacketSize)));
 
         // log framed base64
         // var base64Frame = Convert.ToBase64String(framed);

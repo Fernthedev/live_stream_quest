@@ -63,10 +63,11 @@ public class Cursor
     /// </summary>
     /// <param name="stream">Source stream.</param>
     /// <param name="amount">Number of bytes to read.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>A task that completes when the requested bytes are read.</returns>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="amount"/> is negative.</exception>
     /// <exception cref="InvalidOperationException">If there is not enough space or stream ends early.</exception>
-    public async Task ReadAllFromStream(Stream stream, int amount, System.Threading.CancellationToken cancellationToken = default)
+    public async Task ReadAllFromStream(Stream stream, int amount, CancellationToken cancellationToken = default)
     {
         if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
         if (Position + amount > Data.Length)
@@ -74,7 +75,7 @@ public class Cursor
             throw new InvalidOperationException($"Not enough space in the buffer to read {amount} bytes. Current position: {Position}, buffer size: {Data.Length}.");
         }
 
-        int read = 0;
+        var read = 0;
         while (read < amount)
         {
             var tempRead = await ReadFromStream(stream, amount - read, cancellationToken).ConfigureAwait(false);

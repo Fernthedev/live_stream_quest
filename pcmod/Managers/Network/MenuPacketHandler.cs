@@ -30,9 +30,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
     [Inject] 
     private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection = null!;
 #else
-    [UsedImplicitly]
-    [Inject] 
-    private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
+    [UsedImplicitly] [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
 #endif
 
     private readonly PlayerDataModel _playerDataModel;
@@ -49,10 +47,9 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
 
     // [Inject] readonly LevelSelectionFlowCoordinator _levelSelectionFlow;
-    
+
     // optional since we can try to find it later
-    [Inject(Optional = true)] 
-    private PlayerSettingsPanelController? _playerSettingsPanelController;
+    [Inject(Optional = true)] private PlayerSettingsPanelController? _playerSettingsPanelController;
 
     [Inject]
     public MenuPacketHandler(BeatSaver beatSaver, BeatmapLevelsModel beatmapLevelsModel,
@@ -117,7 +114,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 try
                 {
                     _globalStateManager.StartingGameFromQuest = true;
-                    await StartLevel(packetWrapper).ConfigureAwait(true);
+                    await StartLevel(packetWrapper, _cancellationTokenSource.Token).ConfigureAwait(true);
                 }
                 catch (Exception e)
                 {
@@ -134,7 +131,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
     /// Called after a <see cref="PacketWrapper.PacketOneofCase.StartBeatmap"/> packet arrives
     /// and the handler has been marshalled onto the main thread.
     /// </summary>
-    private async ValueTask StartLevel(PacketWrapper packetWrapper)
+    private async ValueTask StartLevel(PacketWrapper packetWrapper, CancellationToken token = default)
     {
         var id = packetWrapper.StartBeatmap.LevelId;
 
@@ -146,7 +143,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             if (!SongDownloader.IsSongDownloaded(hash))
             {
                 _siraLog.Info($"Song not downloaded {hash}");
-                var beatmap = await _beatSaver.BeatmapByHash(hash, _cancellationTokenSource.Token).ConfigureAwait(true);
+                var beatmap = await _beatSaver.BeatmapByHash(hash, token).ConfigureAwait(true);
 
                 if (beatmap is null)
                 {
@@ -155,15 +152,16 @@ public class MenuPacketHandler : IDisposable, IInitializable
                     return;
                 }
 
-                await SongDownloader.Instance.DownloadSong(beatmap, _cancellationTokenSource.Token)
+                await SongDownloader.Instance.DownloadSong(beatmap, token)
                     .ConfigureAwait(true);
+                token.ThrowIfCancellationRequested();
                 // refresh is necessary
                 // https://github.com/Top-Cat/BeatSaverDownloader/blob/fd9ed043924c01f6b20b3ec037bf3fa8e032bdf2/BeatSaverDownloader/UI/ViewControllers/DownloadQueue/QueueManager.cs#L47
                 Loader.Instance.RefreshSongs(false);
                 // now await until FinishLoad is called
-                while(!Loader.AreSongsLoaded)
+                while (!Loader.AreSongsLoaded)
                 {
-                    await Task.Delay(100).ConfigureAwait(true);
+                    await Task.Delay(100, token).ConfigureAwait(true);
                 }
             }
         }
@@ -237,6 +235,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             null, null, null);
 #else
 
+        token.ThrowIfCancellationRequested();
         var beatmapResult = _beatmapLevelsModel.GetBeatmapLevel(id);
 
         if (beatmapResult == null)
@@ -260,6 +259,8 @@ public class MenuPacketHandler : IDisposable, IInitializable
         // _soloFreePlayFlowCoordinator.Setup(state);
 
         await _playerDataModel.playerDataFileModel.LoadAsync().ConfigureAwait(true);
+        token.ThrowIfCancellationRequested();
+
         _gameplaySetupViewController.Init();
         if (_playerSettingsPanelController is null)
         {
@@ -267,7 +268,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             SendBeatmapStartError("PlayerSettingsPanelController is null, cannot refresh player settings");
             return;
         }
-        
+
         _playerSettingsPanelController.SetIsDirty();
         _playerSettingsPanelController.Refresh();
 
@@ -304,7 +305,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
             }
         };
 
-        _siraLog.Error($"Sending error packet");
+        _siraLog.Error("Sending error packet");
         _networkManager.SendPacket(packetWrapper);
     }
 }

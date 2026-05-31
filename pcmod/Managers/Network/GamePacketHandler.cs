@@ -8,21 +8,35 @@ namespace LiveStreamQuest.Managers.Network;
 
 public class GamePacketHandler : IInitializable, IDisposable
 {
-    [Inject] private readonly SongController _songController;
-    [Inject] private readonly AudioTimeSyncController _audioTimeSyncController;
-    [Inject] private readonly PauseController _pauseController;
-    [Inject] private readonly NetworkManager _networkManager;
-    [Inject] private readonly Submission _submission;
-    [Inject] private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
-
-
-    [Inject] private readonly IReturnToMenuController _returnToMenuController;
-    [Inject] private readonly VRControllerManager _vrControllerManager;
-    [Inject] private readonly TimeDesyncFixManager _timeDesyncFixManager;
-    [Inject] private readonly SiraLog _siraLog;
+    // injected
+    private readonly SongController _songController;
+    private readonly AudioTimeSyncController _audioTimeSyncController;
+    private readonly PauseController _pauseController;
+    private readonly NetworkManager _networkManager;
+    private readonly Submission _submission;
+    private readonly LSQMainThreadDispatcher _mainThreadDispatcher;
+    private readonly IReturnToMenuController _returnToMenuController;
+    private readonly VRControllerManager _vrControllerManager;
+    private readonly TimeDesyncFixManager _timeDesyncFixManager;
+    private readonly SiraLog _siraLog;
 
     private ulong _packetId;
     private bool _ready;
+
+    [Inject]
+    public GamePacketHandler(SongController songController, AudioTimeSyncController audioTimeSyncController, PauseController pauseController, NetworkManager networkManager, Submission submission, LSQMainThreadDispatcher mainThreadDispatcher, IReturnToMenuController returnToMenuController, VRControllerManager vrControllerManager, TimeDesyncFixManager timeDesyncFixManager, SiraLog siraLog)
+    {
+        _songController = songController;
+        _audioTimeSyncController = audioTimeSyncController;
+        _pauseController = pauseController;
+        _networkManager = networkManager;
+        _submission = submission;
+        _mainThreadDispatcher = mainThreadDispatcher;
+        _returnToMenuController = returnToMenuController;
+        _vrControllerManager = vrControllerManager;
+        _timeDesyncFixManager = timeDesyncFixManager;
+        _siraLog = siraLog;
+    }
 
     /// <summary>
     /// Subscribes to protocol events and forces a pause if the map is already playing

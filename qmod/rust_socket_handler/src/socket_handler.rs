@@ -3,7 +3,7 @@ use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use tokio::net::{TcpListener, TcpStream, UdpSocket};
+use tokio::net::{TcpListener, UdpSocket};
 use tokio::sync::Mutex;
 
 use crate::socket_handler::tcp::TcpBackend;
@@ -15,8 +15,6 @@ mod udp;
 
 type PacketCallback = Arc<dyn Fn(&[u8]) + Send + Sync + 'static>;
 
-// A shared client is an Arc-wrapped Mutex around a TcpStream, allowing for concurrent access across tasks
-type SharedClient = Arc<Mutex<TcpStream>>;
 
 // The TransportBackend enum abstracts over the TCP and UDP implementations, allowing the RustSocketServer to provide a unified API regardless of the underlying transport protocol.
 enum TransportBackend {
@@ -87,14 +85,6 @@ impl RustSocketServer {
     pub async fn send_packet(&self, payload: &[u8]) -> io::Result<()> {
         self.backend.send_packet(payload).await
     }
-
-    /// Handles a new TCP client connection by adding it to the TCP clients map and spawning a read task.
-    /// For UDP backends this is a no-op to preserve API compatibility.
-    pub async fn handle_connect(&self, peer: SocketAddr, socket: TcpStream) {
-        self.backend
-            .handle_connect(peer, socket, Arc::clone(&self.on_packet))
-            .await;
-    }
 }
 
 impl TransportBackend {
@@ -116,15 +106,6 @@ impl TransportBackend {
         match self {
             TransportBackend::Tcp(tcp) => tcp.send_packet(payload).await,
             TransportBackend::Udp(udp) => udp.send_packet(payload).await,
-        }
-    }
-
-    async fn handle_connect(&self, peer: SocketAddr, socket: TcpStream, on_packet: PacketCallback) {
-        match self {
-            TransportBackend::Tcp(tcp) => tcp.handle_connect(peer, socket, on_packet).await,
-            TransportBackend::Udp(udp) => {
-                udp.handle_connect(peer, socket, on_packet).await;
-            }
         }
     }
 }

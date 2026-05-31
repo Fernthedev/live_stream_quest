@@ -24,12 +24,16 @@ The PC and QMod follow their respective setup process, which hopefully will be d
 For now, assume the `qpm` process for QMod and BeatSaberDir + NuGet for PC.
 
 ## TODO
-- Switch to UDP
-- Improve protocol handshake hooks
-- Rewrite interpolation math to something that isn't AI generated
-- Improve .NET networking 
-- Batch score updates to avoid TCP spam
-- Compress packets
-- Fix PC UI
-- Add Quest UI
-- Improve connection stability e.g reconnect
+- [x] Switch to UDP
+  - [ ] Add UDP keep alive to prevent disconnects
+- [x] Improve protocol handshake hooks
+- [ ] Rewrite interpolation math to something that isn't AI generated
+- [x] Improve .NET networking 
+- [ ] Batch score updates to avoid TCP spam
+- [ ] Improve packets
+  - [ ] Change frame to `short` to save bandwidth
+  - [ ] Reduce packet size by using smaller or variable size types
+- [ ] Fix PC UI
+  - [ ] Add song download progress UI
+- [ ] Add Quest UI
+- [ ] Improve connection stability e.g reconnect

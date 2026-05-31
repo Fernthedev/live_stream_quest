@@ -224,15 +224,17 @@ public class NetworkManager : IDisposable, IInitializable
 
     private async ValueTask OnReceive(Stream stream, byte[] bytePool, CancellationToken token)
     {
-        var read = await stream.ReadAsync(bytePool, 0, sizeof(PacketSize), token)
-            .ConfigureAwait(false);
+        // Use Cursor to manage read offsets and make intent clearer.
+        var cursor = new Cursor(bytePool);
+
+        // Read the 4-byte length prefix (network order)
+        var read = await cursor.ReadFromStream(stream, sizeof(PacketSize), token).ConfigureAwait(false);
 
         if (read == 0)
         {
             throw new IOException("Connection was closed!");
         }
 
-        // TODO: Better
         if (read < sizeof(PacketSize))
         {
             _siraLog.Debug("Did not receive full length prefix");
@@ -241,22 +243,25 @@ public class NetworkManager : IDisposable, IInitializable
         
         // TODO: This does not work with UInt32
         var lenNetworkOrder = BitConverter.ToInt32(bytePool, 0);
-
-        // C# only supports int :I
         var len = IPAddress.NetworkToHostOrder(lenNetworkOrder);
 
-        var readCount = 0;
-        while (readCount < len)
+        if (len < 0)
         {
-            var tempReadCount = await stream.ReadAsync(bytePool, readCount, len - readCount, token).ConfigureAwait(false);;
-            
-            if (tempReadCount == 0)
-            {
-                throw new IOException("Connection was closed unexpectedly!");
-            }
-
-            readCount += tempReadCount;
+            _siraLog.Warn($"Invalid packet length: {len}");
+            return;
         }
+
+        if (len > bytePool.Length)
+        {
+            _siraLog.Warn($"Packet length {len} exceeds buffer size {bytePool.Length}");
+            throw new IOException("Packet too large");
+        }
+
+        // Reset position to 0 so payload overwrites the prefix (preserves previous behavior)
+        cursor.ResetPosition();
+
+        // Read the full payload
+        await cursor.ReadAllFromStream(stream, len, token).ConfigureAwait(false);
 
         token.ThrowIfCancellationRequested();
 
@@ -320,9 +325,7 @@ public class NetworkManager : IDisposable, IInitializable
 
         var token = _cancellationTokenSource.Token;
 
-        // Build framed message (8-byte length prefix in network order + payload)
-
-        
+        // Build framed message (4-byte length prefix in network order + payload)
         // ReSharper disable once RedundantCast
         var packetLen = packetWrapper.CalculateSize();
         var lenBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(packetLen));

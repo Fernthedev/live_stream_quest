@@ -1,31 +1,35 @@
 Param(
     [Parameter(Mandatory=$false)]
-    [Switch] $clean,
-
+    [Switch]$clean,
     [Parameter(Mandatory=$false)]
-    [Switch] $help
+    [Switch]$release
 )
 
-if ($help -eq $true) {
-    Write-Output "`"Build`" - Copiles your mod into a `".so`" or a `".a`" library"
-    Write-Output "`n-- Arguments --`n"
-
-    Write-Output "-Clean `t`t Deletes the `"build`" folder, so that the entire library is rebuilt"
-
-    exit
-}
-
 # if user specified clean, remove all build files
-if ($clean.IsPresent) {
-    if (Test-Path -Path "build") {
+if ($clean.IsPresent)
+{
+    if (Test-Path -Path "build")
+    {
         remove-item build -R
     }
 }
 
+if (($clean.IsPresent) -or (-not (Test-Path -Path "build")))
+{
+    $out = new-item -Path build -ItemType Directory
+}
 
-if (($clean.IsPresent) -or (-not (Test-Path -Path "build"))) {
-    new-item -Path build -ItemType Directory
-} 
+# build the rust code
+cd ./rust_socket_handler
+if ($release.IsPresent) {
+    cargo ndk -t arm64-v8a build --release
+} else {
+    cargo ndk -t arm64-v8a build
+}
+cd ..
 
-& cmake -G "Ninja" -DCMAKE_BUILD_TYPE="RelWithDebInfo" -B build
-& cmake --build ./build
+# Set build type based on release flag
+$buildType = if ($release.IsPresent) { "RelWithDebInfo" } else { "Debug" }
+
+& cmake -B ./build -G "Ninja" -DCMAKE_BUILD_TYPE="$buildType" .
+& cmake --build ./build 

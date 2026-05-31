@@ -3,6 +3,8 @@
 #include <fmt/ranges.h>
 
 #include "main.hpp"
+#include "packethandler.hpp"
+#include "packethandlers/rust_socket_handler.hpp"
 #include "packethandlers/socketlib_handler.hpp"
 // #include "packethandlers/websocket_handler.hpp"
 
@@ -18,7 +20,7 @@ Manager *Manager::GetInstance() {
 void Manager::Init() {
   initialized = true;
   LOG_INFO("Starting server at port 3306");
-  handler = std::make_unique<SocketLibHandler>((ReceivePacketFunc)[this](
+  handler = std::make_unique<PacketHandlerType>((ReceivePacketFunc)[this](
       auto &&PH1) { processMessage(std::forward<decltype(PH1)>(PH1)); });
   handler->listen(9542);
   LOG_INFO("Server fully initialized");

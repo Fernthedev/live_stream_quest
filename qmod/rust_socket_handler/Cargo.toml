@@ -1,0 +1,24 @@
+[package]
+name = "live_stream_quest_rust"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["staticlib"]
+
+
+[build-dependencies]
+cbindgen = {version = "0.29.3", default-features = false}
+
+[dependencies]
+log = "0.4.30"
+mimalloc = {version = "0.1"}
+paper2_log = { git = "https://github.com/Fernthedev/paperlog.git", package = "paper2_log" }
+tokio = {version = "1.52.3", features = ["full"]}
+
+
+[profile.release]
+lto = "fat"
+opt-level = 3
+strip = "none"
+panic = "abort"

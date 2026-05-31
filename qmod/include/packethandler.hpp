@@ -19,6 +19,9 @@ class PacketHandler {
 
         virtual void scheduleAsync(std::function<void()> &&f) = 0;
 
-    protected:
+      protected:
+        // Packet handler callback to call when a packet is received, should be
+        // set by the constructor of the derived class
+        // called on the main thread, so it can safely interact with the game and other main thread only data structures
         ReceivePacketFunc onReceivePacket = nullptr;
 };

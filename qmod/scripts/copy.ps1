@@ -6,7 +6,7 @@ Param(
     [Switch] $log,
 
     [Parameter(Mandatory=$false)]
-    [Switch] $useDebug,
+    [switch]$release = $false
 
     [Parameter(Mandatory=$false)]
     [Switch] $self,
@@ -39,7 +39,11 @@ if ($help -eq $true) {
     exit
 }
 
-& $PSScriptRoot/build.ps1 -clean:$clean
+if ($release) {
+    & $PSScriptRoot/build.ps1 -release
+} else {
+    & $PSScriptRoot/build.ps1
+}
 
 if ($LASTEXITCODE -ne 0) {
     Write-Output "Failed to build, exiting..."

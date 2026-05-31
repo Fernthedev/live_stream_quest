@@ -199,6 +199,24 @@ struct PauseMapDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PauseMapDefaultTypeInternal _PauseMap_default_instance_;
 template <typename>
+PROTOBUF_CONSTEXPR Hello::Hello(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(Hello_class_data_.base()){}
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase() {
+}
+#endif  // PROTOBUF_CUSTOM_VTABLE
+struct HelloDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR HelloDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~HelloDefaultTypeInternal() {}
+  union {
+    Hello _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HelloDefaultTypeInternal _Hello_default_instance_;
+template <typename>
 PROTOBUF_CONSTEXPR ExitMap::ExitMap(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::internal::ZeroFieldsBase(ExitMap_class_data_.base()){}
@@ -412,10 +430,11 @@ const ::uint32_t
         0,
         0x000, // bitmap
         0x000, // bitmap
+        0x000, // bitmap
         0x085, // bitmap
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_._oneof_case_[0]),
-        14, // hasbit index offset
+        15, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.queryresultid_),
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
@@ -426,7 +445,9 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
         PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
+        PROTOBUF_FIELD_OFFSET(::PacketWrapper, _impl_.Packet_),
         0,
+        ~0u,
         ~0u,
         ~0u,
         ~0u,
@@ -450,7 +471,8 @@ static const ::_pbi::MigrationSchema
         {70, sizeof(::StartMap)},
         {75, sizeof(::ExitMap)},
         {76, sizeof(::PauseMap)},
-        {77, sizeof(::PacketWrapper)},
+        {77, sizeof(::Hello)},
+        {78, sizeof(::PacketWrapper)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::_Vector3_default_instance_._instance,
@@ -464,6 +486,7 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::_StartMap_default_instance_._instance,
     &::_ExitMap_default_instance_._instance,
     &::_PauseMap_default_instance_._instance,
+    &::_Hello_default_instance_._instance,
     &::_PacketWrapper_default_instance_._instance,
 };
 const char descriptor_table_protodef_live_5fstream_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
@@ -488,16 +511,17 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] ABSL_ATTRIBUTE_SECT
     "\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatmapFail"
     "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\034\n\010StartMa"
     "p\022\020\n\010songTime\030\001 \001(\002\"\t\n\007ExitMap\"\n\n\010PauseM"
-    "ap\"\324\002\n\rPacketWrapper\022\025\n\rqueryResultId\030\001 "
-    "\001(\004\022)\n\016updatePosition\030\002 \001(\0132\017.UpdatePosi"
-    "tionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r.StartBeat"
-    "mapH\000\0223\n\023startBeatmapFailure\030\004 \001(\0132\024.Sta"
-    "rtBeatmapFailureH\000\022\033\n\007readyUp\030\005 \001(\0132\010.Re"
-    "adyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.StartMapH\000\022\033"
-    "\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000\022\035\n\010pauseMap\030"
-    "\010 \001(\0132\t.PauseMapH\000\022#\n\013scoreUpdate\030\t \001(\0132"
-    "\014.ScoreUpdateH\000B\010\n\006PacketB\031\252\002\026LiveStream"
-    "Quest.Protosb\006proto3"
+    "ap\"\007\n\005Hello\"\355\002\n\rPacketWrapper\022\025\n\rqueryRe"
+    "sultId\030\001 \001(\004\022)\n\016updatePosition\030\002 \001(\0132\017.U"
+    "pdatePositionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r."
+    "StartBeatmapH\000\0223\n\023startBeatmapFailure\030\004 "
+    "\001(\0132\024.StartBeatmapFailureH\000\022\033\n\007readyUp\030\005"
+    " \001(\0132\010.ReadyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.Sta"
+    "rtMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000\022\035\n\010"
+    "pauseMap\030\010 \001(\0132\t.PauseMapH\000\022#\n\013scoreUpda"
+    "te\030\t \001(\0132\014.ScoreUpdateH\000\022\027\n\005hello\030\n \001(\0132"
+    "\006.HelloH\000B\010\n\006PacketB\031\252\002\026LiveStreamQuest."
+    "Protosb\006proto3"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_live_5fstream_2eproto_deps[1] = {
@@ -507,13 +531,13 @@ static ::absl::once_flag descriptor_table_live_5fstream_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_live_5fstream_2eproto = {
     false,
     false,
-    1180,
+    1214,
     descriptor_table_protodef_live_5fstream_2eproto,
     "live_stream.proto",
     &descriptor_table_live_5fstream_2eproto_once,
     descriptor_table_live_5fstream_2eproto_deps,
     1,
-    12,
+    13,
     schemas,
     file_default_instances,
     TableStruct_live_5fstream_2eproto::offsets,
@@ -3567,6 +3591,115 @@ PauseMap::_table_ = {
 }
 // ===================================================================
 
+class Hello::_Internal {
+ public:
+};
+
+Hello::Hello(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, Hello_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(arena_constructor:Hello)
+}
+Hello::Hello(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const Hello& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, Hello_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  Hello* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+
+  // @@protoc_insertion_point(copy_constructor:Hello)
+}
+
+inline void* PROTOBUF_NONNULL Hello::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) Hello(arena);
+}
+constexpr auto Hello::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(Hello),
+                                            alignof(Hello));
+}
+constexpr auto Hello::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_Hello_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &Hello::MergeImpl,
+          ::google::protobuf::internal::ZeroFieldsBase::GetNewImpl<Hello>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &Hello::SharedDtor,
+          ::google::protobuf::internal::ZeroFieldsBase::GetClearImpl<Hello>(), &Hello::ByteSizeLong,
+              &Hello::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(Hello, _impl_._cached_size_),
+          false,
+      },
+      &Hello::kDescriptorMethods,
+      &descriptor_table_live_5fstream_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull Hello_class_data_ =
+        Hello::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+Hello::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&Hello_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(Hello_class_data_.tc_table);
+  return Hello_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 0, 0, 0, 2>
+Hello::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    0, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967295,  // skipmap
+    offsetof(decltype(_table_), field_names),  // no field_entries
+    0,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    Hello_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::Hello>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, // no field_entries, or aux_entries
+  {{
+  }},
+};
+
+
+
+
+
+
+
+::google::protobuf::Metadata Hello::GetMetadata() const {
+  return ::google::protobuf::internal::ZeroFieldsBase::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
 class PacketWrapper::_Internal {
  public:
   using HasBits =
@@ -3681,6 +3814,19 @@ void PacketWrapper::set_allocated_scoreupdate(::ScoreUpdate* PROTOBUF_NULLABLE s
   }
   // @@protoc_insertion_point(field_set_allocated:PacketWrapper.scoreUpdate)
 }
+void PacketWrapper::set_allocated_hello(::Hello* PROTOBUF_NULLABLE hello) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_Packet();
+  if (hello) {
+    ::google::protobuf::Arena* submessage_arena = hello->GetArena();
+    if (message_arena != submessage_arena) {
+      hello = ::google::protobuf::internal::GetOwnedMessage(message_arena, hello, submessage_arena);
+    }
+    set_has_hello();
+    _impl_.Packet_.hello_ = hello;
+  }
+  // @@protoc_insertion_point(field_set_allocated:PacketWrapper.hello)
+}
 PacketWrapper::PacketWrapper(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, PacketWrapper_class_data_.base()) {
@@ -3739,6 +3885,9 @@ PacketWrapper::PacketWrapper(
         break;
       case kScoreUpdate:
         _impl_.Packet_.scoreupdate_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.Packet_.scoreupdate_);
+        break;
+      case kHello:
+        _impl_.Packet_.hello_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.Packet_.hello_);
         break;
   }
 
@@ -3840,6 +3989,14 @@ void PacketWrapper::clear_Packet() {
       }
       break;
     }
+    case kHello: {
+      if (GetArena() == nullptr) {
+        delete _impl_.Packet_.hello_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.Packet_.hello_);
+      }
+      break;
+    }
     case PACKET_NOT_SET: {
       break;
     }
@@ -3891,17 +4048,17 @@ PacketWrapper::GetClassData() const {
   return PacketWrapper_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 9, 8, 0, 2>
+const ::_pbi::TcParseTable<0, 10, 9, 0, 2>
 PacketWrapper::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(PacketWrapper, _impl_._has_bits_),
     0, // no _extensions_
-    9, 0,  // max_field_number, fast_idx_mask
+    10, 0,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294966784,  // skipmap
+    4294966272,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    9,  // num_field_entries
-    8,  // num_aux_entries
+    10,  // num_field_entries
+    9,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     PacketWrapper_class_data_.base(),
     nullptr,  // post_loop_handler
@@ -3935,6 +4092,8 @@ PacketWrapper::_table_ = {
     {PROTOBUF_FIELD_OFFSET(PacketWrapper, _impl_.Packet_.pausemap_), _Internal::kOneofCaseOffset + 0, 6, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     // .ScoreUpdate scoreUpdate = 9;
     {PROTOBUF_FIELD_OFFSET(PacketWrapper, _impl_.Packet_.scoreupdate_), _Internal::kOneofCaseOffset + 0, 7, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    // .Hello hello = 10;
+    {PROTOBUF_FIELD_OFFSET(PacketWrapper, _impl_.Packet_.hello_), _Internal::kOneofCaseOffset + 0, 8, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::UpdatePosition>()},
@@ -3945,6 +4104,7 @@ PacketWrapper::_table_ = {
       {::_pbi::TcParser::GetTable<::ExitMap>()},
       {::_pbi::TcParser::GetTable<::PauseMap>()},
       {::_pbi::TcParser::GetTable<::ScoreUpdate>()},
+      {::_pbi::TcParser::GetTable<::Hello>()},
   }},
   {{
   }},
@@ -4039,6 +4199,12 @@ PROTOBUF_NOINLINE void PacketWrapper::Clear() {
           stream);
       break;
     }
+    case kHello: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          10, *this_._impl_.Packet_.hello_, this_._impl_.Packet_.hello_->GetCachedSize(), target,
+          stream);
+      break;
+    }
     default:
       break;
   }
@@ -4122,6 +4288,12 @@ PROTOBUF_NOINLINE void PacketWrapper::Clear() {
     case kScoreUpdate: {
       total_size += 1 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.Packet_.scoreupdate_);
+      break;
+    }
+    // .Hello hello = 10;
+    case kHello: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.Packet_.hello_);
       break;
     }
     case PACKET_NOT_SET: {
@@ -4226,6 +4398,14 @@ void PacketWrapper::MergeImpl(::google::protobuf::MessageLite& to_msg,
           _this->_impl_.Packet_.scoreupdate_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.Packet_.scoreupdate_);
         } else {
           _this->_impl_.Packet_.scoreupdate_->MergeFrom(*from._impl_.Packet_.scoreupdate_);
+        }
+        break;
+      }
+      case kHello: {
+        if (oneof_needs_init) {
+          _this->_impl_.Packet_.hello_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.Packet_.hello_);
+        } else {
+          _this->_impl_.Packet_.hello_->MergeFrom(*from._impl_.Packet_.hello_);
         }
         break;
       }

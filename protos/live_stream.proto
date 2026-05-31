@@ -69,6 +69,11 @@ message StartMap {
 message ExitMap {}
 message PauseMap {}
 
+// For UDP to initialize connection
+message Hello {
+    
+}
+
 message PacketWrapper {
   uint64 queryResultId = 1;
   oneof Packet {
@@ -80,5 +85,6 @@ message PacketWrapper {
       ExitMap exitMap = 7;
       PauseMap pauseMap = 8;
       ScoreUpdate scoreUpdate = 9;
+      Hello hello = 10;
   }
 }

@@ -55,6 +55,10 @@ internal sealed class UDPTransportHandler : ITransportHandler
             _siraLog.Info($"Failed to connect to {endPoint}");
             return;
         }
+        
+        // Since it's UDP, we need to send a packet so the other side can register it
+        // TODO: Make a SendAsync that ensures the other side acknowledges it
+        _ = SendAsync(FramedPacket.Encode([]), token).ConfigureAwait(false);
 
         token.ThrowIfCancellationRequested();
 

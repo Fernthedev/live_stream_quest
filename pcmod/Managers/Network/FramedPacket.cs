@@ -29,6 +29,16 @@ internal static class FramedPacket
         
         return framed;
     }
+    
+    public static byte[] Encode(byte[] raw)
+    {
+        var len =  BitConverter.GetBytes(IPAddress.HostToNetworkOrder(raw.Length));
+        var framed = new byte[HeaderSize + raw.Length];
+        Buffer.BlockCopy(len, 0, framed, 0, HeaderSize);
+        Buffer.BlockCopy(raw, 0, framed, HeaderSize, raw.Length);
+        
+        return framed;
+    }
 
     /// <summary>
     /// Reads the payload length from a framed buffer.

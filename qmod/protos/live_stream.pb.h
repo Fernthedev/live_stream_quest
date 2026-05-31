@@ -58,6 +58,10 @@ class ExitMap;
 struct ExitMapDefaultTypeInternal;
 extern ExitMapDefaultTypeInternal _ExitMap_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ExitMap_class_data_;
+class Hello;
+struct HelloDefaultTypeInternal;
+extern HelloDefaultTypeInternal _Hello_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull Hello_class_data_;
 class PacketWrapper;
 struct PacketWrapperDefaultTypeInternal;
 extern PacketWrapperDefaultTypeInternal _PacketWrapper_default_instance_;
@@ -1430,6 +1434,140 @@ class PauseMap final : public ::google::protobuf::internal::ZeroFieldsBase
 extern const ::google::protobuf::internal::ClassDataFull PauseMap_class_data_;
 // -------------------------------------------------------------------
 
+class Hello final : public ::google::protobuf::internal::ZeroFieldsBase
+/* @@protoc_insertion_point(class_definition:Hello) */ {
+ public:
+  inline Hello() : Hello(nullptr) {}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(Hello* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(Hello));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR Hello(::google::protobuf::internal::ConstantInitialized);
+
+  inline Hello(const Hello& from) : Hello(nullptr, from) {}
+  inline Hello(Hello&& from) noexcept
+      : Hello(nullptr, ::std::move(from)) {}
+  inline Hello& operator=(const Hello& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Hello& operator=(Hello&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Hello& default_instance() {
+    return *reinterpret_cast<const Hello*>(
+        &_Hello_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 11;
+  friend void swap(Hello& a, Hello& b) { a.Swap(&b); }
+  inline void Swap(Hello* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Hello* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Hello* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<Hello>(arena);
+  }
+  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const Hello& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const Hello& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "Hello"; }
+
+  explicit Hello(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  Hello(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Hello& from);
+  Hello(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Hello&& from) noexcept
+      : Hello(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  // @@protoc_insertion_point(class_scope:Hello)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 0,
+                                   0, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  friend struct ::TableStruct_live_5fstream_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull Hello_class_data_;
+// -------------------------------------------------------------------
+
 class ExitMap final : public ::google::protobuf::internal::ZeroFieldsBase
 /* @@protoc_insertion_point(class_definition:ExitMap) */ {
  public:
@@ -2353,9 +2491,10 @@ class PacketWrapper final : public ::google::protobuf::Message
     kExitMap = 7,
     kPauseMap = 8,
     kScoreUpdate = 9,
+    kHello = 10,
     PACKET_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 11;
+  static constexpr int kIndexInFileMessages = 12;
   friend void swap(PacketWrapper& a, PacketWrapper& b) { a.Swap(&b); }
   inline void Swap(PacketWrapper* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2451,6 +2590,7 @@ class PacketWrapper final : public ::google::protobuf::Message
     kExitMapFieldNumber = 7,
     kPauseMapFieldNumber = 8,
     kScoreUpdateFieldNumber = 9,
+    kHelloFieldNumber = 10,
   };
   // uint64 queryResultId = 1;
   void clear_queryresultid() ;
@@ -2614,6 +2754,25 @@ class PacketWrapper final : public ::google::protobuf::Message
   ::ScoreUpdate* PROTOBUF_NONNULL _internal_mutable_scoreupdate();
 
   public:
+  // .Hello hello = 10;
+  bool has_hello() const;
+  private:
+  bool _internal_has_hello() const;
+
+  public:
+  void clear_hello() ;
+  const ::Hello& hello() const;
+  [[nodiscard]] ::Hello* PROTOBUF_NULLABLE release_hello();
+  ::Hello* PROTOBUF_NONNULL mutable_hello();
+  void set_allocated_hello(::Hello* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_hello(::Hello* PROTOBUF_NULLABLE value);
+  ::Hello* PROTOBUF_NULLABLE unsafe_arena_release_hello();
+
+  private:
+  const ::Hello& _internal_hello() const;
+  ::Hello* PROTOBUF_NONNULL _internal_mutable_hello();
+
+  public:
   void clear_Packet();
   PacketCase Packet_case() const;
   // @@protoc_insertion_point(class_scope:PacketWrapper)
@@ -2627,11 +2786,12 @@ class PacketWrapper final : public ::google::protobuf::Message
   void set_has_exitmap();
   void set_has_pausemap();
   void set_has_scoreupdate();
+  void set_has_hello();
   inline bool has_Packet() const;
   inline void clear_has_Packet();
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<0, 9,
-                                   8, 0,
+  static const ::google::protobuf::internal::TcParseTable<0, 10,
+                                   9, 0,
                                    2>
       _table_;
 
@@ -2664,6 +2824,7 @@ class PacketWrapper final : public ::google::protobuf::Message
       ::google::protobuf::Message* PROTOBUF_NULLABLE exitmap_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE pausemap_;
       ::google::protobuf::Message* PROTOBUF_NULLABLE scoreupdate_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE hello_;
     } Packet_;
     ::uint32_t _oneof_case_[1];
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -3983,6 +4144,10 @@ inline void StartMap::_internal_set_songtime(float value) {
 
 // -------------------------------------------------------------------
 
+// Hello
+
+// -------------------------------------------------------------------
+
 // PacketWrapper
 
 // uint64 queryResultId = 1;
@@ -4663,6 +4828,88 @@ inline ::ScoreUpdate* PROTOBUF_NONNULL PacketWrapper::mutable_scoreupdate()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   ::ScoreUpdate* _msg = _internal_mutable_scoreupdate();
   // @@protoc_insertion_point(field_mutable:PacketWrapper.scoreUpdate)
+  return _msg;
+}
+
+// .Hello hello = 10;
+inline bool PacketWrapper::has_hello() const {
+  return Packet_case() == kHello;
+}
+inline bool PacketWrapper::_internal_has_hello() const {
+  return Packet_case() == kHello;
+}
+inline void PacketWrapper::set_has_hello() {
+  _impl_._oneof_case_[0] = kHello;
+}
+inline void PacketWrapper::clear_hello() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (Packet_case() == kHello) {
+    if (GetArena() == nullptr) {
+      delete _impl_.Packet_.hello_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.Packet_.hello_);
+    }
+    clear_has_Packet();
+  }
+}
+inline ::Hello* PROTOBUF_NULLABLE PacketWrapper::release_hello() {
+  // @@protoc_insertion_point(field_release:PacketWrapper.hello)
+  if (Packet_case() == kHello) {
+    clear_has_Packet();
+    auto* temp = reinterpret_cast<::Hello*>(_impl_.Packet_.hello_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.Packet_.hello_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::Hello& PacketWrapper::_internal_hello() const {
+  return Packet_case() == kHello ? static_cast<const ::Hello&>(*reinterpret_cast<::Hello*>(_impl_.Packet_.hello_))
+                     : reinterpret_cast<const ::Hello&>(::_Hello_default_instance_);
+}
+inline const ::Hello& PacketWrapper::hello() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:PacketWrapper.hello)
+  return _internal_hello();
+}
+inline ::Hello* PROTOBUF_NULLABLE PacketWrapper::unsafe_arena_release_hello() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:PacketWrapper.hello)
+  if (Packet_case() == kHello) {
+    clear_has_Packet();
+    auto* temp = reinterpret_cast<::Hello*>(_impl_.Packet_.hello_);
+    _impl_.Packet_.hello_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void PacketWrapper::unsafe_arena_set_allocated_hello(
+    ::Hello* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_Packet();
+  if (value) {
+    set_has_hello();
+    _impl_.Packet_.hello_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:PacketWrapper.hello)
+}
+inline ::Hello* PROTOBUF_NONNULL PacketWrapper::_internal_mutable_hello() {
+  if (Packet_case() != kHello) {
+    clear_Packet();
+    set_has_hello();
+    _impl_.Packet_.hello_ = reinterpret_cast<::google::protobuf::Message*>(
+        ::google::protobuf::Message::DefaultConstruct<::Hello>(GetArena()));
+  }
+  return reinterpret_cast<::Hello*>(_impl_.Packet_.hello_);
+}
+inline ::Hello* PROTOBUF_NONNULL PacketWrapper::mutable_hello()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::Hello* _msg = _internal_mutable_hello();
+  // @@protoc_insertion_point(field_mutable:PacketWrapper.hello)
   return _msg;
 }
 

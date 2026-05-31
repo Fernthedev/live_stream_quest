@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33706.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiveStreamQuest", "LiveStreamQuest.csproj", "{FAC1A6B9-1F06-461A-86A6-430EADFA3C1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveStreamQuest.Tests", "..\pcmod.tests\LiveStreamQuest.Tests\LiveStreamQuest.Tests.csproj", "{F334F70C-3C04-40C5-B987-93B6693D1E82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{FAC1A6B9-1F06-461A-86A6-430EADFA3C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FAC1A6B9-1F06-461A-86A6-430EADFA3C1B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{FAC1A6B9-1F06-461A-86A6-430EADFA3C1B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F334F70C-3C04-40C5-B987-93B6693D1E82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F334F70C-3C04-40C5-B987-93B6693D1E82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F334F70C-3C04-40C5-B987-93B6693D1E82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F334F70C-3C04-40C5-B987-93B6693D1E82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

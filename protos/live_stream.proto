@@ -45,6 +45,7 @@ message ScoreUpdate {
   bool isMiss = 4;
   // Store the time so we can use the newest score's total and combo
   google.protobuf.Timestamp time = 5;
+  float songTime = 6;
 }
 
 message StartBeatmap {

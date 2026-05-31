@@ -1923,6 +1923,7 @@ class ScoreUpdate final : public ::google::protobuf::Message
     kComboFieldNumber = 2,
     kScoreFieldNumber = 3,
     kIsMissFieldNumber = 4,
+    kSongTimeFieldNumber = 6,
   };
   // .google.protobuf.Timestamp time = 5;
   bool has_time() const;
@@ -1979,11 +1980,21 @@ class ScoreUpdate final : public ::google::protobuf::Message
   void _internal_set_ismiss(bool value);
 
   public:
+  // float songTime = 6;
+  void clear_songtime() ;
+  float songtime() const;
+  void set_songtime(float value);
+
+  private:
+  float _internal_songtime() const;
+  void _internal_set_songtime(float value);
+
+  public:
   // @@protoc_insertion_point(class_scope:ScoreUpdate)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<3, 5,
+  static const ::google::protobuf::internal::TcParseTable<3, 6,
                                    1, 0,
                                    2>
       _table_;
@@ -2010,6 +2021,7 @@ class ScoreUpdate final : public ::google::protobuf::Message
     float combo_;
     float score_;
     bool ismiss_;
+    float songtime_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -3673,6 +3685,31 @@ inline void ScoreUpdate::set_allocated_time(::google::protobuf::Timestamp* PROTO
 
   _impl_.time_ = reinterpret_cast<::google::protobuf::Timestamp*>(value);
   // @@protoc_insertion_point(field_set_allocated:ScoreUpdate.time)
+}
+
+// float songTime = 6;
+inline void ScoreUpdate::clear_songtime() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.songtime_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline float ScoreUpdate::songtime() const {
+  // @@protoc_insertion_point(field_get:ScoreUpdate.songTime)
+  return _internal_songtime();
+}
+inline void ScoreUpdate::set_songtime(float value) {
+  _internal_set_songtime(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:ScoreUpdate.songTime)
+}
+inline float ScoreUpdate::_internal_songtime() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.songtime_;
+}
+inline void ScoreUpdate::_internal_set_songtime(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.songtime_ = value;
 }
 
 // -------------------------------------------------------------------

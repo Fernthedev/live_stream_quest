@@ -27,10 +27,12 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
 #if BS_1_29
     [UsedImplicitly]
-    [Inject] private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection;
+    [Inject] 
+    private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection = null!;
 #else
     [UsedImplicitly]
-    [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
+    [Inject] 
+    private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
 #endif
 
     private readonly PlayerDataModel _playerDataModel;

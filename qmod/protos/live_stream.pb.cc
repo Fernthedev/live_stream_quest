@@ -250,7 +250,8 @@ inline constexpr ScoreUpdate::Impl_::Impl_(
         totalscore_{0},
         combo_{0},
         score_{0},
-        ismiss_{false} {}
+        ismiss_{false},
+        songtime_{0} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR ScoreUpdate::ScoreUpdate(::_pbi::ConstantInitialized)
@@ -376,17 +377,19 @@ const ::uint32_t
         4,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_._has_bits_),
-        8, // hasbit index offset
+        9, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.totalscore_),
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.combo_),
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.score_),
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.ismiss_),
         PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.time_),
+        PROTOBUF_FIELD_OFFSET(::ScoreUpdate, _impl_.songtime_),
         1,
         2,
         3,
         4,
         0,
+        5,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::StartBeatmap, _impl_._has_bits_),
         6, // hasbit index offset
@@ -441,13 +444,13 @@ static const ::_pbi::MigrationSchema
         {20, sizeof(::Transform)},
         {27, sizeof(::UpdatePosition)},
         {40, sizeof(::ScoreUpdate)},
-        {53, sizeof(::StartBeatmap)},
-        {62, sizeof(::StartBeatmapFailure)},
-        {67, sizeof(::ReadyUp)},
-        {68, sizeof(::StartMap)},
-        {73, sizeof(::ExitMap)},
-        {74, sizeof(::PauseMap)},
-        {75, sizeof(::PacketWrapper)},
+        {55, sizeof(::StartBeatmap)},
+        {64, sizeof(::StartBeatmapFailure)},
+        {69, sizeof(::ReadyUp)},
+        {70, sizeof(::StartMap)},
+        {75, sizeof(::ExitMap)},
+        {76, sizeof(::PauseMap)},
+        {77, sizeof(::PacketWrapper)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::_Vector3_default_instance_._instance,
@@ -477,24 +480,24 @@ const char descriptor_table_protodef_live_5fstream_2eproto[] ABSL_ATTRIBUTE_SECT
     "mH\002\210\001\001\022(\n\004time\030\004 \001(\0132\032.google.protobuf.T"
     "imestamp\022\020\n\010songTime\030\005 \001(\002B\020\n\016_headTrans"
     "formB\020\n\016_leftTransformB\021\n\017_rightTransfor"
-    "m\"y\n\013ScoreUpdate\022\022\n\ntotalScore\030\001 \001(\002\022\r\n\005"
-    "combo\030\002 \001(\002\022\r\n\005score\030\003 \001(\002\022\016\n\006isMiss\030\004 \001"
-    "(\010\022(\n\004time\030\005 \001(\0132\032.google.protobuf.Times"
-    "tamp\"K\n\014StartBeatmap\022\017\n\007levelId\030\001 \001(\t\022\026\n"
-    "\016characteristic\030\002 \001(\t\022\022\n\ndifficulty\030\003 \001("
-    "\005\"$\n\023StartBeatmapFailure\022\r\n\005error\030\001 \001(\t\""
-    "\t\n\007ReadyUp\"\034\n\010StartMap\022\020\n\010songTime\030\001 \001(\002"
-    "\"\t\n\007ExitMap\"\n\n\010PauseMap\"\324\002\n\rPacketWrappe"
-    "r\022\025\n\rqueryResultId\030\001 \001(\004\022)\n\016updatePositi"
-    "on\030\002 \001(\0132\017.UpdatePositionH\000\022%\n\014startBeat"
-    "map\030\003 \001(\0132\r.StartBeatmapH\000\0223\n\023startBeatm"
-    "apFailure\030\004 \001(\0132\024.StartBeatmapFailureH\000\022"
-    "\033\n\007readyUp\030\005 \001(\0132\010.ReadyUpH\000\022\035\n\010startMap"
-    "\030\006 \001(\0132\t.StartMapH\000\022\033\n\007exitMap\030\007 \001(\0132\010.E"
-    "xitMapH\000\022\035\n\010pauseMap\030\010 \001(\0132\t.PauseMapH\000\022"
-    "#\n\013scoreUpdate\030\t \001(\0132\014.ScoreUpdateH\000B\010\n\006"
-    "PacketB\031\252\002\026LiveStreamQuest.Protosb\006proto"
-    "3"
+    "m\"\213\001\n\013ScoreUpdate\022\022\n\ntotalScore\030\001 \001(\002\022\r\n"
+    "\005combo\030\002 \001(\002\022\r\n\005score\030\003 \001(\002\022\016\n\006isMiss\030\004 "
+    "\001(\010\022(\n\004time\030\005 \001(\0132\032.google.protobuf.Time"
+    "stamp\022\020\n\010songTime\030\006 \001(\002\"K\n\014StartBeatmap\022"
+    "\017\n\007levelId\030\001 \001(\t\022\026\n\016characteristic\030\002 \001(\t"
+    "\022\022\n\ndifficulty\030\003 \001(\005\"$\n\023StartBeatmapFail"
+    "ure\022\r\n\005error\030\001 \001(\t\"\t\n\007ReadyUp\"\034\n\010StartMa"
+    "p\022\020\n\010songTime\030\001 \001(\002\"\t\n\007ExitMap\"\n\n\010PauseM"
+    "ap\"\324\002\n\rPacketWrapper\022\025\n\rqueryResultId\030\001 "
+    "\001(\004\022)\n\016updatePosition\030\002 \001(\0132\017.UpdatePosi"
+    "tionH\000\022%\n\014startBeatmap\030\003 \001(\0132\r.StartBeat"
+    "mapH\000\0223\n\023startBeatmapFailure\030\004 \001(\0132\024.Sta"
+    "rtBeatmapFailureH\000\022\033\n\007readyUp\030\005 \001(\0132\010.Re"
+    "adyUpH\000\022\035\n\010startMap\030\006 \001(\0132\t.StartMapH\000\022\033"
+    "\n\007exitMap\030\007 \001(\0132\010.ExitMapH\000\022\035\n\010pauseMap\030"
+    "\010 \001(\0132\t.PauseMapH\000\022#\n\013scoreUpdate\030\t \001(\0132"
+    "\014.ScoreUpdateH\000B\010\n\006PacketB\031\252\002\026LiveStream"
+    "Quest.Protosb\006proto3"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_live_5fstream_2eproto_deps[1] = {
@@ -504,7 +507,7 @@ static ::absl::once_flag descriptor_table_live_5fstream_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_live_5fstream_2eproto = {
     false,
     false,
-    1161,
+    1180,
     descriptor_table_protodef_live_5fstream_2eproto,
     "live_stream.proto",
     &descriptor_table_live_5fstream_2eproto_once,
@@ -1980,9 +1983,9 @@ ScoreUpdate::ScoreUpdate(
                offsetof(Impl_, totalscore_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, totalscore_),
-           offsetof(Impl_, ismiss_) -
+           offsetof(Impl_, songtime_) -
                offsetof(Impl_, totalscore_) +
-               sizeof(Impl_::ismiss_));
+               sizeof(Impl_::songtime_));
 
   // @@protoc_insertion_point(copy_constructor:ScoreUpdate)
 }
@@ -1996,9 +1999,9 @@ inline void ScoreUpdate::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, time_),
            0,
-           offsetof(Impl_, ismiss_) -
+           offsetof(Impl_, songtime_) -
                offsetof(Impl_, time_) +
-               sizeof(Impl_::ismiss_));
+               sizeof(Impl_::songtime_));
 }
 ScoreUpdate::~ScoreUpdate() {
   // @@protoc_insertion_point(destructor:ScoreUpdate)
@@ -2058,16 +2061,16 @@ ScoreUpdate::GetClassData() const {
   return ScoreUpdate_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 1, 0, 2>
+const ::_pbi::TcParseTable<3, 6, 1, 0, 2>
 ScoreUpdate::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_._has_bits_),
     0, // no _extensions_
-    5, 56,  // max_field_number, fast_idx_mask
+    6, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967264,  // skipmap
+    4294967232,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    5,  // num_field_entries
+    6,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     ScoreUpdate_class_data_.base(),
@@ -2098,7 +2101,10 @@ ScoreUpdate::_table_ = {
     {::_pbi::TcParser::FastMtS1,
      {42, 0, 0,
       PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.time_)}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // float songTime = 6;
+    {::_pbi::TcParser::FastF32S1,
+     {53, 5, 0,
+      PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.songtime_)}},
     {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
@@ -2113,6 +2119,8 @@ ScoreUpdate::_table_ = {
     {PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.ismiss_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // .google.protobuf.Timestamp time = 5;
     {PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.time_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // float songTime = 6;
+    {PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.songtime_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::google::protobuf::Timestamp>()},
@@ -2132,10 +2140,10 @@ PROTOBUF_NOINLINE void ScoreUpdate::Clear() {
     ABSL_DCHECK(_impl_.time_ != nullptr);
     _impl_.time_->Clear();
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001eU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003eU)) {
     ::memset(&_impl_.totalscore_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.ismiss_) -
-        reinterpret_cast<char*>(&_impl_.totalscore_)) + sizeof(_impl_.ismiss_));
+        reinterpret_cast<char*>(&_impl_.songtime_) -
+        reinterpret_cast<char*>(&_impl_.totalscore_)) + sizeof(_impl_.songtime_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -2203,6 +2211,15 @@ PROTOBUF_NOINLINE void ScoreUpdate::Clear() {
         stream);
   }
 
+  // float songTime = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (::absl::bit_cast<::uint32_t>(this_._internal_songtime()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteFloatToArray(
+          6, this_._internal_songtime(), target);
+    }
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -2228,7 +2245,7 @@ PROTOBUF_NOINLINE void ScoreUpdate::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     // .google.protobuf.Timestamp time = 5;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       total_size += 1 +
@@ -2258,6 +2275,12 @@ PROTOBUF_NOINLINE void ScoreUpdate::Clear() {
         total_size += 2;
       }
     }
+    // float songTime = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (::absl::bit_cast<::uint32_t>(this_._internal_songtime()) != 0) {
+        total_size += 5;
+      }
+    }
   }
   return this_.MaybeComputeUnknownFieldsSize(total_size,
                                              &this_._impl_._cached_size_);
@@ -2278,7 +2301,7 @@ void ScoreUpdate::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       ABSL_DCHECK(from._impl_.time_ != nullptr);
       if (_this->_impl_.time_ == nullptr) {
@@ -2307,6 +2330,11 @@ void ScoreUpdate::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.ismiss_ = from._impl_.ismiss_;
       }
     }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (::absl::bit_cast<::uint32_t>(from._internal_songtime()) != 0) {
+        _this->_impl_.songtime_ = from._impl_.songtime_;
+      }
+    }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
@@ -2326,8 +2354,8 @@ void ScoreUpdate::InternalSwap(ScoreUpdate* PROTOBUF_RESTRICT PROTOBUF_NONNULL o
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.ismiss_)
-      + sizeof(ScoreUpdate::_impl_.ismiss_)
+      PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.songtime_)
+      + sizeof(ScoreUpdate::_impl_.songtime_)
       - PROTOBUF_FIELD_OFFSET(ScoreUpdate, _impl_.time_)>(
           reinterpret_cast<char*>(&_impl_.time_),
           reinterpret_cast<char*>(&other->_impl_.time_));

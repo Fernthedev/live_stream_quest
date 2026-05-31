@@ -58,6 +58,8 @@ custom_types::Helpers::Coroutine
 updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
   PacketWrapper packetWrapper;
   size_t packetId = 0;
+  auto& frequencyConfig = getLiveStreamQuestConfig().frequency;
+
   while (true) {
     packetWrapper.set_queryresultid(packetId);
     packetId++;
@@ -96,7 +98,7 @@ updatePositionCoro(LiveStreamQuest::PlayerPositionUpdater *self) {
     Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);
 
     co_yield UnityEngine::WaitForSecondsRealtime::New_ctor(
-        1.0f / getLiveStreamQuestConfig().frequency.GetValue())
+        1.0f / frequencyConfig.GetValue())
         ->i___System__Collections__IEnumerator();
     // we have to cast to allow co_yield to accept the WaitForEndOfFrame, which doesn't implement IEnumerator but is still yieldable. This is safe because the coroutine will only call MoveNext and not try to access any properties specific to IEnumerator.
     // we wait for end of frame to allow the player transforms to update before we read them, which ensures we get the most up-to-date avatar position and reduces jitter in the stream. This is especially important at higher frequencies where even small delays can cause noticeable jitter.
@@ -142,6 +144,11 @@ void LiveStreamQuest::PlayerPositionUpdater::OnScoreChange(
                      element)
                      .value_or(nullptr)) {
     scoreUpdate.set_score(goodScore->get_cutScore());
+  }
+
+  // Song Time
+  if (this->audioTimeSyncController) {
+    scoreUpdate.set_songtime(this->audioTimeSyncController->songTime);
   }
 
   Manager::GetInstance()->GetHandler().sendPacket(packetWrapper);

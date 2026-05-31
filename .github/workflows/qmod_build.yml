@@ -77,7 +77,7 @@ jobs:
         uses: Fernthedev/qpm-rust-action@v1
         with:
           #required 
-          package_path: ${GITHUB_WORKSPACE}/qmod
+          package_path: ./qmod
           workflow_token: ${{secrets.GITHUB_TOKEN}}
           resolve_ndk: true
           restore: true # will run restore on download

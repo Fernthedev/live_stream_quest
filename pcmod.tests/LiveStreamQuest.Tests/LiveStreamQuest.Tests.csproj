@@ -15,6 +15,17 @@
         <PackageReference Include="NUnit.Analyzers" Version="4.7.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>
     </ItemGroup>
+    
+    <ItemGroup>
+        <None Include="LiveStreamQuest.csproj.user" Condition="Exists('LiveStreamQuest.csproj.user')" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+    </ItemGroup>
 
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
@@ -22,6 +33,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\pcmod\LiveStreamQuest.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="LiveStreamQuest.Tests.csproj.user" />
     </ItemGroup>
 
 </Project>

@@ -189,7 +189,4 @@
       <EmbeddedResource Include="UI\BSML\LiveStreamQuestView.bsml" />
       <None Remove="UI\BSML\just_a_test.bsml" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Patches\" />
-    </ItemGroup>
 </Project>

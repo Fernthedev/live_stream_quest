@@ -6,7 +6,6 @@ namespace LiveStreamQuest.Managers;
 public class SnapshotManager
 {
     // Ordered historical buffer of incoming remote snapshots
-    // TODO: Switch to sorted list
     private readonly List<VRSnapshot> _snapshots = new(12);
 
     /// <summary>
@@ -14,9 +13,12 @@ public class SnapshotManager
     /// </summary>
     public int Count => _snapshots.Count;
 
-    private float _currentInterpolationDelay = 0.050f; // Baseline 50ms behind
-    private const float MinInterpolationDelay = 0.030f; // Never get closer than 30ms
-    private const float MaxInterpolationDelay = 0.120f; // Maximum cushion of 120ms
+    private float _currentInterpolationDelay = 0.035f; // Baseline 35ms behind
+    private const float MinInterpolationDelay = 0.015f; // Never get closer than 15ms
+    private const float MaxInterpolationDelay = 0.080f; // Maximum cushion of 80ms
+    private const float DefaultInterpolationDelay = 0.035f;
+    private const float SnapshotIntervalEmaAlpha = 0.15f;
+    private float _estimatedSnapshotInterval = DefaultInterpolationDelay;
 
 
     /// <summary>
@@ -25,10 +27,17 @@ public class SnapshotManager
     /// <param name="snapshot">The validated spatial transform packet structure.</param>
     public void AddSnapshot(VRSnapshot snapshot)
     {
-        _snapshots.Add(snapshot);
+        var insertIndex = FindInsertionIndex(snapshot.SongTime);
+        _snapshots.Insert(insertIndex, snapshot);
 
-        // CRITICAL CONSTRAINT: The buffer must remain perfectly sorted chronologically by audio song time.
-        _snapshots.Sort((a, b) => a.SongTime.CompareTo(b.SongTime));
+        if (_snapshots.Count >= 2 && insertIndex == _snapshots.Count - 1)
+        {
+            var lastInterval = (float)(_snapshots[_snapshots.Count - 1].SongTime - _snapshots[_snapshots.Count - 2].SongTime);
+            if (lastInterval > 0f)
+            {
+                _estimatedSnapshotInterval = Mathf.Lerp(_estimatedSnapshotInterval, lastInterval, SnapshotIntervalEmaAlpha);
+            }
+        }
     }
 
     /// <summary>
@@ -66,22 +75,22 @@ public class SnapshotManager
     /// </summary>
     /// <param name="currentSongTime"></param>
     /// <returns></returns>
-    public double CalculateRenderingTimelineTime(float currentSongTime)
+    public double CalculateRenderingTimelineTime(double currentSongTime)
     {
         if (_snapshots.Count < 2) return currentSongTime;
 
         var newestSnapshot = _snapshots[_snapshots.Count - 1];
-        var clockGap = newestSnapshot.SongTime - currentSongTime;
+        var clockGap = (float)(newestSnapshot.SongTime - currentSongTime);
 
-        if (clockGap < MinInterpolationDelay)
-        {
-            var targetDelay = (float)(newestSnapshot.SongTime - currentSongTime) + 0.030f;
-            _currentInterpolationDelay = Mathf.Clamp(targetDelay, MinInterpolationDelay, MaxInterpolationDelay);
-        }
-        else
-        {
-            _currentInterpolationDelay = Mathf.Lerp(_currentInterpolationDelay, 0.050f, Time.deltaTime * 0.5f);
-        }
+        // Keep a small buffer behind the newest packet so the renderer usually interpolates
+        // between two historical snapshots instead of chasing the latest arrival.
+        var cadenceDelay = Mathf.Clamp(_estimatedSnapshotInterval * 1.8f, MinInterpolationDelay, MaxInterpolationDelay);
+        var safetyAdjustedDelay = Mathf.Clamp(
+            cadenceDelay + Mathf.Max(0f, 0.010f - clockGap),
+            MinInterpolationDelay,
+            MaxInterpolationDelay);
+
+        _currentInterpolationDelay = Mathf.Lerp(_currentInterpolationDelay, safetyAdjustedDelay, Time.deltaTime * 8f);
 
         return currentSongTime - _currentInterpolationDelay;
     }
@@ -168,6 +177,27 @@ public class SnapshotManager
         }
 
         return (_snapshots[targetIndex], _snapshots[targetIndex + 1]);
+    }
+
+    private int FindInsertionIndex(double songTime)
+    {
+        var low = 0;
+        var high = _snapshots.Count;
+
+        while (low < high)
+        {
+            var mid = low + ((high - low) >> 1);
+            if (_snapshots[mid].SongTime <= songTime)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+
+        return low;
     }
 
     /// <summary>

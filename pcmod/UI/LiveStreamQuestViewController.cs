@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
@@ -145,7 +147,8 @@ namespace LiveStreamQuest.UI
         {
             try
             {
-                ModalHelper.Parse(transform, UIResource, this);
+                BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), UIResource),
+                    transform.gameObject, this);
             }
             catch (Exception e)
             {

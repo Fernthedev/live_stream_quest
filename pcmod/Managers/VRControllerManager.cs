@@ -140,7 +140,7 @@ public class VRControllerManager : IInitializable, ITickable
         if (_snapshotManager.Count < 2) return;
 
         // 1. Use the stabilized, desync-corrected timeline (constrained to snapshot window, newest preferred)
-        var renderingTimelineTime = _timeDesyncFixManager.SmoothedSongTime;
+        var renderingTimelineTime = _snapshotManager.CalculateRenderingTimelineTime(_timeDesyncFixManager.SmoothedSongTime);
 
         // 2. Continuous Discontinuity Checking (Handles user rewinding map or entering practice loops)
         if (_lastRenderingTimelineTime is not double.MinValue && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
@@ -152,17 +152,10 @@ public class VRControllerManager : IInitializable, ITickable
         }
         _lastRenderingTimelineTime = renderingTimelineTime;
 
-        // 3. Extract perfectly bounded frame slices using named tuple unpacking
-        var (snapshotA, snapshotB) = _snapshotManager.FindBestSnapshotWindow(renderingTimelineTime);
+        // 3. Extract perfectly bounded frame slices and the blend factor from the snapshot buffer
+        var (snapshotA, snapshotB, t) = _snapshotManager.GetInterpolationData(renderingTimelineTime);
 
-        // 4. Evaluate our timeline blending ratio factor 't'
-        var windowDuration = snapshotB.SongTime - snapshotA.SongTime;
-        var t = windowDuration > double.Epsilon
-            ? (float)((renderingTimelineTime - snapshotA.SongTime) / windowDuration)
-            : 1f;
-        t = Mathf.Clamp01(t);
-
-        // 5. Apply the interpolated results directly onto your transformation trees
+        // 4. Apply the interpolated results directly onto your transformation trees
         if (_pauseController._paused != PauseController.PauseState.Paused)
         {
             LerpProper(_properCameraTransform, snapshotA.HeadPosition, snapshotB.HeadPosition, snapshotA.HeadRotation, snapshotB.HeadRotation, t);
@@ -172,7 +165,7 @@ public class VRControllerManager : IInitializable, ITickable
         LerpProper(_playerTransforms._rightHandTransform, snapshotA.RightHandPosition, snapshotB.RightHandPosition, snapshotA.RightHandRotation, snapshotB.RightHandRotation, t);
         LerpProper(_playerTransforms._leftHandTransform, snapshotA.LeftHandPosition, snapshotB.LeftHandPosition, snapshotA.LeftHandRotation, snapshotB.LeftHandRotation, t);
         
-        // 6. Clean up our memory window trailing 1.0 second behind our current timeline frame pointer
+        // 5. Clean up our memory window trailing 1.0 second behind our current timeline frame pointer
         _snapshotManager.PruneOldSnapshots(Math.Min(snapshotA.SongTime, renderingTimelineTime) - 1.0);
     }
 

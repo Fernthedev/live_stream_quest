@@ -77,7 +77,7 @@ public class GamePacketHandler : IInitializable, IDisposable
                 _packetId = packetWrapper.QueryResultId;
 
                 _vrControllerManager.OnNetworkPacketReceived(updatePositionData.HeadTransform,
-                    updatePositionData.RightTransform, updatePositionData.LeftTransform, updatePositionData.SongTime);
+                    right: updatePositionData.RightTransform, left: updatePositionData.LeftTransform, songTime: updatePositionData.SongTime);
                 _timeDesyncFixManager.UpdateTime(packetWrapper.UpdatePosition.SongTime);
                 break;
             case PacketWrapper.PacketOneofCase.StartMap:

@@ -15,6 +15,7 @@ internal class GameInstaller : Installer, IDisposable
     {
         if (!_globalStateManager.StartingGameFromQuest) return;
         
+        Container.BindInterfacesAndSelfTo<SnapshotManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<VRControllerManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<GamePacketHandler>().AsSingle().NonLazy();
         

@@ -179,6 +179,9 @@
         <Content Include="..\protos\live_stream.proto">
           <Link>protos\live_stream.proto</Link>
         </Content>
+        <Content Include="..\README.md">
+          <Link>README.md</Link>
+        </Content>
         <Content Include="LiveStreamQuest.csproj.user" />
     </ItemGroup>
     <ItemGroup>

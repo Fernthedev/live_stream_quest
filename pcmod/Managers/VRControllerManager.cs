@@ -140,10 +140,10 @@ public class VRControllerManager : IInitializable, ITickable
         if (_snapshotManager.Count < 2) return;
 
         // 1. Use the stabilized, desync-corrected timeline (constrained to snapshot window, newest preferred)
-        double renderingTimelineTime = _timeDesyncFixManager.SmoothedSongTime;
+        var renderingTimelineTime = _timeDesyncFixManager.SmoothedSongTime;
 
         // 2. Continuous Discontinuity Checking (Handles user rewinding map or entering practice loops)
-        if (_lastRenderingTimelineTime != double.MinValue && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
+        if (_lastRenderingTimelineTime is not double.MinValue && renderingTimelineTime < _lastRenderingTimelineTime - 0.100)
         {
             _siraLog.Info("[VRControllerManager] Discontinuity detected. Flushing state engine.");
             _snapshotManager.Clear();
@@ -156,8 +156,8 @@ public class VRControllerManager : IInitializable, ITickable
         var (snapshotA, snapshotB) = _snapshotManager.FindBestSnapshotWindow(renderingTimelineTime);
 
         // 4. Evaluate our timeline blending ratio factor 't'
-        double windowDuration = snapshotB.SongTime - snapshotA.SongTime;
-        float t = windowDuration > double.Epsilon
+        var windowDuration = snapshotB.SongTime - snapshotA.SongTime;
+        var t = windowDuration > double.Epsilon
             ? (float)((renderingTimelineTime - snapshotA.SongTime) / windowDuration)
             : 1f;
         t = Mathf.Clamp01(t);
@@ -182,8 +182,8 @@ public class VRControllerManager : IInitializable, ITickable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void LerpProper(Transform transform, Vector3 posA, Vector3 posB, Quaternion rotA, Quaternion rotB, float t)
     {
-        Vector3 blendedPos = Vector3.Lerp(posA, posB, t);
-        Quaternion blendedRot = Quaternion.Slerp(rotA, rotB, t);
+        var blendedPos = Vector3.Lerp(posA, posB, t);
+        var blendedRot = Quaternion.Slerp(rotA, rotB, t);
         SetTransformDirectly(transform, blendedPos, blendedRot);
     }
 

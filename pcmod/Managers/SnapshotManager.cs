@@ -50,10 +50,10 @@ public class SnapshotManager
         var (a, b) = FindBestSnapshotWindow(renderingTimelineTime);
 
         // 2. Compute our precise linear fraction factor 't' relative to the audio grid gap
-        double windowDuration = b.SongTime - a.SongTime;
+        var windowDuration = b.SongTime - a.SongTime;
         if (windowDuration <= double.Epsilon) return (a, b, 1);
 
-        float t = (float)((renderingTimelineTime - a.SongTime) / windowDuration);
+        var t = (float)((renderingTimelineTime - a.SongTime) / windowDuration);
 
         // 3. Clamp ensuring precision float errors are safely locked inside bounds
         t = Mathf.Clamp01(t);
@@ -71,11 +71,11 @@ public class SnapshotManager
         if (_snapshots.Count < 2) return currentSongTime;
 
         var newestSnapshot = _snapshots[_snapshots.Count - 1];
-        double clockGap = newestSnapshot.SongTime - currentSongTime;
+        var clockGap = newestSnapshot.SongTime - currentSongTime;
 
         if (clockGap < MinInterpolationDelay)
         {
-            float targetDelay = (float)(newestSnapshot.SongTime - currentSongTime) + 0.030f;
+            var targetDelay = (float)(newestSnapshot.SongTime - currentSongTime) + 0.030f;
             _currentInterpolationDelay = Mathf.Clamp(targetDelay, MinInterpolationDelay, MaxInterpolationDelay);
         }
         else
@@ -119,7 +119,7 @@ public class SnapshotManager
             return (dummy, dummy);
         }
 
-        int lastWindowIndex = _snapshots.Count - 2;
+        var lastWindowIndex = _snapshots.Count - 2;
 
         // BOUNDARY CASE 1: Target time has completely overshot our absolute freshest data point.
         // Clamp strictly to the last known valid historical segment window.
@@ -128,13 +128,13 @@ public class SnapshotManager
             return (_snapshots[lastWindowIndex], _snapshots[lastWindowIndex + 1]);
         }
 
-        int low = 0;
-        int high = _snapshots.Count - 1;
+        var low = 0;
+        var high = _snapshots.Count - 1;
 
         while (low <= high)
         {
-            int mid = low + ((high - low) >> 1);
-            double midTime = _snapshots[mid].SongTime;
+            var mid = low + ((high - low) >> 1);
+            var midTime = _snapshots[mid].SongTime;
 
             // Using strict '<' means if midTime == renderingTimelineTime, it goes to the 'else' block.
             // This forces 'high' to move left, guaranteeing that any snapshot matching the time
@@ -153,7 +153,7 @@ public class SnapshotManager
         // Because of the strict '<' check above, when the loop breaks:
         // - _snapshots[high] is guaranteed to be STRICTLY LESS THAN renderingTimelineTime (<)
         // - _snapshots[low] is guaranteed to be GREATER THAN OR EQUAL TO renderingTimelineTime (>=)
-        int targetIndex = high;
+        var targetIndex = high;
 
         // BOUNDARY CASE 2: Target time underruns our oldest buffered historical milestone.
         if (targetIndex < 0)
@@ -199,9 +199,9 @@ public class SnapshotManager
     {
         if (_snapshots.Count < 2) return desiredTime;
 
-        double oldestTime = _snapshots[0].SongTime;
+        var oldestTime = _snapshots[0].SongTime;
         // do we pick the newest snapshot or the second newest snapshot for time?
-        double newestTime = _snapshots[_snapshots.Count - 1].SongTime;
+        var newestTime = _snapshots[_snapshots.Count - 1].SongTime;
 
         // Prefer the newest snapshot when the desired time is beyond our buffer
         if (desiredTime >= newestTime)

@@ -143,7 +143,20 @@ namespace LiveStreamQuest.UI
         // Display our new view coordinator as a child of the main menu view
         public void Initialize()
         {
-            InitializeUI();
+            try
+            {
+                ModalHelper.Parse(transform, UIResource, this);
+            }
+            catch (Exception e)
+            {
+                _siraLog.Error(e);
+                if (e.InnerException is not null)
+                    _siraLog.Error(e.InnerException);
+                _siraLog.Error(e.StackTrace);
+            }
+
+            _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
+            MenuButtons.Instance.RegisterButton(_menuButton);
 
             _networkManager.ConnectStateChanged -= OnConnectStateChanged;
             _networkManager.ConnectStateChanged += OnConnectStateChanged;
@@ -160,26 +173,6 @@ namespace LiveStreamQuest.UI
                 _mainMenu.didActivateEvent -= OnMainMenuDidActivate;
                 _mainMenu.didActivateEvent += OnMainMenuDidActivate;
             }
-        }
-
-
-        // Initialize BSML early on
-        private void InitializeUI()
-        {
-            try
-            {
-                ModalHelper.Parse(transform, UIResource, this);
-            }
-            catch (Exception e)
-            {
-                _siraLog.Error(e);
-                if (e.InnerException is not null)
-                    _siraLog.Error(e.InnerException);
-                _siraLog.Error(e.StackTrace);
-            }
-
-            _menuButton = new MenuButton("LiveStreamQuest", ShowPage);
-            MenuButtons.Instance.RegisterButton(_menuButton);
         }
 
         private void OnConnectStateChanged()

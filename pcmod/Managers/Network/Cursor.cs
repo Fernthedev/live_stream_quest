@@ -50,11 +50,11 @@ public class Cursor
         if (amount <= 0) return 0;
         if (Position > Data.Length) throw new InvalidOperationException($"Position {Position} is out of range for buffer of length {Data.Length}.");
 
-        int remaining = Data.Length - Position;
+        var remaining = Data.Length - Position;
         if (remaining == 0) return 0;
         if (amount > remaining) amount = remaining;
 
-        int read = await stream.ReadAsync(Data, Position, amount, cancellationToken).ConfigureAwait(false);
+        var read = await stream.ReadAsync(Data, Position, amount, cancellationToken).ConfigureAwait(false);
         Position += read;
         return read;
     }

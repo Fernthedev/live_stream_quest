@@ -49,7 +49,7 @@ public class TimeDesyncFixManager : ITickable
             // Fallback to raw song time if network sync isn't ready
             if (!_config.SyncTime || !_hasReceivedPacket) return _syncController.songTime;
 
-            double smoothedTime = _syncController.songTime + _smoothedTimeDriftOffset;
+            var smoothedTime = _syncController.songTime + _smoothedTimeDriftOffset;
 
             return smoothedTime;
         }
@@ -63,12 +63,12 @@ public class TimeDesyncFixManager : ITickable
         if (!_hasReceivedPacket) return;
 
         // 1. Linearly extrapolate where the server's (Quest) song time should be right now
-        double timeSinceLastPacket = Time.realtimeSinceStartupAsDouble - _lastPacketReceivedTime;
-        double estimatedServerSongTime = _latestServerSongTime + timeSinceLastPacket;
+        var timeSinceLastPacket = Time.realtimeSinceStartupAsDouble - _lastPacketReceivedTime;
+        var estimatedServerSongTime = _latestServerSongTime + timeSinceLastPacket;
 
         // 2. Measure raw delta desync against local raw audio time
         double currentLocalTime = _syncController.songTime;
-        double rawTimeDriftOffset = estimatedServerSongTime - currentLocalTime;
+        var rawTimeDriftOffset = estimatedServerSongTime - currentLocalTime;
 
 
         // 3. HARD CRITICAL DESYNC FIXED: If PC and Quest run completely out of bounds (> 150ms)

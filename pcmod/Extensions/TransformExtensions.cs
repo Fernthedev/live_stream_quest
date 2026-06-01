@@ -7,7 +7,7 @@ public static class TransformExtensions
 {
     public static Quaternion TransformRotation(this Transform trans, Quaternion targetRotation)
     {
-        Quaternion originalRotation = Quaternion.Inverse(trans.rotation) * targetRotation;
+        var originalRotation = Quaternion.Inverse(trans.rotation) * targetRotation;
         return originalRotation;
     }
 

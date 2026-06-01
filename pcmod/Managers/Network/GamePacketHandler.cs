@@ -104,12 +104,7 @@ public class GamePacketHandler : IInitializable, IDisposable
                 break;
             case PacketWrapper.PacketOneofCase.PauseMap:
                 _siraLog.Info("4. Pause map");
-
-#if BS_1_29
-                _mainThreadDispatcher.Enqueue(PauseMapAndReadyUp);
-#else
                 _mainThreadDispatcher.DispatchOnMainThread(PauseMapAndReadyUp);
-#endif
                 break;
         }
     }

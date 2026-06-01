@@ -184,11 +184,9 @@ namespace LiveStreamQuest.UI
             //
             // propertyChanged(this, new PropertyChangedEventArgs("canConnect"));
             // propertyChanged(this, new PropertyChangedEventArgs("connecting"));
-#if BS_1_29
-            _mainThreadDispatcher.Enqueue(() =>
-#else
+
             _mainThreadDispatcher.DispatchOnMainThread(() =>
-#endif
+
             {
                 if (!isInViewControllerHierarchy) return;
 

@@ -25,13 +25,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
 
     private readonly MenuTransitionsHelper _menuTransitionsHelper;
 
-#if BS_1_29
-    [UsedImplicitly]
-    [Inject] 
-    private readonly BeatmapCharacteristicCollectionSO _beatmapCharacteristicCollection = null!;
-#else
     [UsedImplicitly] [Inject] private readonly BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
-#endif
 
     private readonly PlayerDataModel _playerDataModel;
     private readonly GameplaySetupViewController _gameplaySetupViewController;
@@ -98,11 +92,7 @@ public class MenuPacketHandler : IDisposable, IInitializable
     /// </summary>
     public void HandlePacket(PacketWrapper packetWrapper)
     {
-#if BS_1_29
-        _mainThreadDispatcher.Enqueue(() => HandlePacketMainThread(packetWrapper));
-#else
         _mainThreadDispatcher.DispatchOnMainThread(HandlePacketMainThread, packetWrapper);
-#endif
     }
 
     private async void HandlePacketMainThread(PacketWrapper packetWrapper)
@@ -123,6 +113,8 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 }
 
                 break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -165,75 +157,6 @@ public class MenuPacketHandler : IDisposable, IInitializable
                 }
             }
         }
-#if BS_1_29
-          var levelPreview = _beatmapLevelsModel.GetLevelPreviewForLevelId(id);
-
-        if (levelPreview == null)
-        {
-            SendBeatmapStartError("levelPreview is null");
-            // TODO: User error dialog
-            return;
-        }
-
-        var levelPack = custom ? SongCore.Loader.CustomLevelsPack : _beatmapLevelsModel.GetLevelPackForLevelId(id);
-
-        if (levelPack == null)
-        {
-            SendBeatmapStartError("levelPack is null");
-            // TODO: User error dialog
-            return;
-        }
-
-        var beatmapResult = await _beatmapLevelsModel.GetBeatmapLevelAsync(id, _cancellationTokenSource.Token)
-            .ConfigureAwait(true);
-
-        if (beatmapResult.beatmapLevel == null || beatmapResult.isError)
-        {
-            SendBeatmapStartError("beatmap level is null");
-            // TODO: User error dialog
-            return;
-        }
-
-        var beatmapCharacteristicSo =
-            _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(packetWrapper.StartBeatmap
-                .Characteristic);
-
-        var beatmapDifficulty = (BeatmapDifficulty)packetWrapper.StartBeatmap.Difficulty;
-        var diffBeatmap =
-            beatmapResult.beatmapLevel.beatmapLevelData.GetDifficultyBeatmap(beatmapCharacteristicSo,
-                beatmapDifficulty);
-
-        if (beatmapCharacteristicSo == null)
-        {
-            SendBeatmapStartError("beatmapCharacteristicSo is null");
-            // TODO: User error dialog
-            return;
-        }
-
-        if (diffBeatmap == null)
-        {
-            SendBeatmapStartError("diffBeatmap is null");
-            // TODO: User error dialog
-            return;
-        }
-
-        // TODO: Figure out why this null refs if single player hasn't been opened
-
-        // multiplayerLevelSelectionFlowCoordinator.Setup(x);
-        // _soloFreePlayFlowCoordinator.Setup(state);
-
-        _playerDataModel.Load();
-        _gameplaySetupViewController.Init();
-        _playerSettingsPanelController.SetIsDirty();
-        _playerSettingsPanelController.Refresh();
-
-        _menuTransitionsHelper.StartStandardLevel("Solo", diffBeatmap, levelPreview,
-            _playerDataModel.playerData.overrideEnvironmentSettings, null,
-            _gameplaySetupViewController.gameplayModifiers, //TODO: Fix
-            _playerSettingsPanelController.playerSpecificSettings, null, Localization.Get("BUTTON_MENU"), false,
-            true,
-            null, null, null);
-#else
 
         token.ThrowIfCancellationRequested();
         var beatmapResult = _beatmapLevelsModel.GetBeatmapLevel(id);
@@ -284,7 +207,6 @@ public class MenuPacketHandler : IDisposable, IInitializable
             false,
             true,
             null, null, null, null);
-#endif
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using LiveStreamQuest.Extensions;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -172,7 +173,7 @@ public class VRControllerManager : IInitializable, ITickable
         LerpProper(_playerTransforms._leftHandTransform, snapshotA.LeftHandPosition, snapshotB.LeftHandPosition, snapshotA.LeftHandRotation, snapshotB.LeftHandRotation, t);
         
         // 6. Clean up our memory window trailing 1.0 second behind our current timeline frame pointer
-        _snapshotManager.PruneOldSnapshots(snapshotA.SongTime - 1.0);
+        _snapshotManager.PruneOldSnapshots(Math.Min(snapshotA.SongTime, renderingTimelineTime) - 1.0);
     }
 
     /// <summary>

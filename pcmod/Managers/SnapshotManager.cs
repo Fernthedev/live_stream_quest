@@ -3,9 +3,12 @@ using UnityEngine;
 
 namespace LiveStreamQuest.Managers;
 
+// This whole class is AI math
+// we need to be better :(
 public class SnapshotManager
 {
     // Ordered historical buffer of incoming remote snapshots
+    // TODO: Use sorted list
     private readonly List<VRSnapshot> _snapshots = new(12);
 
     /// <summary>
@@ -29,7 +32,8 @@ public class SnapshotManager
     {
         var insertIndex = FindInsertionIndex(snapshot.SongTime);
         _snapshots.Insert(insertIndex, snapshot);
-
+        
+        // If the new snapshot is the latest one, we can update our estimated snapshot interval using an EMA of the last two snapshots.
         if (_snapshots.Count >= 2 && insertIndex == _snapshots.Count - 1)
         {
             var lastInterval = (float)(_snapshots[_snapshots.Count - 1].SongTime - _snapshots[_snapshots.Count - 2].SongTime);
@@ -71,10 +75,16 @@ public class SnapshotManager
     }
 
     /// <summary>
-    /// 
+    /// Computes a stable rendering timeline by applying a smoothed interpolation delay behind the
+    /// newest received snapshot.
+    /// The delay is dynamically adjusted from observed packet cadence and widened when the local
+    /// song clock approaches or overtakes the newest snapshot time, reducing extrapolation jitter.
     /// </summary>
-    /// <param name="currentSongTime"></param>
-    /// <returns></returns>
+    /// <param name="currentSongTime">Current local song time in seconds.</param>
+    /// <returns>
+    /// A delayed timeline time in song seconds used for snapshot interpolation.
+    /// If fewer than two snapshots are available, returns <paramref name="currentSongTime"/> unchanged.
+    /// </returns>
     public double CalculateRenderingTimelineTime(double currentSongTime)
     {
         if (_snapshots.Count < 2) return currentSongTime;
@@ -179,6 +189,11 @@ public class SnapshotManager
         return (_snapshots[targetIndex], _snapshots[targetIndex + 1]);
     }
 
+    /// <summary>
+    /// Performs a binary search to find the correct insertion index for a new snapshot based on its song time.
+    /// </summary>
+    /// <param name="songTime"></param>
+    /// <returns></returns>
     private int FindInsertionIndex(double songTime)
     {
         var low = 0;
@@ -206,7 +221,7 @@ public class SnapshotManager
     /// <param name="thresholdSongTimeSeconds">The point in timeline seconds behind which all snapshots are discarded.</param>
     public void PruneOldSnapshots(double thresholdSongTimeSeconds)
     {
-        _snapshots.RemoveAll(snap => snap.SongTime < thresholdSongTimeSeconds);
+        _snapshots.RemoveRange(0, FindInsertionIndex(thresholdSongTimeSeconds));
     }
 
     public void Clear()

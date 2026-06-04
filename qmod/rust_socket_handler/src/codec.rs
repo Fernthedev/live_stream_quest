@@ -1,4 +1,4 @@
-pub type PacketSize = u32;
+pub type PacketSize = u16;
 
 pub fn encode_frame(payload: &[u8]) -> Vec<u8> {
     let mut frame = Vec::with_capacity(payload.len() + std::mem::size_of::<PacketSize>());

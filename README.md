@@ -20,10 +20,10 @@ You may use `adb` to bypass this requirement, though this will require a wired c
 adb tcpip 9542
 ```
 ## Configure
-Open the game on the quest and PC. Once both are ready, go to the `LiveStreamQuest` mod menu on the left side and configure your parameters. If you're using `adb tcpip`, use `127.0.0.1` for IP address. Otherwise, use the Quest's local network IP address e.g `192.168.x.x` or `10.x.x.x`.
+Open the game on the quest and PC. Once both are ready, on PC go to the `LiveStreamQuest` mod menu on the left side and configure your parameters. If you're using `adb tcpip`, use `127.0.0.1` for IP address. Otherwise, use the Quest's local network IP address e.g `192.168.x.x` or `10.x.x.x`.
 
 ## Usage
-Once configured, press `Connect` on PC. Currently error handling and UI are lacking as of today. Therefore, it may not be immediately obvious if issues occur. Additionally reconnect attempts are loosely handled. UDP reliability has not been properly developed, thereby requiring multiple connect attempts until a successful connection is made.
+Once configured, press `Connect` on PC. Currently error handling and error UI are lacking as of today. Therefore, it may not be immediately obvious if issues occur. Additionally reconnect attempts are loosely handled. UDP reliability has not been properly developed, thereby requiring multiple connect attempts until a successful connection is made.
 
 Once connected, load maps on Quest. If properly configured and connected, the map should start loading on PC. If the map is a custom level, it may take a while until PC finishes downloading and loading the map.
 

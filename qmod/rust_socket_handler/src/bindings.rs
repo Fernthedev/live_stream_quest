@@ -52,9 +52,9 @@ impl RustSocketServerBinding {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn rust_socket_server_init() -> *const c_char {
+pub extern "C" fn rust_socket_server_init() -> *const c_char{
     // init logging
-    if let Err(e) = paper2_log::Paper2Logger::init_with_max_level(log::LevelFilter::Debug) {
+    if let Err(e) = paper2_log::Paper2Logger::init_with_max_level(log::LevelFilter::Debug, Some("LiveStreamQuest".to_string())) {
         error!("Failed to initialize logging {e}");
         return CString::new(e.to_string()).unwrap_or_else(|_| CString::new("Failed to initialize logging").unwrap()).into_raw();
     }

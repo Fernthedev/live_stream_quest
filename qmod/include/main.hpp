@@ -17,6 +17,7 @@ static constexpr auto LSQLogger = Paper::ConstLoggerContext("LiveStreamQuest");
 
 
 #define LOG_INFO(...) LSQLogger.fmtLog<Paper::LogLevel::INF>(__VA_ARGS__)
+#define LOG_ERROR(...) LSQLogger.fmtLog<Paper::LogLevel::ERR>(__VA_ARGS__)
 #define LOG_DEBUG(...) LSQLogger.fmtLog<Paper::LogLevel::DBG>(__VA_ARGS__)
 // #define LOG_DEBUG(...)
 

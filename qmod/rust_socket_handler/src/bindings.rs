@@ -1,4 +1,4 @@
-use std::ffi::c_void;
+use std::ffi::{CString, c_char, c_void};
 use std::ptr;
 use std::sync::Arc;
 
@@ -52,11 +52,13 @@ impl RustSocketServerBinding {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn rust_socket_server_init() {
+pub extern "C" fn rust_socket_server_init() -> *const c_char {
     // init logging
-    if let Err(_) = paper2_log::Paper2Logger::init_with_max_level(log::LevelFilter::Debug) {
-        error!("Failed to initialize logging");
+    if let Err(e) = paper2_log::Paper2Logger::init_with_max_level(log::LevelFilter::Debug) {
+        error!("Failed to initialize logging {e}");
+        return CString::new(e.to_string()).unwrap_or_else(|_| CString::new("Failed to initialize logging").unwrap()).into_raw();
     }
+    ptr::null()
 }
 
 /// Creates a new socket server binding and returns an opaque handle for FFI callers.

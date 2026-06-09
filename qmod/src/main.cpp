@@ -318,7 +318,11 @@ extern "C" void setup(CModInfo *info) {
 extern "C" void load() {
   il2cpp_functions::Init();
 
-  LiveStreamQuestRust::ffi::rust_socket_server_init();
+  auto err = LiveStreamQuestRust::ffi::rust_socket_server_init();
+  if (err) {
+    LOG_ERROR("Failed to initialize rust socket logger: {}", err);
+    return;
+  }
 
   custom_types::Register::AutoRegister();
 

@@ -24,6 +24,8 @@ typedef struct RustSocketServerBinding RustSocketServerBinding;
 extern "C" {
 #endif // __cplusplus
 
+void rust_socket_server_init(void);
+
 /**
  * Creates a new socket server binding and returns an opaque handle for FFI callers.
  *

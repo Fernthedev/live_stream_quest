@@ -2,6 +2,7 @@ use std::ffi::c_void;
 use std::ptr;
 use std::sync::Arc;
 
+use log::error;
 use tokio::runtime::{Builder, Runtime};
 use tokio::task::JoinHandle;
 
@@ -50,10 +51,11 @@ impl RustSocketServerBinding {
 	}
 }
 
+#[unsafe(no_mangle)]
 pub extern "C" fn rust_socket_server_init() {
     // init logging
     if let Err(_) = paper2_log::Paper2Logger::init_with_max_level(log::LevelFilter::Debug) {
-        eprintln!("Failed to initialize logging");
+        error!("Failed to initialize logging");
     }
 }
 
@@ -77,7 +79,10 @@ pub extern "C" fn rust_socket_server_new(
 ) -> *mut RustSocketServerBinding {
 	let runtime = match Builder::new_multi_thread().enable_all().build() {
 		Ok(rt) => rt,
-		Err(_) => return ptr::null_mut(),
+		Err(e) => {
+			error!("Failed to create runtime: {}", e);
+			return ptr::null_mut();
+		}
 	};
 
 	let user_data = UserData::new(user_data);
@@ -95,7 +100,10 @@ pub extern "C" fn rust_socket_server_new(
 		callback_fn,
 	)) {
 		Ok(server) => server,
-		Err(_) => return ptr::null_mut(),
+		Err(e) => {
+			error!("Failed to create socket server: {}", e);
+			return ptr::null_mut();
+		}
 	};
 
 	let binding = RustSocketServerBinding {

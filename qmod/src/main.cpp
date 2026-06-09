@@ -318,6 +318,8 @@ extern "C" void setup(CModInfo *info) {
 extern "C" void load() {
   il2cpp_functions::Init();
 
+  LiveStreamQuestRust::ffi::rust_socket_server_init();
+
   custom_types::Register::AutoRegister();
 
   Manager::GetInstance()->Init();

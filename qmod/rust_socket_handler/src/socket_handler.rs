@@ -3,7 +3,7 @@ use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use tokio::net::{TcpListener, UdpSocket};
+use tokio::net::{TcpSocket, UdpSocket};
 use tokio::sync::Mutex;
 
 use crate::socket_handler::tcp::TcpBackend;
@@ -12,9 +12,7 @@ use crate::socket_handler::udp::UdpBackend;
 mod tcp;
 mod udp;
 
-
 type PacketCallback = Arc<dyn Fn(&[u8]) + Send + Sync + 'static>;
-
 
 // The TransportBackend enum abstracts over the TCP and UDP implementations, allowing the RustSocketServer to provide a unified API regardless of the underlying transport protocol.
 enum TransportBackend {
@@ -49,10 +47,34 @@ impl RustSocketServer {
     ) -> io::Result<Self> {
         let bind_addr = SocketAddr::from(([0, 0, 0, 0], port));
         let backend = match transport {
-            SocketTransport::TCP => TransportBackend::Tcp(TcpBackend {
-                listener: TcpListener::bind(bind_addr).await?,
-                clients: Arc::new(Mutex::new(HashMap::new())),
-            }),
+            SocketTransport::TCP => {
+                // let listener = TcpListener::bind(bind_addr).await?;
+                // 1. Create the un-bound socket descriptor
+                let socket = TcpSocket::new_v6()?;
+
+                // 2. Explicitly force REUSEADDR onto the raw descriptor
+                socket.set_reuseaddr(true)?;
+
+                // why not
+                socket.set_nodelay(true)?;
+                
+                socket.set_keepalive(true)?;
+
+                // 3. Optional extra insurance for Android NDK environments:
+                // If your app restarts fast enough, REUSEPORT allows binding even if
+                // the old socket descriptor hasn't finished clearing out of the process table.
+                #[cfg(unix)]
+                socket.set_reuseport(true)?;
+
+                // 4. Bind and listen manually
+                socket.bind(bind_addr)?;
+                let listener = socket.listen(1024)?;
+
+                TransportBackend::Tcp(TcpBackend {
+                    listener,
+                    clients: Arc::new(Mutex::new(HashMap::new())),
+                })
+            }
             SocketTransport::UDP => TransportBackend::Udp(UdpBackend {
                 server_socket: UdpSocket::bind(bind_addr).await?,
                 peers: Arc::new(Mutex::new(HashSet::new())),

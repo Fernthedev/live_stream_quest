@@ -17,10 +17,10 @@ Install the mod on both Quest and PC. They do not need to be the same game versi
 ## Wired
 You may use `adb` to bypass this requirement, though this will require a wired connection. Only TCP is supported under this mode.
 ```
-adb tcpip 9542
+adb forward tcp:9542 tcp:9542
 ```
 ## Configure
-Open the game on the quest and PC. Once both are ready, on PC go to the `LiveStreamQuest` mod menu on the left side and configure your parameters. If you're using `adb tcpip`, use `127.0.0.1` for IP address. Otherwise, use the Quest's local network IP address e.g `192.168.x.x` or `10.x.x.x`.
+Open the game on the quest and PC. Once both are ready, on PC go to the `LiveStreamQuest` mod menu on the left side and configure your parameters. If you're using `adb forward`, use `127.0.0.1` for IP address. Otherwise, use the Quest's local network IP address e.g `192.168.x.x` or `10.x.x.x`.
 
 ## Usage
 Once configured, press `Connect` on PC. Currently error handling and error UI are lacking as of today. Therefore, it may not be immediately obvious if issues occur. Additionally reconnect attempts are loosely handled. UDP reliability has not been properly developed, thereby requiring multiple connect attempts until a successful connection is made.
@@ -28,6 +28,8 @@ Once configured, press `Connect` on PC. Currently error handling and error UI ar
 Once connected, load maps on Quest. If properly configured and connected, the map should start loading on PC. If the map is a custom level, it may take a while until PC finishes downloading and loading the map.
 
 The Quest and PC will stay in a `Pause` state until both have achknowledged their ready state in game. Once this is done, they will both start the game at the same time barring latency issues.
+
+If the mod fails to output on your PC, PLEASE double check that you have properly configured both mods! If both are configured properly and you are still not getting any output on your PC, please close the game on both your headset and PC. Then, restart your headset and try again.
 
 ## Settings
 PC has a minimal UI for configuring various settings. However, Quest lacks UI for configuring settings e.g packet rate (in Hz) or TCP/UDP mode. The settings configuration requires manual editing, found at `/sdcard/ModData/com.beatgames.beatsaber/Config/LiveStreamQuest.json`.

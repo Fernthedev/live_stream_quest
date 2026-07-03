@@ -6,7 +6,7 @@
 #include <mutex>
 
 class SocketLibHandler : public PacketHandler {
-    using PacketSize = uint32_t;
+    using PacketSize = uint16_t;
   
     public:
         SocketLibHandler(ReceivePacketFunc onReceivePacket) : PacketHandler(onReceivePacket) { }
